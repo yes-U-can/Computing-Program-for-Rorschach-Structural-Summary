@@ -1,4 +1,4 @@
-# 로샤 구조 요약지 계산 프로그램 (Rorschach Structural Summary Program)
+# 로샤 구조 요약지 계산 프로그램 (Computing Program for Rorschach Structural Summary)
 
 수기로 직접 계산하던 로샤 검사의 구조 요약지를 자동으로 계산하고 출력할 수 있도록 개발된 Google Apps Script 기반 웹 애플리케이션입니다.
 
