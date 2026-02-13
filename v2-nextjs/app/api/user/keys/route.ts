@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { Prisma } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { createCipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -72,20 +71,12 @@ export async function POST(req: Request) {
 
   const { encrypted, iv } = await encrypt(apiKey);
 
-  let data: Prisma.UserUpdateInput;
-  switch (provider as Provider) {
-    case 'openai':
-      data = { encryptedOpenAIKey: encrypted, openAIKeyIv: iv };
-      break;
-    case 'google':
-      data = { encryptedGoogleKey: encrypted, googleKeyIv: iv };
-      break;
-    case 'anthropic':
-      data = { encryptedAnthropicKey: encrypted, anthropicKeyIv: iv };
-      break;
-    default:
-      return NextResponse.json({ error: 'Unsupported provider' }, { status: 400 });
-  }
+  const updateDataByProvider: Record<Provider, Record<string, string>> = {
+    openai: { encryptedOpenAIKey: encrypted, openAIKeyIv: iv },
+    google: { encryptedGoogleKey: encrypted, googleKeyIv: iv },
+    anthropic: { encryptedAnthropicKey: encrypted, anthropicKeyIv: iv },
+  };
+  const data = updateDataByProvider[provider as Provider];
 
   try {
     await prisma.user.update({
