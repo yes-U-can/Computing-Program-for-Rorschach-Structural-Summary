@@ -1,0 +1,355 @@
+{
+  "app": {
+    "title": "Rorschach Structural Summary Calculator",
+    "version": "v2.0.0",
+    "provider": "Provided by Seoul Institute of Clinical Psychology"
+  },
+  "nav": {
+    "scoring": "Scoring & Structural Summary",
+    "more": "More",
+    "login": "Login / Sign Up",
+    "logout": "Logout",
+    "account": "My Account",
+    "loginRequired": "Login required",
+    "aiAssistant": "AI Assistant"
+  },
+  "buttons": {
+    "calculate": "Calculate Results",
+    "reset": "Reset Input",
+    "add": "Add",
+    "delete": "Delete",
+    "print": "Print",
+    "rawData": "Raw Data",
+    "summary": "Summary",
+    "aiInterpret": "Request AI Interpretation",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "save": "Save",
+    "load": "Load",
+    "backToInput": "Back to Input"
+  },
+  "modal": {
+    "welcome": {
+      "title": "Rorschach Structural Summary Calculator",
+      "new": "Create New",
+      "loadSample": "Start with Sample Data",
+      "loadSaved": "Load Auto-saved Content",
+      "continue": "Continue Work",
+      "continueMsg": "There is content you worked on last time."
+    },
+    "reset": {
+      "title": "Please confirm again",
+      "message": "Do you want to reset all current inputs?"
+    },
+    "ai": {
+      "title": "Preparation Step: Please download the CSV file by clicking the green buttons on the previous screen.",
+      "message": "The AI chatbot currently connected is Gemini Gems, which requires a Google account.",
+      "open": "Open in New Window",
+      "cancel": "Return to Results"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "noticeTitle": "※ Browser Storage (LocalStorage) Usage Notice",
+      "noticeText_part1": "This app temporarily stores data entered in the 'Scoring & Structural Summary' tab in your computer's browser's local storage (LocalStorage) for your scoring convenience.",
+      "noticeText_part2": "This data is not transmitted to the server or accessible by the operator, and is used solely for the purpose of restoring input content when you revisit the browser.",
+      "noticeText_part3": "When using AI features after login, saved API keys are managed in encrypted form, and reference context (built-in docs and user-added knowledge sources) may be sent with chat requests to improve response quality."
+    }
+  },
+  "input": {
+    "card": "Card",
+    "response": "Response",
+    "location": "Location",
+    "dq": "DQ",
+    "determinants": "Determinants",
+    "fq": "FQ",
+    "pair": "Pair",
+    "contents": "Contents",
+    "popular": "P",
+    "z": "Z",
+    "specialScores": "Special Scores",
+    "score": "Score",
+    "gphr": "G/PHR",
+    "guideResponse": "The [Response] section is for noting the subject's verbal responses; it does not affect calculations, so it can be left blank.<br>The [Score] and [G/PHR] sections are calculated automatically, so no manual input is needed.<br>However, for [Score], values are automatically calculated only after selecting the [Card] and [Z] types.",
+    "tooltipInfo": "Only the bottommost row can be manipulated,\nand up to 50 rows are possible.",
+    "rowOrderTip": "The order of response rows does not affect the calculation results.\nFor example, it's fine to record content for Card 6 in the 8th row and content for Card 2 in the 14th row."
+  },
+  "info": {
+    "categories": {
+      "scoring-input": "Scoring Input",
+      "result-interpretation": "Result Interpretation",
+      "upper-section": "Upper Section",
+      "lower-section": "Lower Section",
+      "special-indices": "Special Indices",
+      "core": "Core",
+      "ideation": "Ideation",
+      "affect": "Affect",
+      "mediation": "Mediation",
+      "processing": "Processing",
+      "interpersonal": "Interpersonal",
+      "selfPerception": "Self-Perception"
+    }
+  },
+  "result": {
+    "tabs": {
+      "upper": "Upper Section",
+      "lower": "Lower Section",
+      "special": "Special Indices"
+    },
+    "upper": {
+      "title": "Upper Section",
+      "location": "Location",
+      "dq": "DQ",
+      "formQuality": "Form Quality",
+      "determinants": "Determinants",
+      "contents": "Contents",
+      "approach": "Approach",
+      "specialScores": "Special Scores"
+    },
+    "core": {
+      "title": "Core Section",
+      "R": "R",
+      "Lambda": "L",
+      "EB": "EB",
+      "EA": "EA",
+      "EBPer": "EBPer",
+      "eb": "eb",
+      "es": "es",
+      "D": "D Score",
+      "AdjD": "Adj D",
+      "AdjEs": "Adj es",
+      "FM": "FM",
+      "m": "m",
+      "SumCprime": "SumC'",
+      "SumT": "SumT",
+      "SumV": "SumV",
+      "SumY": "SumY"
+    },
+    "ideation": {
+      "title": "Ideation",
+      "a_p": "a:p",
+      "Ma_Mp": "Ma:Mp",
+      "_2AB_Art_Ay": "2AB+(Art+Ay)",
+      "MOR": "MOR",
+      "Sum6": "Sum6",
+      "Lv2": "Lv2",
+      "WSum6": "WSum6",
+      "M_minus": "M-",
+      "Mnone": "Mnone"
+    },
+    "affect": {
+      "title": "Affect",
+      "FC_CF_C": "FC:CF+C",
+      "PureC": "Pure C",
+      "SumC_WSumC": "SumC':WSumC",
+      "Afr": "Afr",
+      "S": "S",
+      "Blends_R": "Blends:R",
+      "CP": "CP"
+    },
+    "mediation": {
+      "title": "Mediation",
+      "XA_percent": "XA%",
+      "WDA_percent": "WDA%",
+      "X_minus_percent": "X-%",
+      "S_minus": "S-",
+      "P": "P",
+      "X_plus_percent": "X+%",
+      "Xu_percent": "Xu%"
+    },
+    "processing": {
+      "title": "Processing",
+      "Zf": "Zf",
+      "Zd": "Zd",
+      "W_D_Dd": "W:D:Dd",
+      "W_M": "W:M",
+      "PSV": "PSV",
+      "DQ_plus": "DQ+",
+      "DQ_v": "DQv"
+    },
+    "interpersonal": {
+      "title": "Interpersonal",
+      "COP": "COP",
+      "AG": "AG",
+      "a_p": "a:p",
+      "Food": "Food",
+      "SumT": "SumT",
+      "HumanCont": "Human Cont",
+      "PureH": "Pure H",
+      "PER": "PER",
+      "ISO_Index": "Isol Idx"
+    },
+    "selfPerception": {
+      "title": "Self-Perception",
+      "_3r_2_R": "3r+(2)/R",
+      "Fr_rF": "Fr+rF",
+      "SumV": "SumV",
+      "FD": "FD",
+      "An_Xy": "An+Xy",
+      "MOR": "MOR",
+      "H_ratio": "H:(H)+Hd+(Hd)"
+    }
+  },
+  "indices": {
+    "title": "Special Indices",
+    "PTI": "PTI",
+    "DEPI": "DEPI",
+    "CDI": "CDI",
+    "SCON": "S-CON",
+    "HVI": "HVI",
+    "OBS": "OBS",
+    "sconNote": "( Note: Applies only to examinees aged 14 or older )",
+    "sconMain": "Check if 8 or more criteria are met",
+    "depiMain": "Check if 5 or more criteria are met",
+    "cdiMain": "Check if 4 or more criteria are met",
+    "hviMain": "Check if criterion (1) is met and 4 or more of criteria (2)~(8) are met",
+    "obsMain": "Check if 1 or more of the conditions below are met",
+    "obsR1": "All of (1)~(5) are met",
+    "obsR2": "2 or more of (1)~(4) are met",
+    "obsR3": "3 or more of (1)~(5) are met",
+    "positive": "Positive",
+    "negative": "NO"
+  },
+  "toast": {
+    "overScoring": {
+      "title": "Over-scoring Warning",
+      "message": "Having 4 or more determinants is rare.\n1. Did the examinee actually say this?\n2. Did you accidentally score Form (F) multiple times?"
+    },
+    "categoryDup": {
+      "title": "Category Duplication Check",
+      "message": "This is not about the number of objects. Enter the same category (e.g., Animal A) only once."
+    },
+    "hierarchy": {
+      "title": "Hierarchy Check",
+      "message": "Too many scores. Be careful not to enter cognitive scores multiple times for the same expression. (Higher scores include lower scores.)"
+    },
+    "tooManyResponses": {
+      "title": "Too Many Responses Warning (R ≥ 45)",
+      "message": "The number of responses is too high. Please review the test administration process."
+    },
+    "validity": {
+      "title": "Validity Warning",
+      "message": "If the number of responses is less than 14, the profile validity may be low, reducing the reliability of interpretation."
+    },
+    "resetComplete": {
+      "title": "Reset Complete",
+      "message": "All input values have been reset."
+    },
+    "autoSaved": {
+      "title": "Auto Saved",
+      "message": "Your input has been automatically saved."
+    },
+    "reflectionPair": {
+      "title": "Reflection-Pair Exclusion",
+      "message": "Reflection (Fr/rF) is scored, so Pair (2) has been automatically cleared."
+    },
+    "dqVagueFq": {
+      "title": "DQ-FQ Constraint",
+      "message": "When DQ is 'v' (vague), FQ '+' (superior) cannot be selected and has been reset."
+    },
+    "dqVagueZ": {
+      "title": "DQ-Z Constraint",
+      "message": "When DQ is 'v' (vague), organizational activity (Z) is not applicable."
+    },
+    "pureDeterminantFq": {
+      "title": "Pure Determinant FQ",
+      "message": "Only formless determinants are scored, so FQ has been automatically set to 'none'."
+    },
+    "specialScoreLevel": {
+      "title": "Special Score Level Conflict",
+      "message": "Level 1 and Level 2 of the same special score cannot coexist. The previous level has been removed."
+    },
+    "apiKeySaved": {
+      "title": "API Key Saved",
+      "message": "{provider} API key has been saved."
+    },
+    "apiKeyError": {
+      "title": "Error",
+      "message": "Failed to save API key. Please try again."
+    }
+  },
+  "loader": {
+    "calculating": "Calculating...",
+    "subtext": "Calculation results are auto-saved in the browser and can be loaded later."
+  },
+  "links": {
+    "manual": "User Manual",
+    "bug": "Report Bugs & Improvements",
+    "patch": "Patch Notes",
+    "lab": "Seoul Clinical Psychology Institute",
+    "privacy": "Privacy Policy"
+  },
+  "language": {
+    "select": "Select Language",
+    "ko": "한국어",
+    "en": "English",
+    "ja": "日本語",
+    "es": "Español",
+    "pt": "Português"
+  },
+  "export": {
+    "rawDataTitle": "Export all items entered by the user in CSV format",
+    "summaryTitle": "Export all items calculated in the structural summary in CSV format"
+  },
+  "footer": {
+    "title": "Computing Program for Rorschach Structural Summary",
+    "copyright": "© 1997–2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
+  },
+  "codeList": {
+    "header": "Code list and descriptions for each scoring item."
+  },
+  "specialIndices": {
+    "scon_main": "Check if 8 or more criteria are met",
+    "scon_note": "( Note: Applies only to examinees aged 14 or older )",
+    "depi_main": "Check if 5 or more criteria are met",
+    "pti_main": "Score displayed (no cutoff)",
+    "cdi_main": "Check if 4 or more criteria are met",
+    "hvi_main": "Check if criterion (1) is met and 4 or more of criteria (2)~(8) are met",
+    "obs_main": "Check if 1 or more of the conditions below are met",
+    "obs_r1": "All of (1)~(5) are met",
+    "obs_r2": "2 or more of (1)~(4) are met",
+    "obs_r3": "3 or more of (1)~(5) are met"
+  },
+  "account": {
+    "title": "My Account",
+    "subtitle": "Manage your account settings and API keys.",
+    "apiKeys": {
+      "title": "API Key Management",
+      "openai": "OpenAI API Key",
+      "google": "Google API Key",
+      "anthropic": "Anthropic API Key",
+      "placeholder": "Enter your {provider} API key",
+      "saveButton": "Save",
+      "setupRequired": "API Key setup required",
+      "deleteButton": "Delete",
+      "saved": "Saved",
+      "notSaved": "Not saved"
+    },
+    "knowledgeSources": {
+      "title": "Knowledge Sources",
+      "description": "Add your own notes/files. AI chat will prioritize these sources over built-in docs when relevant.",
+      "sourceTitle": "Source title",
+      "pastePlaceholder": "Paste knowledge content...",
+      "addButton": "Add Source",
+      "uploadButton": "Upload .txt/.md",
+      "removeButton": "Remove",
+      "saved": "Saved",
+      "savedMessage": "Knowledge source saved.",
+      "uploaded": "Uploaded",
+      "uploadedMessage": "{filename} imported.",
+      "fileTooLarge": "File too large (max 500KB)"
+    }
+  },
+  "chat": {
+    "title": "AI Assistant",
+    "placeholder": "Ask a question...",
+    "errorMessage": "Sorry, I couldn't get a response. Please check your API key and try again.",
+    "history": "Chat History",
+    "selectChat": "Select a chat to view",
+    "startNew": "Or start a new conversation.",
+    "noSessions": "No conversations yet.",
+    "loading": "Loading...",
+    "emptyStateTitle": "Select a chat to view",
+    "emptyStateDescription": "Choose a conversation from the sidebar, or type a message below to start a new one."
+  }
+}

@@ -1,0 +1,355 @@
+{
+  "app": {
+    "title": "로샤 구조 요약지 계산기",
+    "version": "v2.0.0",
+    "provider": "서울임상심리연구소 제공"
+  },
+  "nav": {
+    "scoring": "채점 & 구조 요약",
+    "more": "더보기",
+    "login": "로그인 / 회원가입",
+    "logout": "로그아웃",
+    "account": "내 계정",
+    "loginRequired": "로그인이 필요합니다",
+    "aiAssistant": "AI 어시스턴트"
+  },
+  "buttons": {
+    "calculate": "결과 계산하기",
+    "reset": "입력값 초기화하기",
+    "add": "추가",
+    "delete": "삭제",
+    "print": "인쇄",
+    "rawData": "입력값 원본",
+    "summary": "구조요약 수치",
+    "aiInterpret": "AI에게 해석 부탁하기",
+    "yes": "예",
+    "no": "아니오",
+    "close": "닫기",
+    "save": "저장",
+    "load": "불러오기",
+    "backToInput": "입력으로 돌아가기"
+  },
+  "modal": {
+    "welcome": {
+      "title": "로샤 구조 요약지 계산기",
+      "new": "새로 만들기",
+      "loadSample": "샘플 데이터로 시작하기",
+      "loadSaved": "자동저장된 내용 불러오기",
+      "continue": "작업 이어하기",
+      "continueMsg": "마지막에 작업했던 내용이 있습니다."
+    },
+    "reset": {
+      "title": "다시 한 번 확인해 주세요",
+      "message": "현재 입력된 모든 값들을 초기화 하시겠습니까?"
+    },
+    "ai": {
+      "title": "준비 단계: 이전 화면에서 초록색 버튼들을 눌러 csv 파일을 다운로드 해주세요.",
+      "message": "현재 연결되는 AI 챗봇은 구글 계정이 있어야 사용 가능한 Gemini Gems입니다.",
+      "open": "새로운 창에서 열기",
+      "cancel": "결과 화면으로 돌아가기"
+    },
+    "privacy": {
+      "title": "개인정보처리방침",
+      "noticeTitle": "※ 브라우저 저장소(LocalStorage) 사용 고지",
+      "noticeText_part1": "본 앱은 귀하의 채점 편의를 위해 '채점 & 구조 요약' 탭에 입력한 데이터를 귀하의 컴퓨터 브라우저 내의 로컬 스토리지(LocalStorage)에 임시 저장합니다.",
+      "noticeText_part2": "이 데이터는 서버로 전송되거나 운영자가 접근할 수 없으며, 브라우저를 재방문할 때 입력 내용을 복원하기 위한 목적으로만 사용됩니다.",
+      "noticeText_part3": "로그인 후 AI 기능을 사용하는 경우, 저장한 API 키는 암호화되어 관리되며, 대화 요청 시 문서 참조 정보(기본 docs 및 사용자가 등록한 지식 소스)가 AI 응답 품질 향상을 위해 함께 전송될 수 있습니다."
+    }
+  },
+  "input": {
+    "card": "카드",
+    "response": "반응",
+    "location": "위치",
+    "dq": "DQ",
+    "determinants": "결정인",
+    "fq": "FQ",
+    "pair": "Pair",
+    "contents": "내용",
+    "popular": "P",
+    "z": "Z",
+    "specialScores": "특수점수",
+    "score": "Score",
+    "gphr": "G/PHR",
+    "guideResponse": "[Response] 항목은 피검자의 언어 반응을 메모하는 공간이며, 계산에 영향을 주지 않으므로 비워둬도 괜찮습니다.<br>[Score]와 [G/PHR] 항목은 자동으로 계산되므로 직접 입력할 필요가 없습니다.<br>단, [Score]는 [Card]와 [Z] 유형을 선택해야 값이 자동 계산됩니다.",
+    "tooltipInfo": "최하단의 행에 대해서만 조작 가능하며,\n최대 50개까지 가능합니다.",
+    "rowOrderTip": "반응 행의 순서는 결과 계산에 영향을 미치지 않습니다.\n예를 들어, 8번째 행에 6번 카드 내용을, 14번째 행에 2번 카드 내용을 기록해도 문제 없습니다."
+  },
+  "info": {
+    "categories": {
+      "scoring-input": "Scoring Input",
+      "result-interpretation": "Result Interpretation",
+      "upper-section": "Upper Section",
+      "lower-section": "Lower Section",
+      "special-indices": "Special Indices",
+      "core": "Core",
+      "ideation": "Ideation",
+      "affect": "Affect",
+      "mediation": "Mediation",
+      "processing": "Processing",
+      "interpersonal": "Interpersonal",
+      "selfPerception": "Self-Perception"
+    }
+  },
+  "result": {
+    "tabs": {
+      "upper": "Upper Section",
+      "lower": "Lower Section",
+      "special": "Special Indices"
+    },
+    "upper": {
+      "title": "Upper Section",
+      "location": "위치",
+      "dq": "발달질",
+      "formQuality": "형태질",
+      "determinants": "결정인",
+      "contents": "내용",
+      "approach": "접근",
+      "specialScores": "특수점수"
+    },
+    "core": {
+      "title": "Core Section",
+      "R": "R",
+      "Lambda": "L",
+      "EB": "EB",
+      "EA": "EA",
+      "EBPer": "EBPer",
+      "eb": "eb",
+      "es": "es",
+      "D": "D Score",
+      "AdjD": "Adj D",
+      "AdjEs": "Adj es",
+      "FM": "FM",
+      "m": "m",
+      "SumCprime": "SumC'",
+      "SumT": "SumT",
+      "SumV": "SumV",
+      "SumY": "SumY"
+    },
+    "ideation": {
+      "title": "Ideation",
+      "a_p": "a:p",
+      "Ma_Mp": "Ma:Mp",
+      "_2AB_Art_Ay": "2AB+(Art+Ay)",
+      "MOR": "MOR",
+      "Sum6": "Sum6",
+      "Lv2": "Lv2",
+      "WSum6": "WSum6",
+      "M_minus": "M-",
+      "Mnone": "Mnone"
+    },
+    "affect": {
+      "title": "Affect",
+      "FC_CF_C": "FC:CF+C",
+      "PureC": "Pure C",
+      "SumC_WSumC": "SumC':WSumC",
+      "Afr": "Afr",
+      "S": "S",
+      "Blends_R": "Blends:R",
+      "CP": "CP"
+    },
+    "mediation": {
+      "title": "Mediation",
+      "XA_percent": "XA%",
+      "WDA_percent": "WDA%",
+      "X_minus_percent": "X-%",
+      "S_minus": "S-",
+      "P": "P",
+      "X_plus_percent": "X+%",
+      "Xu_percent": "Xu%"
+    },
+    "processing": {
+      "title": "Processing",
+      "Zf": "Zf",
+      "Zd": "Zd",
+      "W_D_Dd": "W:D:Dd",
+      "W_M": "W:M",
+      "PSV": "PSV",
+      "DQ_plus": "DQ+",
+      "DQ_v": "DQv"
+    },
+    "interpersonal": {
+      "title": "Interpersonal",
+      "COP": "COP",
+      "AG": "AG",
+      "a_p": "a:p",
+      "Food": "Food",
+      "SumT": "SumT",
+      "HumanCont": "Human Cont",
+      "PureH": "Pure H",
+      "PER": "PER",
+      "ISO_Index": "Isol Idx"
+    },
+    "selfPerception": {
+      "title": "Self-Perception",
+      "_3r_2_R": "3r+(2)/R",
+      "Fr_rF": "Fr+rF",
+      "SumV": "SumV",
+      "FD": "FD",
+      "An_Xy": "An+Xy",
+      "MOR": "MOR",
+      "H_ratio": "H:(H)+Hd+(Hd)"
+    }
+  },
+  "indices": {
+    "title": "특수 지표",
+    "PTI": "PTI",
+    "DEPI": "DEPI",
+    "CDI": "CDI",
+    "SCON": "S-CON",
+    "HVI": "HVI",
+    "OBS": "OBS",
+    "sconNote": "( 주의 : 14세 이상의 수검자에게만 적용 )",
+    "sconMain": "8개 이상 해당될 경우 체크",
+    "depiMain": "5개 이상 해당될 경우 체크",
+    "cdiMain": "4개 이상이면 체크",
+    "hviMain": "(1)번을 만족시키고 아래 (2)~(8) 항목 중 4개 이상 해당될 경우 체크",
+    "obsMain": "아래 조건 중 1개 이상 해당되면 체크",
+    "obsR1": "(1)~(5) 모두 해당",
+    "obsR2": "(1)~(4) 중에서 2개 이상 해당",
+    "obsR3": "(1)~(5) 중에서 3개 이상 해당",
+    "positive": "Positive",
+    "negative": "NO"
+  },
+  "toast": {
+    "overScoring": {
+      "title": "과잉 채점 주의",
+      "message": "결정인이 4개 이상인 경우는 드뭅니다.\n1. 수검자가 직접 말한 내용인가요?\n2. 혹시 형태(F)를 중복 채점하지 않았나요?"
+    },
+    "categoryDup": {
+      "title": "범주 중복 확인",
+      "message": "사물의 개수가 아닙니다. 같은 범주(예: 동물 A)는 한 번만 입력하세요."
+    },
+    "hierarchy": {
+      "title": "위계(Hierarchy) 점검",
+      "message": "점수가 많습니다. 동일한 표현에 대해 인지 점수를 중복 입력하지 않도록 주의하세요. (상위 점수가 하위 점수를 포함함)"
+    },
+    "tooManyResponses": {
+      "title": "반응 과다 주의 (R ≥ 45)",
+      "message": "반응 수가 너무 많습니다. 검사 실시 과정을 점검해 보세요."
+    },
+    "validity": {
+      "title": "타당도 주의",
+      "message": "반응 수가 14개 미만이면 프로파일의 타당도가 낮아져 해석의 신뢰도가 떨어질 수 있습니다."
+    },
+    "resetComplete": {
+      "title": "초기화 완료",
+      "message": "모든 입력값이 초기화되었습니다."
+    },
+    "autoSaved": {
+      "title": "자동 저장됨",
+      "message": "입력 내용이 자동 저장되었습니다."
+    },
+    "reflectionPair": {
+      "title": "반사-쌍반응 상호배제",
+      "message": "반사반응(Fr/rF)이 채점된 경우, 쌍반응(2)은 자동으로 해제됩니다."
+    },
+    "dqVagueFq": {
+      "title": "DQ-FQ 제약",
+      "message": "DQ가 'v'(모호)인 경우, FQ '+'(우수)는 선택할 수 없어 초기화됩니다."
+    },
+    "dqVagueZ": {
+      "title": "DQ-Z 제약",
+      "message": "DQ가 'v'(모호)인 경우, 조직화 활동(Z)은 부여되지 않습니다."
+    },
+    "pureDeterminantFq": {
+      "title": "순수 결정인 FQ",
+      "message": "형태가 포함되지 않은 순수 결정인만 채점되어, FQ가 'none'으로 자동 설정됩니다."
+    },
+    "specialScoreLevel": {
+      "title": "특수점수 수준 중복",
+      "message": "같은 특수점수의 Level 1과 Level 2는 동시에 부여할 수 없습니다. 이전 수준이 자동으로 제거됩니다."
+    },
+    "apiKeySaved": {
+      "title": "API 키 저장됨",
+      "message": "{provider} API 키가 저장되었습니다."
+    },
+    "apiKeyError": {
+      "title": "오류",
+      "message": "API 키를 저장하지 못했습니다. 다시 시도해주세요."
+    }
+  },
+  "loader": {
+    "calculating": "계산 중...",
+    "subtext": "계산 결과는 브라우저에 자동저장되므로 나중에 불러올 수 있습니다"
+  },
+  "links": {
+    "manual": "프로그램 사용법",
+    "bug": "버그 및 개선사항 제보",
+    "patch": "프로그램 패치 노트",
+    "lab": "서울임상심리연구소",
+    "privacy": "개인정보처리방침"
+  },
+  "language": {
+    "select": "언어 선택",
+    "ko": "한국어",
+    "en": "English",
+    "ja": "日本語",
+    "es": "Español",
+    "pt": "Português"
+  },
+  "export": {
+    "rawDataTitle": "사용자가 입력한 항목을 모두 csv 형태로 내보냅니다",
+    "summaryTitle": "구조 요약지에 산출된 항목을 모두 csv 형태로 내보냅니다"
+  },
+  "footer": {
+    "title": "Computing Program for Rorschach Structural Summary",
+    "copyright": "© 1997–2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
+  },
+  "codeList": {
+    "header": "각 채점 항목의 코드 목록과 설명입니다."
+  },
+  "specialIndices": {
+    "scon_main": "8개 이상 해당될 경우 체크",
+    "scon_note": "( 주의 : 14세 이상의 수검자에게만 적용 )",
+    "depi_main": "5개 이상 해당될 경우 체크",
+    "pti_main": "점수 표시 (컷오프 없음)",
+    "cdi_main": "4개 이상이면 체크",
+    "hvi_main": "(1)번을 만족시키고 아래 (2)~(8) 항목 중 4개 이상 해당될 경우 체크",
+    "obs_main": "아래 조건 중 1개 이상 해당되면 체크",
+    "obs_r1": "(1)~(5) 모두 해당",
+    "obs_r2": "(1)~(4) 중에서 2개 이상 해당",
+    "obs_r3": "(1)~(5) 중에서 3개 이상 해당"
+  },
+  "account": {
+    "title": "내 계정",
+    "subtitle": "계정 설정 및 API 키를 관리합니다.",
+    "apiKeys": {
+      "title": "API 키 관리",
+      "openai": "OpenAI API 키",
+      "google": "Google API 키",
+      "anthropic": "Anthropic API 키",
+      "placeholder": "{provider} API 키를 입력하세요",
+      "saveButton": "저장",
+      "setupRequired": "API 키 설정이 필요합니다",
+      "deleteButton": "삭제",
+      "saved": "저장됨",
+      "notSaved": "미저장"
+    },
+    "knowledgeSources": {
+      "title": "지식 소스",
+      "description": "나만의 노트/파일을 추가하세요. AI 채팅이 관련 시 내장 문서보다 이 소스를 우선 참조합니다.",
+      "sourceTitle": "소스 제목",
+      "pastePlaceholder": "지식 내용을 붙여넣기...",
+      "addButton": "소스 추가",
+      "uploadButton": ".txt/.md 업로드",
+      "removeButton": "삭제",
+      "saved": "저장됨",
+      "savedMessage": "지식 소스가 저장되었습니다.",
+      "uploaded": "업로드됨",
+      "uploadedMessage": "{filename} 가져오기 완료.",
+      "fileTooLarge": "파일이 너무 큽니다 (최대 500KB)"
+    }
+  },
+  "chat": {
+    "title": "AI 어시스턴트",
+    "placeholder": "질문을 입력하세요...",
+    "errorMessage": "응답을 받지 못했습니다. API 키를 확인하고 다시 시도해 주세요.",
+    "history": "대화 기록",
+    "selectChat": "대화를 선택하여 확인하세요",
+    "startNew": "또는 새 대화를 시작하세요.",
+    "noSessions": "아직 대화가 없습니다.",
+    "loading": "로딩 중...",
+    "emptyStateTitle": "대화를 선택하여 확인하세요",
+    "emptyStateDescription": "사이드바에서 대화를 선택하거나, 아래에 메시지를 입력하여 새 대화를 시작하세요."
+  }
+}

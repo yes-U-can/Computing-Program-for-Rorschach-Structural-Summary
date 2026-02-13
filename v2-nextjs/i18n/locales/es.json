@@ -1,0 +1,355 @@
+{
+  "app": {
+    "title": "Calculadora del Sumario Estructural de Rorschach",
+    "version": "v2.0.0",
+    "provider": "Proporcionado por Instituto de Psicología Clínica de Seúl"
+  },
+  "nav": {
+    "scoring": "Codificación y Sumario Estructural",
+    "more": "Más",
+    "login": "Iniciar Sesión / Registrarse",
+    "logout": "Cerrar Sesión",
+    "account": "Mi Cuenta",
+    "loginRequired": "Se requiere iniciar sesión",
+    "aiAssistant": "Asistente de IA"
+  },
+  "buttons": {
+    "calculate": "Calcular Resultados",
+    "reset": "Restablecer Entrada",
+    "add": "Añadir",
+    "delete": "Eliminar",
+    "print": "Imprimir",
+    "rawData": "Datos Crudos",
+    "summary": "Resumen",
+    "aiInterpret": "Solicitar Interpretación de IA",
+    "yes": "Sí",
+    "no": "No",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "load": "Cargar",
+    "backToInput": "Volver a la Entrada"
+  },
+  "modal": {
+    "welcome": {
+      "title": "Calculadora del Sumario Estructural de Rorschach",
+      "new": "Crear Nuevo",
+      "loadSample": "Iniciar con Datos de Muestra",
+      "loadSaved": "Cargar Contenido Auto-guardado",
+      "continue": "Continuar Trabajo",
+      "continueMsg": "Hay contenido en el que trabajó la última vez."
+    },
+    "reset": {
+      "title": "Por favor confirme de nuevo",
+      "message": "¿Desea restablecer todos los valores introducidos?"
+    },
+    "ai": {
+      "title": "Paso de preparación: Descargue el archivo CSV haciendo clic en los botones verdes de la pantalla anterior.",
+      "message": "El chatbot de IA conectado actualmente es Gemini Gems, que requiere una cuenta de Google.",
+      "open": "Abrir en Nueva Ventana",
+      "cancel": "Volver a Resultados"
+    },
+    "privacy": {
+      "title": "Política de Privacidad",
+      "noticeTitle": "※ Aviso de Uso de Almacenamiento del Navegador (LocalStorage)",
+      "noticeText_part1": "Esta aplicación almacena temporalmente los datos ingresados en la pestaña 'Codificación y Sumario Estructural' en el almacenamiento local (LocalStorage) del navegador de su computadora para su conveniencia de codificación.",
+      "noticeText_part2": "Estos datos no se transmiten al servidor ni son accesibles por el operador, y se usan únicamente para restaurar el contenido de entrada cuando vuelva a visitar el navegador.",
+      "noticeText_part3": "Al usar funciones de IA después de iniciar sesión, las claves API guardadas se gestionan de forma cifrada, y el contexto de referencia (docs integrados y fuentes de conocimiento añadidas por el usuario) puede enviarse con las solicitudes de chat para mejorar la calidad de las respuestas."
+    }
+  },
+  "input": {
+    "card": "Lámina",
+    "response": "Respuesta",
+    "location": "Localización",
+    "dq": "DQ",
+    "determinants": "Determinantes",
+    "fq": "FQ",
+    "pair": "Par",
+    "contents": "Contenidos",
+    "popular": "P",
+    "z": "Z",
+    "specialScores": "Códigos Especiales",
+    "score": "Puntuación",
+    "gphr": "G/PHR",
+    "guideResponse": "La sección [Response] es para anotar las respuestas verbales del sujeto; no afecta a los cálculos, por lo que puede dejarse en blanco.<br>Las secciones [Score] y [G/PHR] se calculan automáticamente, por lo que no es necesario introducirlas manualmente.<br>Sin embargo, para [Score], los valores solo se calculan automáticamente después de seleccionar los tipos de [Card] (Lámina) y [Z].",
+    "tooltipInfo": "Solo se puede manipular la fila inferior,\ny hasta 50 filas son posibles.",
+    "rowOrderTip": "El orden de las filas de respuesta no afecta los resultados del cálculo.\nPor ejemplo, registrar contenido para la Lámina 6 en la fila 8 y registrar contenido para la Lámina 2 en la fila 14 está bien."
+  },
+  "info": {
+    "categories": {
+      "scoring-input": "Scoring Input",
+      "result-interpretation": "Result Interpretation",
+      "upper-section": "Upper Section",
+      "lower-section": "Lower Section",
+      "special-indices": "Special Indices",
+      "core": "Core",
+      "ideation": "Ideation",
+      "affect": "Affect",
+      "mediation": "Mediation",
+      "processing": "Processing",
+      "interpersonal": "Interpersonal",
+      "selfPerception": "Self-Perception"
+    }
+  },
+  "result": {
+    "tabs": {
+      "upper": "Upper Section",
+      "lower": "Lower Section",
+      "special": "Special Indices"
+    },
+    "upper": {
+      "title": "Upper Section",
+      "location": "Localización",
+      "dq": "Calidad de Desarrollo",
+      "formQuality": "Calidad Formal",
+      "determinants": "Determinantes",
+      "contents": "Contenidos",
+      "approach": "Aproximación",
+      "specialScores": "Códigos Especiales"
+    },
+    "core": {
+      "title": "Sección Central",
+      "R": "R",
+      "Lambda": "L",
+      "EB": "EB",
+      "EA": "EA",
+      "EBPer": "EBPer",
+      "eb": "eb",
+      "es": "es",
+      "D": "Puntuación D",
+      "AdjD": "D Ajustada",
+      "AdjEs": "es Ajustada",
+      "FM": "FM",
+      "m": "m",
+      "SumCprime": "SumC'",
+      "SumT": "SumT",
+      "SumV": "SumV",
+      "SumY": "SumY"
+    },
+    "ideation": {
+      "title": "Ideación",
+      "a_p": "a:p",
+      "Ma_Mp": "Ma:Mp",
+      "_2AB_Art_Ay": "2AB+(Art+Ay)",
+      "MOR": "MOR",
+      "Sum6": "Sum6",
+      "Lv2": "Lv2",
+      "WSum6": "WSum6",
+      "M_minus": "M-",
+      "Mnone": "Mnone"
+    },
+    "affect": {
+      "title": "Afecto",
+      "FC_CF_C": "FC:CF+C",
+      "PureC": "C Pura",
+      "SumC_WSumC": "SumC':WSumC",
+      "Afr": "Afr",
+      "S": "S",
+      "Blends_R": "Blends:R",
+      "CP": "CP"
+    },
+    "mediation": {
+      "title": "Mediación",
+      "XA_percent": "XA%",
+      "WDA_percent": "WDA%",
+      "X_minus_percent": "X-%",
+      "S_minus": "S-",
+      "P": "P",
+      "X_plus_percent": "X+%",
+      "Xu_percent": "Xu%"
+    },
+    "processing": {
+      "title": "Procesamiento",
+      "Zf": "Zf",
+      "Zd": "Zd",
+      "W_D_Dd": "W:D:Dd",
+      "W_M": "W:M",
+      "PSV": "PSV",
+      "DQ_plus": "DQ+",
+      "DQ_v": "DQv"
+    },
+    "interpersonal": {
+      "title": "Interpersonal",
+      "COP": "COP",
+      "AG": "AG",
+      "a_p": "a:p",
+      "Food": "Fd",
+      "SumT": "SumT",
+      "HumanCont": "Cont. Humano",
+      "PureH": "H Pura",
+      "PER": "PER",
+      "ISO_Index": "Índice Ais"
+    },
+    "selfPerception": {
+      "title": "Autopercepción",
+      "_3r_2_R": "3r+(2)/R",
+      "Fr_rF": "Fr+rF",
+      "SumV": "SumV",
+      "FD": "FD",
+      "An_Xy": "An+Xy",
+      "MOR": "MOR",
+      "H_ratio": "H:(H)+Hd+(Hd)"
+    }
+  },
+  "indices": {
+    "title": "Índices Especiales",
+    "PTI": "PTI",
+    "DEPI": "DEPI",
+    "CDI": "CDI",
+    "SCON": "S-CON",
+    "HVI": "HVI",
+    "OBS": "OBS",
+    "sconNote": "( Nota: Se aplica solo a examinados de 14 años o más )",
+    "sconMain": "Marcar si se cumplen 8 o más criterios",
+    "depiMain": "Marcar si se cumplen 5 o más criterios",
+    "cdiMain": "Marcar si se cumplen 4 o más criterios",
+    "hviMain": "Marcar si se cumple el criterio (1) y 4 o más de los criterios (2)~(8)",
+    "obsMain": "Marcar si se cumple 1 o más de las condiciones siguientes",
+    "obsR1": "Todos los criterios (1)~(5) se cumplen",
+    "obsR2": "2 o más de (1)~(4) se cumplen",
+    "obsR3": "3 o más de (1)~(5) se cumplen",
+    "positive": "Positivo",
+    "negative": "NO"
+  },
+  "toast": {
+    "overScoring": {
+      "title": "Advertencia de Sobre-codificación",
+      "message": "Tener 4 o más determinantes es raro.\n1. ¿El examinado realmente dijo esto?\n2. ¿Codificó accidentalmente la Forma (F) múltiples veces?"
+    },
+    "categoryDup": {
+      "title": "Verificación de Duplicación de Categoría",
+      "message": "No se trata del número de objetos. Ingrese la misma categoría (ej: Animal A) solo una vez."
+    },
+    "hierarchy": {
+      "title": "Verificación de Jerarquía",
+      "message": "Demasiadas puntuaciones. Tenga cuidado de no ingresar puntuaciones cognitivas múltiples veces para la misma expresión. (Las puntuaciones superiores incluyen las inferiores.)"
+    },
+    "tooManyResponses": {
+      "title": "Advertencia de Demasiadas Respuestas (R ≥ 45)",
+      "message": "El número de respuestas es demasiado alto. Por favor, revise el proceso de administración de la prueba."
+    },
+    "validity": {
+      "title": "Advertencia de Validez",
+      "message": "Si el número de respuestas es menor que 14, la validez del perfil puede ser baja, reduciendo la confiabilidad de la interpretación."
+    },
+    "resetComplete": {
+      "title": "Reinicio Completo",
+      "message": "Todos los valores de entrada han sido reiniciados."
+    },
+    "autoSaved": {
+      "title": "Guardado Automático",
+      "message": "Su entrada ha sido guardada automáticamente."
+    },
+    "reflectionPair": {
+      "title": "Exclusión Reflejo-Par",
+      "message": "Se ha puntuado reflejo (Fr/rF), por lo que el par (2) se ha desactivado automáticamente."
+    },
+    "dqVagueFq": {
+      "title": "Restricción DQ-FQ",
+      "message": "Cuando DQ es 'v' (vago), FQ '+' (superior) no se puede seleccionar y se ha reiniciado."
+    },
+    "dqVagueZ": {
+      "title": "Restricción DQ-Z",
+      "message": "Cuando DQ es 'v' (vago), la actividad organizativa (Z) no es aplicable."
+    },
+    "pureDeterminantFq": {
+      "title": "FQ de Determinante Puro",
+      "message": "Solo se han puntuado determinantes sin forma, por lo que FQ se ha establecido automáticamente en 'none'."
+    },
+    "specialScoreLevel": {
+      "title": "Conflicto de Nivel de Puntuación Especial",
+      "message": "El Nivel 1 y el Nivel 2 de la misma puntuación especial no pueden coexistir. El nivel anterior ha sido eliminado."
+    },
+    "apiKeySaved": {
+      "title": "Clave de API guardada",
+      "message": "La clave de API de {provider} ha sido guardada."
+    },
+    "apiKeyError": {
+      "title": "Error",
+      "message": "No se pudo guardar la clave de API. Por favor, inténtelo de nuevo."
+    }
+  },
+  "loader": {
+    "calculating": "Calculando...",
+    "subtext": "Los resultados del cálculo se guardan automáticamente en el navegador y se pueden cargar más tarde."
+  },
+  "links": {
+    "manual": "Manual de Usuario",
+    "bug": "Reportar Errores y Mejoras",
+    "patch": "Notas del Parche",
+    "lab": "Instituto de Psicología Clínica de Seúl",
+    "privacy": "Política de Privacidad"
+  },
+  "language": {
+    "select": "Seleccionar Idioma",
+    "ko": "한국어",
+    "en": "English",
+    "ja": "日本語",
+    "es": "Español",
+    "pt": "Português"
+  },
+  "export": {
+    "rawDataTitle": "Exportar todos los elementos ingresados por el usuario en formato CSV",
+    "summaryTitle": "Exportar todos los elementos calculados en el sumario estructural en formato CSV"
+  },
+  "footer": {
+    "title": "Programa de Cálculo del Sumario Estructural de Rorschach",
+    "copyright": "© 1997–2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
+  },
+  "codeList": {
+    "header": "Lista de códigos y descripción de cada ítem de codificación."
+  },
+  "specialIndices": {
+    "scon_main": "Marcar si se cumplen 8 o más criterios",
+    "scon_note": "( Nota: Se aplica solo a examinados de 14 años o más )",
+    "depi_main": "Marcar si se cumplen 5 o más criterios",
+    "pti_main": "Puntuación mostrada (sin punto de corte)",
+    "cdi_main": "Marcar si se cumplen 4 o más criterios",
+    "hvi_main": "Marcar si se cumple el criterio (1) y 4 o más de los criterios (2)~(8)",
+    "obs_main": "Marcar si se cumple 1 o más de las condiciones siguientes",
+    "obs_r1": "Todos los criterios (1)~(5) se cumplen",
+    "obs_r2": "2 o más de (1)~(4) se cumplen",
+    "obs_r3": "3 o más de (1)~(5) se cumplen"
+  },
+  "account": {
+    "title": "Mi Cuenta",
+    "subtitle": "Gestiona la configuración de tu cuenta y claves API.",
+    "apiKeys": {
+      "title": "Gestión de Claves API",
+      "openai": "Clave API de OpenAI",
+      "google": "Clave API de Google",
+      "anthropic": "Clave API de Anthropic",
+      "placeholder": "Introduce tu clave de API de {provider}",
+      "saveButton": "Guardar",
+      "setupRequired": "Se requiere configuración de clave API",
+      "deleteButton": "Eliminar",
+      "saved": "Guardada",
+      "notSaved": "No guardada"
+    },
+    "knowledgeSources": {
+      "title": "Fuentes de Conocimiento",
+      "description": "Añade tus propias notas/archivos. El chat de IA priorizará estas fuentes sobre los docs integrados cuando sea relevante.",
+      "sourceTitle": "Título de la fuente",
+      "pastePlaceholder": "Pega el contenido del conocimiento...",
+      "addButton": "Añadir Fuente",
+      "uploadButton": "Subir .txt/.md",
+      "removeButton": "Eliminar",
+      "saved": "Guardado",
+      "savedMessage": "Fuente de conocimiento guardada.",
+      "uploaded": "Subido",
+      "uploadedMessage": "{filename} importado.",
+      "fileTooLarge": "Archivo demasiado grande (máx. 500KB)"
+    }
+  },
+  "chat": {
+    "title": "Asistente de IA",
+    "placeholder": "Haz una pregunta...",
+    "errorMessage": "Lo siento, no pude obtener una respuesta. Por favor, verifica tu clave API e inténtalo de nuevo.",
+    "history": "Historial de Chat",
+    "selectChat": "Selecciona un chat para ver",
+    "startNew": "O inicia una nueva conversación.",
+    "noSessions": "Aún no hay conversaciones.",
+    "loading": "Cargando...",
+    "emptyStateTitle": "Selecciona un chat para ver",
+    "emptyStateDescription": "Elige una conversación de la barra lateral, o escribe un mensaje abajo para iniciar una nueva."
+  }
+}

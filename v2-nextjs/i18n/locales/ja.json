@@ -1,0 +1,355 @@
+{
+  "app": {
+    "title": "ロールシャッハ構造一覧表計算プログラム",
+    "version": "v2.0.0",
+    "provider": "ソウル臨床心理研究所提供"
+  },
+  "nav": {
+    "scoring": "スコアリング & 構造一覧表",
+    "more": "その他",
+    "login": "ログイン / 会員登録",
+    "logout": "ログアウト",
+    "account": "マイアカウント",
+    "loginRequired": "ログインが必要です",
+    "aiAssistant": "AIアシスタント"
+  },
+  "buttons": {
+    "calculate": "結果を計算する",
+    "reset": "入力をリセット",
+    "add": "追加",
+    "delete": "削除",
+    "print": "印刷",
+    "rawData": "生データ",
+    "summary": "要約",
+    "aiInterpret": "AI解釈をリクエスト",
+    "yes": "はい",
+    "no": "いいえ",
+    "close": "閉じる",
+    "save": "保存",
+    "load": "読み込み",
+    "backToInput": "入力に戻る"
+  },
+  "modal": {
+    "welcome": {
+      "title": "ロールシャッハ構造一覧表計算プログラム",
+      "new": "新規作成",
+      "loadSample": "サンプルデータで開始",
+      "loadSaved": "自動保存された内容を読み込む",
+      "continue": "作業を続ける",
+      "continueMsg": "前回作業した内容があります。"
+    },
+    "reset": {
+      "title": "再確認してください",
+      "message": "現在の入力値をすべてリセットしますか？"
+    },
+    "ai": {
+      "title": "準備段階：前の画面の緑色のボタンを押してCSVファイルをダウンロードしてください。",
+      "message": "現在接続されているAIチャットボットは、Googleアカウントが必要なGemini Gemsです。",
+      "open": "新しいウィンドウで開く",
+      "cancel": "結果画面に戻る"
+    },
+    "privacy": {
+      "title": "個人情報処理方針",
+      "noticeTitle": "※ ブラウザ保存域(LocalStorage)使用告知",
+      "noticeText_part1": "本アプリは、ご利用者の採点の便宜のため、「採点 & 構造一覧表」タブに入力したデータを、ご利用者のコンピュータのブラウザ内のローカルストレージ(LocalStorage)に一時保存します。",
+      "noticeText_part2": "このデータはサーバーに送信されたり、運営者がアクセスすることはできず、ブラウザを再訪問する際に入力内容を復元する目的でのみ使用されます。",
+      "noticeText_part3": "ログイン後にAI機能を使用する場合、保存したAPIキーは暗号化して管理され、回答品質向上のために参照コンテキスト（組み込みdocsおよびユーザー追加の知識ソース）がチャットリクエストと共に送信されることがあります。"
+    }
+  },
+  "input": {
+    "card": "カード",
+    "response": "反応",
+    "location": "位置",
+    "dq": "DQ",
+    "determinants": "決定因",
+    "fq": "FQ",
+    "pair": "Pair",
+    "contents": "内容",
+    "popular": "P",
+    "z": "Z",
+    "specialScores": "特殊スコア",
+    "score": "Score",
+    "gphr": "G/PHR",
+    "guideResponse": "[Response]項目は被検者の言語反応をメモする場所であり、計算には影響しないため空欄でも構いません。<br>[Score]と[G/PHR]項目は自動的に計算されるため、直接入力する必要はありません。<br>ただし、[Score]は[Card]（図版）と[Z]（組織化）のタイプを選択しないと値が自動計算されません。",
+    "tooltipInfo": "最下行のみ操作可能で、\n最大50個まで可能です。",
+    "rowOrderTip": "反応行の順序は結果計算に影響しません。\n例えば8行目に6番カードの内容を記録し、14行目に2番カードの内容を記録しても問題ありません。"
+  },
+  "info": {
+    "categories": {
+      "scoring-input": "Scoring Input",
+      "result-interpretation": "Result Interpretation",
+      "upper-section": "Upper Section",
+      "lower-section": "Lower Section",
+      "special-indices": "Special Indices",
+      "core": "Core",
+      "ideation": "Ideation",
+      "affect": "Affect",
+      "mediation": "Mediation",
+      "processing": "Processing",
+      "interpersonal": "Interpersonal",
+      "selfPerception": "Self-Perception"
+    }
+  },
+  "result": {
+    "tabs": {
+      "upper": "Upper Section",
+      "lower": "Lower Section",
+      "special": "Special Indices"
+    },
+    "upper": {
+      "title": "Upper Section",
+      "location": "位置",
+      "dq": "発達質",
+      "formQuality": "形態質",
+      "determinants": "決定因",
+      "contents": "内容",
+      "approach": "アプローチ",
+      "specialScores": "特殊スコア"
+    },
+    "core": {
+      "title": "Core Section",
+      "R": "R",
+      "Lambda": "L",
+      "EB": "EB",
+      "EA": "EA",
+      "EBPer": "EBPer",
+      "eb": "eb",
+      "es": "es",
+      "D": "D Score",
+      "AdjD": "Adj D",
+      "AdjEs": "Adj es",
+      "FM": "FM",
+      "m": "m",
+      "SumCprime": "SumC'",
+      "SumT": "SumT",
+      "SumV": "SumV",
+      "SumY": "SumY"
+    },
+    "ideation": {
+      "title": "Ideation",
+      "a_p": "a:p",
+      "Ma_Mp": "Ma:Mp",
+      "_2AB_Art_Ay": "2AB+(Art+Ay)",
+      "MOR": "MOR",
+      "Sum6": "Sum6",
+      "Lv2": "Lv2",
+      "WSum6": "WSum6",
+      "M_minus": "M-",
+      "Mnone": "Mnone"
+    },
+    "affect": {
+      "title": "Affect",
+      "FC_CF_C": "FC:CF+C",
+      "PureC": "Pure C",
+      "SumC_WSumC": "SumC':WSumC",
+      "Afr": "Afr",
+      "S": "S",
+      "Blends_R": "Blends:R",
+      "CP": "CP"
+    },
+    "mediation": {
+      "title": "Mediation",
+      "XA_percent": "XA%",
+      "WDA_percent": "WDA%",
+      "X_minus_percent": "X-%",
+      "S_minus": "S-",
+      "P": "P",
+      "X_plus_percent": "X+%",
+      "Xu_percent": "Xu%"
+    },
+    "processing": {
+      "title": "Processing",
+      "Zf": "Zf",
+      "Zd": "Zd",
+      "W_D_Dd": "W:D:Dd",
+      "W_M": "W:M",
+      "PSV": "PSV",
+      "DQ_plus": "DQ+",
+      "DQ_v": "DQv"
+    },
+    "interpersonal": {
+      "title": "Interpersonal",
+      "COP": "COP",
+      "AG": "AG",
+      "a_p": "a:p",
+      "Food": "Food",
+      "SumT": "SumT",
+      "HumanCont": "Human Cont",
+      "PureH": "Pure H",
+      "PER": "PER",
+      "ISO_Index": "Isol Idx"
+    },
+    "selfPerception": {
+      "title": "Self-Perception",
+      "_3r_2_R": "3r+(2)/R",
+      "Fr_rF": "Fr+rF",
+      "SumV": "SumV",
+      "FD": "FD",
+      "An_Xy": "An+Xy",
+      "MOR": "MOR",
+      "H_ratio": "H:(H)+Hd+(Hd)"
+    }
+  },
+  "indices": {
+    "title": "特殊指標",
+    "PTI": "PTI",
+    "DEPI": "DEPI",
+    "CDI": "CDI",
+    "SCON": "S-CON",
+    "HVI": "HVI",
+    "OBS": "OBS",
+    "sconNote": "( 注意：14歳以上の受検者にのみ適用 )",
+    "sconMain": "8個以上該当する場合チェック",
+    "depiMain": "5個以上該当する場合チェック",
+    "cdiMain": "4個以上の場合チェック",
+    "hviMain": "(1)を満たし、(2)~(8)項目のうち4個以上該当する場合チェック",
+    "obsMain": "以下の条件のうち1個以上該当する場合チェック",
+    "obsR1": "(1)~(5)すべて該当",
+    "obsR2": "(1)~(4)のうち2個以上該当",
+    "obsR3": "(1)~(5)のうち3個以上該当",
+    "positive": "Positive",
+    "negative": "NO"
+  },
+  "toast": {
+    "overScoring": {
+      "title": "過剰採点注意",
+      "message": "決定因が4個以上の場合は稀です。\n1. 被検者が実際に言った内容ですか？\n2. 形態(F)を重複して採点していませんか？"
+    },
+    "categoryDup": {
+      "title": "カテゴリ重複確認",
+      "message": "対象の個数ではありません。同じカテゴリ（例：動物A）は一度だけ入力してください。"
+    },
+    "hierarchy": {
+      "title": "階層(Hierarchy)点検",
+      "message": "点数が多すぎます。同じ表現に対して認知点数を重複入力しないよう注意してください。（上位点数は下位点数を含みます）"
+    },
+    "tooManyResponses": {
+      "title": "反応過多注意 (R ≥ 45)",
+      "message": "反応数が多すぎます。検査実施過程を点検してください。"
+    },
+    "validity": {
+      "title": "妥当性注意",
+      "message": "反応数が14個未満の場合、プロファイルの妥当性が低くなり、解釈の信頼性が低下する可能性があります。"
+    },
+    "resetComplete": {
+      "title": "初期化完了",
+      "message": "すべての入力値が初期化されました。"
+    },
+    "autoSaved": {
+      "title": "自動保存完了",
+      "message": "入力内容が自動保存されました。"
+    },
+    "reflectionPair": {
+      "title": "反射-ペア相互排除",
+      "message": "反射反応（Fr/rF）が採点されたため、ペア反応（2）は自動的に解除されます。"
+    },
+    "dqVagueFq": {
+      "title": "DQ-FQ制約",
+      "message": "DQが'v'（曖昧）の場合、FQ'+'（優秀）は選択できずリセットされます。"
+    },
+    "dqVagueZ": {
+      "title": "DQ-Z制約",
+      "message": "DQが'v'（曖昧）の場合、組織化活動（Z）は付与されません。"
+    },
+    "pureDeterminantFq": {
+      "title": "純粋決定因FQ",
+      "message": "形態を含まない純粋決定因のみが採点されたため、FQは自動的に'none'に設定されます。"
+    },
+    "specialScoreLevel": {
+      "title": "特殊スコアレベル重複",
+      "message": "同じ特殊スコアのLevel 1とLevel 2は同時に付与できません。以前のレベルが自動的に削除されます。"
+    },
+    "apiKeySaved": {
+      "title": "APIキーが保存されました",
+      "message": "{provider}のAPIキーが保存されました。"
+    },
+    "apiKeyError": {
+      "title": "エラー",
+      "message": "APIキーの保存に失敗しました。もう一度お試しください。"
+    }
+  },
+  "loader": {
+    "calculating": "計算中...",
+    "subtext": "計算結果はブラウザに自動保存されるため、後で読み込むことができます。"
+  },
+  "links": {
+    "manual": "プログラムの使い方",
+    "bug": "バグ・改善報告",
+    "patch": "パッチノート",
+    "lab": "ソウル臨床心理研究所",
+    "privacy": "個人情報処理方針"
+  },
+  "language": {
+    "select": "言語を選択",
+    "ko": "韓国語",
+    "en": "English",
+    "ja": "日本語",
+    "es": "Español",
+    "pt": "Português"
+  },
+  "export": {
+    "rawDataTitle": "ユーザーが入力したすべての項目をCSV形式でエクスポートします",
+    "summaryTitle": "構造一覧表に算出されたすべての項目をCSV形式でエクスポートします"
+  },
+  "footer": {
+    "title": "ロールシャッハ構造一覧表計算プログラム",
+    "copyright": "© 1997–2026 ソウル臨床心理研究所 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
+  },
+  "codeList": {
+    "header": "各スコアリング項目のコード一覧と説明です。"
+  },
+  "specialIndices": {
+    "scon_main": "8個以上該当する場合チェック",
+    "scon_note": "( 注意：14歳以上の受検者にのみ適用 )",
+    "depi_main": "5個以上該当する場合チェック",
+    "pti_main": "スコア表示（カットオフなし）",
+    "cdi_main": "4個以上の場合チェック",
+    "hvi_main": "(1)を満たし、(2)~(8)項目のうち4個以上該当する場合チェック",
+    "obs_main": "以下の条件のうち1個以上該当する場合チェック",
+    "obs_r1": "(1)~(5)すべて該当",
+    "obs_r2": "(1)~(4)のうち2個以上該当",
+    "obs_r3": "(1)~(5)のうち3個以上該当"
+  },
+  "account": {
+    "title": "マイアカウント",
+    "subtitle": "アカウント設定とAPIキーを管理します。",
+    "apiKeys": {
+      "title": "APIキー管理",
+      "openai": "OpenAI APIキー",
+      "google": "Google APIキー",
+      "anthropic": "Anthropic APIキー",
+      "placeholder": "{provider} APIキーを入力してください",
+      "saveButton": "保存",
+      "setupRequired": "APIキーの設定が必要です",
+      "deleteButton": "削除",
+      "saved": "保存済み",
+      "notSaved": "未保存"
+    },
+    "knowledgeSources": {
+      "title": "ナレッジソース",
+      "description": "メモやファイルを追加してください。AIチャットは関連する場合、組み込みドキュメントよりもこれらのソースを優先的に参照します。",
+      "sourceTitle": "ソースタイトル",
+      "pastePlaceholder": "ナレッジの内容を貼り付け...",
+      "addButton": "ソース追加",
+      "uploadButton": ".txt/.mdアップロード",
+      "removeButton": "削除",
+      "saved": "保存済み",
+      "savedMessage": "ナレッジソースが保存されました。",
+      "uploaded": "アップロード済み",
+      "uploadedMessage": "{filename}をインポートしました。",
+      "fileTooLarge": "ファイルが大きすぎます（最大500KB）"
+    }
+  },
+  "chat": {
+    "title": "AIアシスタント",
+    "placeholder": "質問を入力してください...",
+    "errorMessage": "応答を取得できませんでした。APIキーを確認して再試行してください。",
+    "history": "チャット履歴",
+    "selectChat": "チャットを選択して表示",
+    "startNew": "または新しい会話を始めてください。",
+    "noSessions": "まだ会話がありません。",
+    "loading": "読み込み中...",
+    "emptyStateTitle": "チャットを選択して表示",
+    "emptyStateDescription": "サイドバーから会話を選択するか、下にメッセージを入力して新しい会話を開始してください。"
+  }
+}

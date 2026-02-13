@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Base Styles */
+@layer base {
+  body {
+    @apply text-stone-700 bg-stone-50 dark:text-slate-200 dark:bg-slate-900;
+    font-size: 16px;
+    line-height: 1.6;
+    /* Watercolor Texture Background - subtle paper noise + soft gradient */
+    background-image:
+      radial-gradient(at 0% 0%, hsla(253, 16%, 90%, 1) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(225, 39%, 90%, 1) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(339, 49%, 90%, 1) 0, transparent 50%);
+    background-attachment: fixed;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body,
+  :where(.dark) body {
+    background-image: none;
+  }
+
+  h1 {
+    @apply text-4xl font-bold text-stone-800 dark:text-slate-100 tracking-tight;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  h2 {
+    @apply text-2xl font-semibold text-stone-800 dark:text-slate-100;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-stone-800 dark:text-slate-100;
+  }
+
+  /* Focus Styles (Accessibility - Soft Glow) */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply outline-none ring-2 ring-indigo-400/50 ring-offset-2;
+  }
+}
+
+:root {
+  /* Watercolor Palette - Softer, less saturated */
+  --primary-color: #6366f1;
+  /* Soft Indigo */
+  --secondary-color: #78716C;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --border-glass: rgba(255, 255, 255, 0.5);
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Component Styles */
+@layer components {
+
+  /* Buttons - Soft & Pill shaped */
+  .btn-primary {
+    @apply px-6 py-3 text-lg font-semibold text-white rounded-full shadow-lg shadow-indigo-500/20 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-indigo-500/30 active:translate-y-0 bg-gradient-to-r from-indigo-500 to-purple-500;
+  }
+
+  .btn-primary:hover {
+    @apply opacity-90;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 text-lg font-semibold text-indigo-600 bg-white/80 backdrop-blur-sm border border-indigo-200 rounded-full transition-all duration-300 ease-out hover:bg-indigo-50/80 hover:border-indigo-300 active:bg-indigo-100/80;
+  }
+
+  .btn-tertiary {
+    @apply px-4 py-2 text-base font-medium text-stone-500 hover:text-indigo-600 hover:bg-white/50 rounded-lg transition-all duration-150;
+  }
+
+  /* Cards - Glassmorphism / Watercolor Paper */
+  .card {
+    @apply bg-white/70 backdrop-blur-md border border-white/50 rounded-2xl p-6 transition-all duration-300 ease-out hover:bg-white/80
+      dark:bg-slate-800/70 dark:border-slate-700/50 dark:hover:bg-slate-800/90;
+    box-shadow: 0 8px 30px rgb(0, 0, 0, 0.04);
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 30px rgb(0, 0, 0, 0.08);
+  }
+
+  .grid-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/50 rounded-2xl p-6 transition-all duration-300 ease-out hover:bg-white/80 flex flex-col
+      dark:bg-slate-800/70 dark:border-slate-700/50 dark:hover:bg-slate-800/90;
+    box-shadow: 0 8px 30px rgb(0, 0, 0, 0.04);
+  }
+
+  .grid-card:hover {
+    box-shadow: 0 8px 30px rgb(0, 0, 0, 0.08);
+  }
+
+  .card-header {
+    @apply text-xl font-semibold text-stone-800 dark:text-slate-100 mb-4 pb-3 border-b border-indigo-100/50 dark:border-slate-700/50;
+  }
+
+  /* Form Elements - Soft Borders */
+  .input-field {
+    @apply w-full px-4 py-3 text-base text-stone-700 bg-white/50 border border-stone-200 rounded-xl backdrop-blur-sm transition-all duration-200 focus:bg-white focus:border-indigo-300 focus:ring-4 focus:ring-indigo-500/10;
+  }
+
+  .input-field.error {
+    @apply border-red-300 bg-red-50/30 focus:border-red-400 focus:ring-red-500/10;
+  }
+
+  .label {
+    @apply block text-sm font-semibold text-stone-600 mb-2 ml-1;
+  }
+
+  .label.required::after {
+    @apply text-red-400;
+    content: ' *';
+  }
+
+  /* Tabs - Floating Style */
+  .tab-container {
+    @apply flex gap-2 bg-stone-200/50 p-1.5 rounded-full backdrop-blur-sm;
+  }
+
+  .tab-button {
+    @apply flex-1 px-6 py-2.5 text-base font-medium bg-transparent text-stone-500 rounded-full transition-all duration-200 hover:text-stone-800 hover:bg-white/40;
+  }
+
+  .tab-button.active {
+    @apply text-indigo-700 bg-white shadow-sm font-semibold;
+  }
+
+  /* Mobile Card UI */
+  .mobile-card {
+    @apply bg-white/80 backdrop-blur-xl rounded-3xl p-6 mx-4 shadow-xl border border-white/60;
+  }
+
+  .mobile-card-header {
+    @apply text-lg font-bold text-stone-800 mb-4 text-center;
+  }
+
+  .card-progress {
+    @apply w-full h-1.5 bg-stone-100 rounded-full overflow-hidden mb-6;
+  }
+
+  .card-progress-fill {
+    @apply h-full transition-all duration-500 ease-out rounded-full bg-gradient-to-r from-indigo-400 to-purple-400;
+  }
+
+  .mobile-field-group {
+    @apply mb-6;
+  }
+
+  .mobile-nav {
+    @apply flex gap-4 mt-8;
+  }
+
+  .btn-prev {
+    @apply flex-1 px-4 py-4 text-lg font-bold rounded-2xl border-none bg-stone-100/80 text-stone-500 transition-all duration-200 hover:bg-stone-200/80 hover:text-stone-700 active:scale-95;
+  }
+
+  .btn-next {
+    @apply flex-1 px-4 py-4 text-lg font-bold rounded-2xl border-none text-white shadow-lg shadow-indigo-500/20 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-200 hover:shadow-indigo-500/30 hover:opacity-90 active:scale-95;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+
+  /* Print Styles */
+  .no-print {
+    @media print {
+      display: none !important;
+    }
+  }
+
+  .touch-target {
+    @apply min-w-[44px] min-h-[44px];
+  }
+
+  @media (max-width: 767px) {
+    .touch-target {
+      @apply min-w-[48px] min-h-[48px];
+    }
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  body {
+    background: white !important;
+    color: #1c1917 !important;
+  }
+
+  .dark {
+    color-scheme: light;
+  }
+
+  .no-print,
+  #initial-screen-container #initial-tab,
+  #initial-screen-container .tabcontent-initial,
+  #results-tab,
+  .print-guide,
+  .dets-toggle,
+  #language-selector {
+    display: none !important;
+  }
+
+  #results-container {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    visibility: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+  }
+
+  .tabcontent-results {
+    display: block !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  /* Reset Card Styles for Print */
+  .card,
+  .grid-card {
+    background: none !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 4px !important;
+  }
+
+  #Special_Indices {
+    display: block !important;
+  }
+
+  #Upper_Section {
+    order: 1;
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 0;
+    margin-bottom: 20px !important;
+    page-break-after: auto;
+    page-break-inside: avoid;
+    height: auto;
+  }
+
+  #Lower_Section {
+    order: 2;
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    page-break-after: always;
+    height: auto;
+  }
+
+  #Special_Indices {
+    order: 3;
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 0;
+    margin-bottom: 0 !important;
+    page-break-after: auto;
+    page-break-inside: avoid;
+    height: auto;
+  }
+
+  #response-list-container {
+    order: 4;
+    display: block !important;
+  }
+}

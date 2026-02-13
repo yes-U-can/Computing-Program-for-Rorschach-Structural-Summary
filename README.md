@@ -1,38 +1,8 @@
-# 로샤 구조 요약지 계산 프로그램 (Computing Program for Rorschach Structural Summary)
+# Computing Program for Rorschach Structural Summary
 
-수기로 직접 계산하던 로샤 검사의 구조 요약지를 자동으로 계산하고 출력할 수 있도록 개발된 Google Apps Script 기반 웹 애플리케이션입니다.
+This repository is split by major version:
 
-## 📖 프로젝트 소개 (About)
+- `v1-gas/`: Legacy Google Apps Script web app (version 1)
+- `v2-nextjs/`: Current Next.js app (version 2)
 
-로샤 검사 결과를 자동화하려는 노력은 여러 전문가 선생님들을 통해 꾸준히 이어져 왔습니다. 제가 기억하는 exe 파일 형태의 프로그램부터, Excel 매크로를 활용한 자동화 시트까지 다양한 시도가 있었습니다.
-
-저는 **Google Apps Script(GAS)**라는 도구를 이용하여, 컴퓨터에 **별도의 설치 과정이 필요 없는 웹앱 형태**로 이 프로그램을 제작했습니다. 임상 현장의 전문가분께서 더 편리하게 사용하시길 바라며, 오류를 발견하시면 언제든 알려주세요. 함께 개선해 나가겠습니다.
-
-본 프로그램의 저작권은 **서울임상심리연구소(SICP)**에 귀속되어 있으나, 임상심리학 분야의 발전과 전문가들의 원활한 업무를 돕기 위한 공익적 목적으로 전체 코드를 공개합니다.
-
-## ✨ 주요 기능 (Features)
-
-1.  **자동 계산**: 반응 영역, 내용, 결정인 등 복잡한 채점 항목을 자동으로 계산합니다.
-2.  **언어 반응 메모**: 피검자의 주요 언어 반응을 편리하게 메모하고 관리할 수 있습니다.
-3.  **결과지 프린트**: 최종 산출된 구조 요약지를 깔끔한 양식으로 인쇄할 수 있습니다.
-
-## 💻 사용 기술 (Tech Stack)
-
-- Google Apps Script (JavaScript)
-- HTML / CSS
-
-## ©️ 저작권 및 라이선스 (Copyright & License)
-
-Copyright (c) 2025 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP)
-
-본 프로젝트는 **MIT 라이선스**를 따릅니다. 자세한 내용은 `LICENSE` 파일을 참고해주세요.
-
----
-
-## 📌 배포 및 피드백 (Deployment & Feedback)
-
-본 GitHub 저장소에는 **최초 릴리즈 버전인 `v1.0.0`**의 소스 코드만 업로드됩니다.
-
-향후 이루어지는 **핫픽스, 버그/마이너/메이저 패치** 등 모든 업데이트 공지 및 변경 사항은 **[Notion](https://mowcowork.notion.site/28f722d9b81180b5b7d2f849e467b293?v=28f722d9b81181e89311000c2dad8de9)** 페이지를 통해 안내됩니다.
-
-프로그램 사용 중 발견하신 개선 사항이나 오류 제보는 **[네이버 블로그](https://blog.naver.com/yes-u-can/224043775130)**의 해당 게시물 댓글로 남겨주시면 감사하겠습니다. 함께 더 좋은 프로그램을 만들어나가겠습니다.
+Use each folder as an independent project root.
