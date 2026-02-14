@@ -13,6 +13,9 @@
     "loginRequired": "Login required",
     "aiAssistant": "AI Assistant"
   },
+  "auth": {
+    "googleContinue": "Continue with Google"
+  },
   "buttons": {
     "calculate": "Calculate Results",
     "reset": "Reset Input",

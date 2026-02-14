@@ -19,14 +19,6 @@ function GoogleIcon() {
   );
 }
 
-const LOGIN_COPY: Record<string, string> = {
-  ko: 'Google로 로그인/회원가입',
-  en: 'Continue with Google',
-  ja: 'Google で続行',
-  es: 'Continuar con Google',
-  pt: 'Continuar com Google',
-};
-
 const UserMenu = () => {
   const { data: session } = useSession();
   const { t } = useTranslation();
@@ -97,7 +89,7 @@ const UserMenu = () => {
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const { language } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <header className="relative z-10 print:hidden">
@@ -107,9 +99,6 @@ export default function Header() {
             <h1 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">
               Computing Program for Rorschach Structural Summary
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Copyright 1997-2026 Seoul Institute of Clinical Psychology (SICP). All rights reserved.
-            </p>
           </div>
           <div className="flex items-center gap-3 self-end sm:self-auto">
             <LanguageSelector />
@@ -124,7 +113,7 @@ export default function Header() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-md text-sm font-medium text-[#4E73AA] hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4E73AA]"
               >
                 <GoogleIcon />
-                <span>{LOGIN_COPY[language] ?? LOGIN_COPY.en}</span>
+                <span>{t('auth.googleContinue')}</span>
               </button>
             )}
           </div>

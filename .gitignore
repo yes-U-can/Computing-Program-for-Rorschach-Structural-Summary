@@ -1,0 +1,7 @@
+﻿# Root-level safety ignores
+/.secrets/
+/docs/
+.env
+.env.*
+*.key
+*.pem

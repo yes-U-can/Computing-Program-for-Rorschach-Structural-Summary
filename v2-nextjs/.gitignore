@@ -38,6 +38,9 @@ yarn-error.log*
 /docs
 /gas
 /nul
+/.secrets
+**/secrets.local.md
+**/secrets*.md
 /.claude
 /.cursor
 .cursorrules
