@@ -75,11 +75,11 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
   const level3Items = level3Prefix.length ? getDocChildren(level3Prefix) : [];
 
   const docsLabel: Record<Language, string> = {
-    en: 'Docs',
+    en: 'Dictionary',
     ko: '사전',
-    ja: 'ドキュメント',
-    es: 'Documentacion',
-    pt: 'Documentacao',
+    ja: '辞典',
+    es: 'Diccionario',
+    pt: 'Dicionario',
   };
 
   return (
@@ -186,5 +186,6 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
     </div>
   );
 }
+
 
 

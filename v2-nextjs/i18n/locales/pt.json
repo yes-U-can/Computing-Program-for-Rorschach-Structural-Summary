@@ -6,7 +6,7 @@
   },
   "nav": {
     "scoring": "Codificação e Sumário Estrutural",
-    "more": "Documentacao",
+    "more": "Dicionario",
     "login": "Entrar / Registrar",
     "logout": "Sair",
     "account": "Minha Conta",
@@ -358,7 +358,8 @@
     "noSessions": "Nenhuma conversa ainda.",
     "loading": "Carregando...",
     "emptyStateTitle": "Selecione um chat para ver",
-    "emptyStateDescription": "Escolha uma conversa na barra lateral, ou digite uma mensagem abaixo para iniciar uma nova."
+    "emptyStateDescription": "Escolha uma conversa na barra lateral, ou digite uma mensagem abaixo para iniciar uma nova.",
+    "newChat": "Nova conversa"
   },
   "auth": {
     "googleContinue": "Continuar com Google"

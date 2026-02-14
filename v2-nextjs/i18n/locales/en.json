@@ -6,7 +6,7 @@
   },
   "nav": {
     "scoring": "Scoring & Structural Summary",
-    "more": "Docs",
+    "more": "Dictionary",
     "login": "Login / Sign Up",
     "logout": "Logout",
     "account": "My Account",
@@ -358,7 +358,8 @@
     "noSessions": "No conversations yet.",
     "loading": "Loading...",
     "emptyStateTitle": "Select a chat to view",
-    "emptyStateDescription": "Choose a conversation from the sidebar, or type a message below to start a new one."
+    "emptyStateDescription": "Choose a conversation from the sidebar, or type a message below to start a new one.",
+    "newChat": "New Chat"
   },
   "auth": {
     "googleContinue": "Continue with Google"

@@ -16,7 +16,7 @@ function normalizeLang(lang?: string): Language {
 }
 
 export const metadata: Metadata = {
-  title: 'Documentation',
+  title: 'Dictionary',
   description: 'Searchable documentation for Rorschach scoring items and structural summary variables.',
   alternates: {
     canonical: '/docs',
@@ -47,7 +47,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
 
   const labels: Record<Language, { title: string; subtitle: string; search: string; placeholder: string; empty: string; idle: string; results: (count: number, q: string) => string }> = {
     en: {
-      title: 'Documentation',
+      title: 'Dictionary',
       subtitle: 'Search scoring-item and result-variable reference pages.',
       search: 'Search',
       placeholder: 'Search by code, title, keyword...',
@@ -56,7 +56,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
       results: (count, text) => `${count} result${count === 1 ? '' : 's'}${text ? ` for "${text}"` : ''}`,
     },
     ko: {
-      title: '\uBB38\uC11C',
+      title: '\uC0AC\uC804',
       subtitle: '\uCC44\uC810 \uD56D\uBAA9\uACFC \uACB0\uACFC \uBCC0\uC218 \uC124\uBA85\uC744 \uAC80\uC0C9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.',
       search: '\uAC80\uC0C9',
       placeholder: '\uCF54\uB4DC, \uC81C\uBAA9, \uD0A4\uC6CC\uB4DC\uB85C \uAC80\uC0C9...',
@@ -65,7 +65,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
       results: (count, text) => `\uAC80\uC0C9 \uACB0\uACFC ${count}\uAC74${text ? `: \"${text}\"` : ''}`,
     },
     ja: {
-      title: '\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8',
+      title: '\u8F9E\u5178',
       subtitle: '\u63A1\u70B9\u9805\u76EE\u3068\u7D50\u679C\u5909\u6570\u306E\u53C2\u7167\u30DA\u30FC\u30B8\u3092\u691C\u7D22\u3067\u304D\u307E\u3059\u3002',
       search: '\u691C\u7D22',
       placeholder: '\u30B3\u30FC\u30C9\u3001\u30BF\u30A4\u30C8\u30EB\u3001\u30AD\u30FC\u30EF\u30FC\u30C9\u3067\u691C\u7D22...',
@@ -74,7 +74,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
       results: (count, text) => `\u691C\u7D22\u7D50\u679C ${count}\u4EF6${text ? `: \"${text}\"` : ''}`,
     },
     es: {
-      title: 'Documentacion',
+      title: 'Diccionario',
       subtitle: 'Busque paginas de referencia de codigos y variables de resultados.',
       search: 'Buscar',
       placeholder: 'Buscar por codigo, titulo o palabra clave...',
@@ -83,7 +83,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
       results: (count, text) => `${count} resultado${count === 1 ? '' : 's'}${text ? ` para \"${text}\"` : ''}`,
     },
     pt: {
-      title: 'Documentacao',
+      title: 'Dicionario',
       subtitle: 'Pesquise paginas de referencia de codigos e variaveis de resultado.',
       search: 'Buscar',
       placeholder: 'Buscar por codigo, titulo ou palavra-chave...',
