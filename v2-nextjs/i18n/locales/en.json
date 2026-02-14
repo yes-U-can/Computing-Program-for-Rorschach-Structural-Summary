@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Computing Program for Rorschach Structural Summary",
+    "title": "Rorschach Structural Summary Calculator",
     "version": "v2.0.0",
     "provider": "Provided by Seoul Institute of Clinical Psychology"
   },
@@ -12,9 +12,6 @@
     "account": "My Account",
     "loginRequired": "Login required",
     "aiAssistant": "AI Assistant"
-  },
-  "auth": {
-    "googleContinue": "Continue with Google"
   },
   "buttons": {
     "calculate": "Calculate Results",
@@ -34,7 +31,7 @@
   },
   "modal": {
     "welcome": {
-      "title": "Computing Program for Rorschach Structural Summary",
+      "title": "Rorschach Structural Summary Calculator",
       "new": "Create New",
       "loadSample": "Start with Sample Data",
       "loadSaved": "Load Auto-saved Content",
@@ -53,7 +50,7 @@
     },
     "privacy": {
       "title": "Privacy Policy",
-      "noticeTitle": "??Browser Storage (LocalStorage) Usage Notice",
+      "noticeTitle": "※ Browser Storage (LocalStorage) Usage Notice",
       "noticeText_part1": "This app temporarily stores data entered in the 'Scoring & Structural Summary' tab in your computer's browser's local storage (LocalStorage) for your scoring convenience.",
       "noticeText_part2": "This data is not transmitted to the server or accessible by the operator, and is used solely for the purpose of restoring input content when you revisit the browser.",
       "noticeText_part3": "When using AI features after login, saved API keys are managed in encrypted form, and reference context (built-in docs and user-added knowledge sources) may be sent with chat requests to improve response quality."
@@ -227,7 +224,7 @@
       "message": "Too many scores. Be careful not to enter cognitive scores multiple times for the same expression. (Higher scores include lower scores.)"
     },
     "tooManyResponses": {
-      "title": "Too Many Responses Warning (R ??45)",
+      "title": "Too Many Responses Warning (R ≥ 45)",
       "message": "The number of responses is too high. Please review the test administration process."
     },
     "validity": {
@@ -284,11 +281,11 @@
   },
   "language": {
     "select": "Select Language",
-    "ko": "Korean",
+    "ko": "한국어",
     "en": "English",
-    "ja": "Japanese",
-    "es": "Spanish",
-    "pt": "Portuguese"
+    "ja": "日本語",
+    "es": "Español",
+    "pt": "Português"
   },
   "export": {
     "rawDataTitle": "Export all items entered by the user in CSV format",
@@ -296,7 +293,7 @@
   },
   "footer": {
     "title": "Computing Program for Rorschach Structural Summary",
-    "copyright": "Copyright 1997-2026 Seoul Institute of Clinical Psychology (SICP). All rights reserved."
+    "copyright": "© 1997–2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
   },
   "codeList": {
     "header": "Code list and descriptions for each scoring item."
@@ -354,6 +351,8 @@
     "loading": "Loading...",
     "emptyStateTitle": "Select a chat to view",
     "emptyStateDescription": "Choose a conversation from the sidebar, or type a message below to start a new one."
+  },
+  "auth": {
+    "googleContinue": "Continue with Google"
   }
 }
-
