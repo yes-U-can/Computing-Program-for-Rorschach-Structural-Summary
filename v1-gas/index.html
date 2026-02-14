@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8f9fa; color: #212529; margin: 0; padding: 20px; }
+        .container { max-width: 100%; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #343a40; }
+        h1 { border-bottom: 2px solid #dee2e6; padding-bottom: 10px; }
+        .button-container { text-align: center; margin-top: 30px; }
+        button { background-color: #007bff; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        #results-container { display: none; }
+        .auto-calc-input { background-color: #e9ecef; text-align: center; font-weight: bold; border: 1px solid #ced4da; border-radius: 4px; padding: 8px; width: 100%; min-width: 80px; box-sizing: border-box; }
+        .table-wrapper { overflow-x: auto; border: 1px solid #dee2e6; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 0; }
+        th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; font-size: 14px; white-space: nowrap; }
+        th { text-align: center; color: #495057; font-weight: bold; }
+        .group-basic-bg, th.group-basic    { background-color: #f8f9fa; }
+        .group-loc-bg,   th.group-loc       { background-color: #e7f3fe; }
+        .group-dq-bg,    th.group-dq        { background-color: #e0f7fa; }
+        .group-det-bg,   th.group-det       { background-color: #e8f5e9; }
+        .group-fq-bg,    th.group-fq        { background-color: #f1f8e9; }
+        .group-pair-bg,  th.group-pair      { background-color: #f9fbe7; }
+        .group-con-bg,   th.group-con       { background-color: #fff8e1; }
+        .group-pop-bg,   th.group-pop       { background-color: #fff3e0; }
+        .group-z-bg,     th.group-z         { background-color: #fbe9e7; }
+        .group-calc-bg,  th.group-calc      { background-color: #efebe9; }
+        .group-special-bg, th.group-special { background-color: #f3e5f5; }
+        #input-body tr:nth-child(odd)  .group-basic    { background-color: #ffffff; }
+        #input-body tr:nth-child(even) .group-basic    { background-color: #e9ecef; }
+        #input-body tr:nth-child(odd)  .group-loc      { background-color: #f0f7ff; }
+        #input-body tr:nth-child(even) .group-loc      { background-color: #d6eaff; }
+        #input-body tr:nth-child(odd)  .group-dq       { background-color: #eefcfd; }
+        #input-body tr:nth-child(even) .group-dq       { background-color: #cdeff5; }
+        #input-body tr:nth-child(odd)  .group-det      { background-color: #f1f8f2; }
+        #input-body tr:nth-child(even) .group-det      { background-color: #dceadc; }
+        #input-body tr:nth-child(odd)  .group-fq       { background-color: #f6faf2; }
+        #input-body tr:nth-child(even) .group-fq       { background-color: #e7f0e0; }
+        #input-body tr:nth-child(odd)  .group-pair     { background-color: #fbfdec; }
+        #input-body tr:nth-child(even) .group-pair     { background-color: #f0f2d9; }
+        #input-body tr:nth-child(odd)  .group-con      { background-color: #fffaf0; }
+        #input-body tr:nth-child(even) .group-con      { background-color: #f2eedb; }
+        #input-body tr:nth-child(odd)  .group-pop      { background-color: #fff8f0; }
+        #input-body tr:nth-child(even) .group-pop      { background-color: #f2e9d9; }
+        #input-body tr:nth-child(odd)  .group-z        { background-color: #fdeee9; }
+        #input-body tr:nth-child(even) .group-z        { background-color: #f2e0da; }
+        #input-body tr:nth-child(odd)  .group-calc     { background-color: #f5f2f0; }
+        #input-body tr:nth-child(even) .group-calc     { background-color: #e6e2e0; }
+        #input-body tr:nth-child(odd)  .group-special { background-color: #f8eef9; }
+        #input-body tr:nth-child(even) .group-special { background-color: #e9ddea; }
+        #list-grid-container-wrapper { overflow-x: auto; padding-bottom: 15px; }
+        #list-grid-container { display: flex; flex-wrap: nowrap; gap: 15px; }
+        .list-card { flex: 0 0 220px; border: 1px solid #b0b0b0; border-radius: 5px; }
+        .list-card h3 { margin: 0; text-align: center; padding: 10px; border-bottom: 1px solid #b0b0b0; font-size: 16px; }
+        .list-card ul { list-style-type: none; padding: 10px; margin: 0; font-size: 14px; background-color: rgba(255,255,255,0.6); }
+        .list-card li { padding: 4px 2px; }
+        .tab { overflow: hidden; border: 1px solid #ccc; background-color: #e9ecef; border-radius: 5px 5px 0 0; }
+        .tab button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; font-size: 17px; border-radius: 0; color: #212529; }
+        .tab button:hover { background-color: #dee2e6; }
+        .tab button.active { background-color: #ffffff; font-weight: bold; border-bottom: 2px solid #007bff; }
+        .tabcontent-initial, .tabcontent-results { display: none; padding: 20px 12px; border: 1px solid #ccc; border-top: none; border-radius: 0 0 5px 5px; animation: fadeEffect 0.5s; }
+        @keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
+        .tooltip-container { position: relative; cursor: help; text-align: center; border-bottom: 1px dotted #343a40; padding: 4px 0; margin: 8px auto; width: fit-content; }
+        .tooltip-text { visibility: hidden; width: 450px; background-color: #fffacd; color: #000; text-align: left; border-radius: 6px; padding: 10px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -225px; opacity: 0; transition: opacity 0.3s; border: 1px solid #a0a0a0; box-shadow: 0 3px 8px rgba(0,0,0,0.2); white-space: normal; font-size: 12px; }
+        .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+        .results-grid { display: grid; gap: 10px; }
+        .results-grid .grid-card { border: 1px solid #e0e0e0; border-radius: 5px; padding: 10px; display: flex; flex-direction: column; }
+        .results-grid .grid-card h3 { margin-top: 0; font-size: 1em; text-align: center; border-bottom: 1px solid #e0e0e0; padding-bottom: 8px; margin-bottom: 8px; flex-shrink: 0; }
+        .results-grid .grid-card table { width: 100%; }
+        .results-grid .grid-card th, .results-grid .grid-card td { padding: 6px; font-size: 12px; }
+        .results-grid .grid-card th { background-color: #f8f9fa; font-weight: normal; text-align: left; }
+        .results-grid .grid-card td { text-align: center; font-weight: bold; }
+        #Upper_Section .results-grid { grid-template-columns: repeat(26, 1fr); }
+        #Upper_Section .loc-feat table th, #Upper_Section .dq table th, #Upper_Section .single table th, #Upper_Section .pairs table th, #Upper_Section .contents table th { width: 35%; }
+        .approach table { table-layout: fixed; }
+        .approach table th { width: 4%; }
+        .spec-scores-table { table-layout: fixed; }
+        .spec-scores-table th:first-child { width: 28%; }
+        #special-scores-level-table td { width: 18%; }
+        .spec-scores table:last-of-type { table-layout: fixed; }
+        .spec-scores table:last-of-type th { width: 25%; }
+        .dets-toggle table { table-layout: fixed; }
+        .dets-toggle table th { width: 6%; }
+        .dets-toggle table td { width: 10.66%; }
+        .form-qual table { table-layout: fixed; }
+        .form-qual th { text-align: left; }
+        .loc-feat { grid-column: 1 / span 4; grid-row: 1 / span 14; }
+        .dq { grid-column: 1 / span 4; grid-row: 15 / span 7; }
+        .blends { grid-column: 5 / span 6; grid-row: 1 / span 21; padding: 0; }
+        .blends h3 { padding: 10px; }
+        .blends-table-wrapper { overflow-y: auto; flex-grow: 1; }
+        .blends table {
+            border-top: 1px solid #e0e0e0; 
+            table-layout: fixed;
+        }
+        .single { grid-column: 11 / span 3; grid-row: 1 / span 25; }
+        .pairs { grid-column: 11 / span 3; grid-row: 26 / span 4; }
+        .contents { grid-column: 14 / span 3; grid-row: 1 / span 29; }
+        .approach { grid-column: 17 / span 10; grid-row: 1 / span 12; }
+        .spec-scores { grid-column: 17 / span 10; grid-row: 13 / span 20; }
+        .form-qual { grid-column: 1 / span 10; grid-row: 22 / span 8; }
+        .dets-toggle { grid-column: 1 / span 26; margin-top: 15px; }
+        .dets-toggle summary { cursor: pointer; font-weight: bold; padding: 5px; border: 1px solid #ccc; border-radius: 5px; background-color: #f8f9fa; }
+        #Lower_Section .results-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: min-content; }
+        #Lower_Section .grid-card table { table-layout: fixed; }
+        #Lower_Section .grid-card th { width: 40%; }
+        #Lower_Section .core-card-main-table th { width: 12%; }
+        #Lower_Section .core-card-top-table th { width: 20%; }
+        #Lower_Section .ideation-card-table th { width: 30%; }
+        #Lower_Section .special-indices-card-table th:nth-child(3) { background-color: #f8f9fa; }
+        #Special_Indices .results-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        #Special_Indices .grid-card { padding: 15px; }
+        #Special_Indices h3 { font-size: 1.1em; padding-bottom: 10px; margin-bottom: 10px; }
+        .criterion-item { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 12px; }
+        .criterion-item.main-criterion { font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .criterion-item .label { white-space: normal; line-height: 1.4; }
+        .criterion-item .label .note { font-weight: normal; font-size: 0.9em; color: #6c757d; }
+        .custom-checkbox { flex-shrink: 0; width: 16px; height: 16px; background-color: #fff; border: 1px solid #adb5bd; border-radius: 3px; margin-right: 10px; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+        .custom-checkbox.checked { background-color: #28a745; border-color: #28a745; }
+        .custom-checkbox.checked::after { content: '✓'; color: white; font-weight: bold; font-size: 12px; }
+        .obs-rules { font-size: 12px; margin-top: 15px; border-bottom: 1px solid #e0e0e0; margin-bottom: 15px; }
+        .obs-rules .criterion-item { margin-bottom: 12px; }
+        @media print {
+            .no-print { display: none !important; }
+            body * { visibility: hidden; }
+            .printable-area, .printable-area * { visibility: visible; }
+            .printable-area { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; padding: 0; margin: 0; }
+        }
+        .print-guide details { border: 1px solid #dee2e6; border-radius: 8px; margin-top: 25px; background-color: #f8f9fa; }
+        .print-guide summary { font-weight: bold; font-size: 1.1em; padding: 15px 20px; cursor: pointer; outline: none; }
+        .print-guide details[open] summary { border-bottom: 1px solid #dee2e6; }
+        .guide-content { padding: 10px 25px 20px 25px; }
+        .guide-layout { display: flex; gap: 30px; }
+        .guide-column.left { flex: 0 0 45%; }
+        .guide-column.right { flex: 1; }
+        .guide-layout h4 { margin-top: 20px; margin-bottom: 8px; font-size: 1em; background-color: #e9ecef; padding: 8px 12px; border-radius: 5px; }
+        .guide-layout ul { list-style-type: 'ㆍ'; padding-left: 20px; margin: 0; }
+        .guide-layout li { padding: 6px 0; color: #495057; }
+        .guide-layout li strong { color: #212529; }
+        .guide-layout code { background-color: #e0e7ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div id="initial-screen-container">
+            <div class="tab" id="initial-tab">
+                <button class="tablinks-initial active" onclick="openInitialTab(event, 'Notice')">Notice</button>
+                <button class="tablinks-initial" onclick="openInitialTab(event, 'Scoring')">Scoring</button>
+                <button class="tablinks-initial" onclick="openInitialTab(event, 'List')">List</button>
+            </div>
+
+            <div id="Notice" class="tabcontent-initial" style="display: block;">
+                <h2>안녕하세요! 서울임상심리연구소에서 제공하는 간편 로샤 채점 계산기입니다, 이용해주셔서 감사합니다.</h2>
+                <p>
+                    <strong>【작동 방법】</strong><br><br>
+                    ① Scoring 탭에서 채점 내용을 입력합니다.<br><br>
+                    ② List 탭에서는 채점에 사용되는 코드 전체 목록과 간단한 설명을 확인할 수 있습니다.<br><br>
+                    ③ Scoring 탭에 처음 들어가면, 저장된 내용이 없을 경우 테스트용 샘플 데이터를 불러올지 묻습니다. 새로 입력하려면 '취소'를 누르세요.<br><br>
+                    ④ 입력 내용은 브라우저에 자동 저장됩니다. 재접속 시 "이전에 자동 저장된 내용이 있습니다. 불러올까요?"라는 메시지가 뜨면 '확인'을 눌러 이어서 작업할 수 있습니다.<br><br>
+                    ⑤ 채점 내용을 하나도 입력하지 않고 'Calculate Results' 버튼을 누르면 "Error: No responses entered." 메시지가 나타납니다.<br><br>
+                    ⑥ 채점 완료 후 'Calculate Results' 버튼을 누르면 결과 화면으로 이동합니다. 이전 화면으로 돌아가려면 'Go Back' 버튼을 누르세요.<br><br>
+                    ⑦ 'Print Results' 버튼으로 현재 보고 있는 결과 화면을 인쇄할 수 있습니다. (하단에서 영역별 결과지 인쇄 시 권장 설정을 확인하세요.)<br><br><br>
+
+                    <strong>【Scoring 탭에 점수 입력 시 유의사항】</strong><br><br>
+                    ① [Response] 항목은 피검자의 언어 반응을 메모하는 공간이며, 계산에 영향을 주지 않으므로 비워둬도 괜찮습니다.<br><br>
+                    ② [Determinants], [Contents], [Special Score]에 여러 코드를 입력할 경우, 왼쪽 칸부터 순서대로 채워주세요.<br><br>
+                    ③ [Score]와 [G/PHR] 항목은 자동으로 계산되므로 직접 입력할 필요가 없습니다. 단, [Score]는 [Card]와 [Z] 유형을 선택해야 값이 자동 계산됩니다.<br><br><br>
+
+                    <strong>【관련 웹사이트 바로가기】</strong><br><br>
+                    ① <a href="https://blog.naver.com/yes-u-can/224043775130" target="_blank">네이버 블로그</a>: 개선사항 및 버그 제보<br><br>
+                    ② <a href="https://github.com/yes-U-can/Computing-Program-for-Rorschach-Structural-Summary" target="_blank">깃허브</a>: 코드 열람<br><br>
+                    ③ <a href="https://sites.google.com/view/yes-u-can-pc?usp=sharing" target="_blank">서울임상심리연구소 공식 홈페이지</a>
+
+              </p>
+                
+                <hr style="margin: 25px 0; border: none; border-top: 1px solid #eee;">
+
+                <div class="print-guide">
+                    <details>
+                        <summary>※ 결과지 인쇄 시 권장 설정 (클릭하여 보기)</summary>
+                        <div class="guide-content">
+                            <div class="guide-layout">
+                                <div class="guide-column left">
+                                    <h4>[공통]</h4>
+                                    <ul>
+                                        <li><strong>페이지:</strong> 전체</li>
+                                        <li><strong>용지 크기:</strong> A4</li>
+                                        <li><strong>컬러:</strong> 흑백</li>
+                                        <li><strong>여백:</strong> 기본</li>
+                                        <li><strong>배경 그래픽:</strong> OFF</li>
+                                        <li><strong>머리글과 바닥글:</strong> OFF (권장)</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-column right">
+                                    <h4>[Upper Section]</h4>
+                                    <ul>
+                                        <li><strong>레이아웃:</strong> <code>가로</code></li>
+                                        <li><strong>배율(확대/축소):</strong> 맞춤설정 - <code>80%</code></li>
+                                    </ul>
+
+                                    <h4>[Lower Section]</h4>
+                                    <ul>
+                                        <li><strong>레이아웃:</strong> <code>세로</code></li>
+                                        <li><strong>배율(확대/축소):</strong> 맞춤설정 - <code>80%</code></li>
+                                    </ul>
+
+                                    <h4>[Special Indices]</h4>
+                                    <ul>
+                                        <li><strong>레이아웃:</strong> <code>세로</code></li>
+                                        <li><strong>배율(확대/축소):</strong> 맞춤설정 - <code>85%</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <div id="Scoring" class="tabcontent-initial">
+                <div id="scoring-container">
+                    <h1>Rorschach Response Sheet</h1>
+                    <form id="calc-form">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="group-basic">No.</th><th class="group-basic">Card</th><th class="group-basic">Response</th>
+                                        <th class="group-loc">Location</th><th class="group-dq">DQ</th>
+                                        <th colspan="6" class="group-det">Determinants</th>
+                                        <th class="group-fq">FQ</th><th class="group-pair">Pair</th>
+                                        <th colspan="6" class="group-con">Contents</th>
+                                        <th class="group-pop">P</th><th class="group-z">Z</th>
+                                        <th class="group-calc">Score</th><th class="group-calc">G/PHR</th>
+                                        <th colspan="6" class="group-special">Special Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="input-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="button-container"> <button type="submit">Calculate Results</button> </div>
+                    </form>
+                    <div id="loader" style="display:none; text-align:center;"><h2>Calculating...</h2></div>
+                </div>
+            </div>
+
+            <div id="List" class="tabcontent-initial">
+                <h2>채점 코드 목록 (Scoring Code List)</h2>
+                <p>각 드롭다운 메뉴에 포함된 선택지 목록입니다. (좌우로 스크롤 가능)</p>
+                <div id="list-grid-container-wrapper">
+                    <div id="list-grid-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-container">
+    
+            <h1 class="no-print">Structural Summary</h1>
+            
+            <div class="tab no-print" id="results-tab">
+                <button class="tablinks-results active" onclick="openResultsTab(event, 'Upper_Section')">Upper Section</button>
+                <button class="tablinks-results" onclick="openResultsTab(event, 'Lower_Section')">Lower Section</button>
+                <button class="tablinks-results" onclick="openResultsTab(event, 'Special_Indices')">Special Indices</button>
+            </div>
+            
+            <div id="Upper_Section" class="tabcontent-results printable-area" style="display: block;">
+                <div class="results-grid">
+                    <div class="grid-card loc-feat">
+                        <h3>Location Features</h3>
+                        <table><tbody>
+                            <tr><th>Zf</th><td id="res_up_Zf"></td></tr>
+                            <tr><th>ZSum</th><td id="res_up_ZSum"></td></tr>
+                            <tr><th>ZEst</th><td id="res_up_ZEst"></td></tr>
+                            <tr style="height: 1.5em;"><td colspan="2" style="border-left: none; border-right: none; border-bottom: 1px solid #f0f0f0;"></td></tr>
+                            <tr><th>W</th><td id="res_up_W"></td></tr>
+                            <tr><th>D</th><td id="res_up_D"></td></tr>
+                            <tr><th>W+D</th><td id="res_up_WD"></td></tr>
+                            <tr><th>Dd</th><td id="res_up_Dd"></td></tr>
+                            <tr><th>S</th><td id="res_up_S"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card dq">
+                        <h3>DQ</h3>
+                        <table><tbody>
+                            <tr><th>+</th><td id="res_up_dq_plus"></td></tr>
+                            <tr><th>o</th><td id="res_up_dq_o"></td></tr>
+                            <tr><th>v/+</th><td id="res_up_dq_vplus"></td></tr>
+                            <tr><th>v</th><td id="res_up_dq_v"></td></tr>
+                        </tbody></table>
+                    </div>
+                     <div class="grid-card blends">
+                        <h3>Blends</h3>
+                        <div class="blends-table-wrapper">
+                            <table id="res_up_blends_table">
+                                </table>
+                        </div>
+                    </div>
+                     <div class="grid-card form-qual">
+                        <h3>Form Quality</h3>
+                        <table>
+                            <thead><tr><th></th><th>FQx</th><th>MQual</th><th>W+D</th></tr></thead>
+                            <tbody>
+                                <tr><th>+</th><td id="res_up_fq_plus_fqx"></td><td id="res_up_fq_plus_mqual"></td><td id="res_up_fq_plus_wd"></td></tr>
+                                <tr><th>o</th><td id="res_up_fq_o_fqx"></td><td id="res_up_fq_o_mqual"></td><td id="res_up_fq_o_wd"></td></tr>
+                                <tr><th>u</th><td id="res_up_fq_u_fqx"></td><td id="res_up_fq_u_mqual"></td><td id="res_up_fq_u_wd"></td></tr>
+                                <tr><th>-</th><td id="res_up_fq_minus_fqx"></td><td id="res_up_fq_minus_mqual"></td><td id="res_up_fq_minus_wd"></td></tr>
+                                <tr><th>none</th><td id="res_up_fq_none_fqx"></td><td id="res_up_fq_none_mqual"></td><td id="res_up_fq_none_wd"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                     <div class="grid-card single">
+                        <h3>Single</h3>
+                        <table><tbody>
+                            <tr><th>M</th><td id="res_up_s_m"></td></tr>
+                            <tr><th>FM</th><td id="res_up_s_fm"></td></tr>
+                            <tr><th>m</th><td id="res_up_s_m_lower"></td></tr>
+                            <tr><th>FC</th><td id="res_up_s_fc"></td></tr>
+                            <tr><th>CF</th><td id="res_up_s_cf"></td></tr>
+                            <tr><th>C</th><td id="res_up_s_c"></td></tr>
+                            <tr><th>Cn</th><td id="res_up_s_cn"></td></tr>
+                            <tr><th>FC'</th><td id="res_up_s_fc_prime"></td></tr>
+                            <tr><th>C'F</th><td id="res_up_s_cf_prime"></td></tr>
+                            <tr><th>C'</th><td id="res_up_s_c_prime"></td></tr>
+                            <tr><th>FT</th><td id="res_up_s_ft"></td></tr>
+                            <tr><th>TF</th><td id="res_up_s_tf"></td></tr>
+                            <tr><th>T</th><td id="res_up_s_t"></td></tr>
+                            <tr><th>FV</th><td id="res_up_s_fv"></td></tr>
+                            <tr><th>VF</th><td id="res_up_s_vf"></td></tr>
+                            <tr><th>V</th><td id="res_up_s_v"></td></tr>
+                            <tr><th>FY</th><td id="res_up_s_fy"></td></tr>
+                            <tr><th>YF</th><td id="res_up_s_yf"></td></tr>
+                            <tr><th>Y</th><td id="res_up_s_y"></td></tr>
+                            <tr><th>Fr</th><td id="res_up_s_fr"></td></tr>
+                            <tr><th>rF</th><td id="res_up_s_rf"></td></tr>
+                            <tr><th>FD</th><td id="res_up_s_fd"></td></tr>
+                            <tr><th>F</th><td id="res_up_s_f"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card pairs">
+                        <h3>Pairs</h3>
+                        <table><tbody>
+                            <tr><th>(2)</th><td id="res_up_pairs"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card contents">
+                        <h3>Contents</h3>
+                        <table><tbody>
+                            <tr><th>H</th><td id="res_up_c_h"></td></tr>
+                            <tr><th>(H)</th><td id="res_up_c_h_paren"></td></tr>
+                            <tr><th>Hd</th><td id="res_up_c_hd"></td></tr>
+                            <tr><th>(Hd)</th><td id="res_up_c_hd_paren"></td></tr>
+                            <tr><th>Hx</th><td id="res_up_c_hx"></td></tr>
+                            <tr><th>A</th><td id="res_up_c_a"></td></tr>
+                            <tr><th>(A)</th><td id="res_up_c_a_paren"></td></tr>
+                            <tr><th>Ad</th><td id="res_up_c_ad"></td></tr>
+                            <tr><th>(Ad)</th><td id="res_up_c_ad_paren"></td></tr>
+                            <tr><th>An</th><td id="res_up_c_an"></td></tr>
+                            <tr><th>Art</th><td id="res_up_c_art"></td></tr>
+                            <tr><th>Ay</th><td id="res_up_c_ay"></td></tr>
+                            <tr><th>Bl</th><td id="res_up_c_bl"></td></tr>
+                            <tr><th>Bt</th><td id="res_up_c_bt"></td></tr>
+                            <tr><th>Cg</th><td id="res_up_c_cg"></td></tr>
+                            <tr><th>Cl</th><td id="res_up_c_cl"></td></tr>
+                            <tr><th>Ex</th><td id="res_up_c_ex"></td></tr>
+                            <tr><th>Fd</th><td id="res_up_c_fd"></td></tr>
+                            <tr><th>Fi</th><td id="res_up_c_fi"></td></tr>
+                            <tr><th>Ge</th><td id="res_up_c_ge"></td></tr>
+                            <tr><th>Hh</th><td id="res_up_c_hh"></td></tr>
+                            <tr><th>Ls</th><td id="res_up_c_ls"></td></tr>
+                            <tr><th>Na</th><td id="res_up_c_na"></td></tr>
+                            <tr><th>Sc</th><td id="res_up_c_sc"></td></tr>
+                            <tr><th>Sx</th><td id="res_up_c_sx"></td></tr>
+                            <tr><th>Xy</th><td id="res_up_c_xy"></td></tr>
+                            <tr><th>Id</th><td id="res_up_c_id"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card approach">
+                        <h3>Approach</h3>
+                        <table>
+                            <tbody>
+                                <tr><th>I</th><td id="res_ap_1_1"></td><td id="res_ap_1_2"></td><td id="res_ap_1_3"></td><td id="res_ap_1_4"></td><td id="res_ap_1_5"></td><td id="res_ap_1_6"></td><td id="res_ap_1_7"></td><td id="res_ap_1_8"></td><td id="res_ap_1_9"></td><td id="res_ap_1_10"></td></tr>
+                                <tr><th>II</th><td id="res_ap_2_1"></td><td id="res_ap_2_2"></td><td id="res_ap_2_3"></td><td id="res_ap_2_4"></td><td id="res_ap_2_5"></td><td id="res_ap_2_6"></td><td id="res_ap_2_7"></td><td id="res_ap_2_8"></td><td id="res_ap_2_9"></td><td id="res_ap_2_10"></td></tr>
+                                <tr><th>III</th><td id="res_ap_3_1"></td><td id="res_ap_3_2"></td><td id="res_ap_3_3"></td><td id="res_ap_3_4"></td><td id="res_ap_3_5"></td><td id="res_ap_3_6"></td><td id="res_ap_3_7"></td><td id="res_ap_3_8"></td><td id="res_ap_3_9"></td><td id="res_ap_3_10"></td></tr>
+                                <tr><th>IV</th><td id="res_ap_4_1"></td><td id="res_ap_4_2"></td><td id="res_ap_4_3"></td><td id="res_ap_4_4"></td><td id="res_ap_4_5"></td><td id="res_ap_4_6"></td><td id="res_ap_4_7"></td><td id="res_ap_4_8"></td><td id="res_ap_4_9"></td><td id="res_ap_4_10"></td></tr>
+                                <tr><th>V</th><td id="res_ap_5_1"></td><td id="res_ap_5_2"></td><td id="res_ap_5_3"></td><td id="res_ap_5_4"></td><td id="res_ap_5_5"></td><td id="res_ap_5_6"></td><td id="res_ap_5_7"></td><td id="res_ap_5_8"></td><td id="res_ap_5_9"></td><td id="res_ap_5_10"></td></tr>
+                                <tr><th>VI</th><td id="res_ap_6_1"></td><td id="res_ap_6_2"></td><td id="res_ap_6_3"></td><td id="res_ap_6_4"></td><td id="res_ap_6_5"></td><td id="res_ap_6_6"></td><td id="res_ap_6_7"></td><td id="res_ap_6_8"></td><td id="res_ap_6_9"></td><td id="res_ap_6_10"></td></tr>
+                                <tr><th>VII</th><td id="res_ap_7_1"></td><td id="res_ap_7_2"></td><td id="res_ap_7_3"></td><td id="res_ap_7_4"></td><td id="res_ap_7_5"></td><td id="res_ap_7_6"></td><td id="res_ap_7_7"></td><td id="res_ap_7_8"></td><td id="res_ap_7_9"></td><td id="res_ap_7_10"></td></tr>
+                                <tr><th>VIII</th><td id="res_ap_8_1"></td><td id="res_ap_8_2"></td><td id="res_ap_8_3"></td><td id="res_ap_8_4"></td><td id="res_ap_8_5"></td><td id="res_ap_8_6"></td><td id="res_ap_8_7"></td><td id="res_ap_8_8"></td><td id="res_ap_8_9"></td><td id="res_ap_8_10"></td></tr>
+                                <tr><th>IX</th><td id="res_ap_9_1"></td><td id="res_ap_9_2"></td><td id="res_ap_9_3"></td><td id="res_ap_9_4"></td><td id="res_ap_9_5"></td><td id="res_ap_9_6"></td><td id="res_ap_9_7"></td><td id="res_ap_9_8"></td><td id="res_ap_9_9"></td><td id="res_ap_9_10"></td></tr>
+                                <tr><th>X</th><td id="res_ap_10_1"></td><td id="res_ap_10_2"></td><td id="res_ap_10_3"></td><td id="res_ap_10_4"></td><td id="res_ap_10_5"></td><td id="res_ap_10_6"></td><td id="res_ap_10_7"></td><td id="res_ap_10_8"></td><td id="res_ap_10_9"></td><td id="res_ap_10_10"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="grid-card spec-scores">
+                          <h3>Special Scores</h3>
+                        <table class="spec-scores-table" id="special-scores-level-table">
+                            <thead>
+                                <tr><th></th><th colspan="2">Level 1</th><th colspan="2">Level 2</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>DV</th><td id="res_up_ss_dv1_n"></td><td id="res_up_ss_dv1_w"></td><td id="res_up_ss_dv2_n"></td><td id="res_up_ss_dv2_w"></td></tr>
+                                <tr><th>INCOM</th><td id="res_up_ss_incom1_n"></td><td id="res_up_ss_incom1_w"></td><td id="res_up_ss_incom2_n"></td><td id="res_up_ss_incom2_w"></td></tr>
+                                <tr><th>DR</th><td id="res_up_ss_dr1_n"></td><td id="res_up_ss_dr1_w"></td><td id="res_up_ss_dr2_n"></td><td id="res_up_ss_dr2_w"></td></tr>
+                                <tr><th>FABCOM</th><td id="res_up_ss_fabcom1_n"></td><td id="res_up_ss_fabcom1_w"></td><td id="res_up_ss_fabcom2_n"></td><td id="res_up_ss_fabcom2_w"></td></tr>
+                                <tr><th>ALOG</th><td id="res_up_ss_alog_n"></td><td id="res_up_ss_alog_w"></td><td colspan="2" style="background-color: #f0f0f0;"></td></tr>
+                                <tr><th>CONTAM</th><td id="res_up_ss_contam_n"></td><td id="res_up_ss_contam_w"></td><td colspan="2" style="background-color: #f0f0f0;"></td></tr>
+                                <tr><td colspan="5" style="border-top: 1px solid #dee2e6; padding:4px;"></td></tr>
+                                <tr><th colspan="2" style="text-align:right;">Sum6 =</th><td id="res_up_ss_sum6"></td><th style="text-align:right;">WSum6 =</th><td id="res_up_ss_wsum6"></td></tr>
+                            </tbody>
+                        </table>
+                        <table style="margin-top: auto;">
+                            <tbody><tr><th>AB</th><td id="res_up_ss_ab"></td><th>GHR</th><td id="res_up_ss_ghr"></td></tr>
+                            <tr><th>AG</th><td id="res_up_ss_ag"></td><th>PHR</th><td id="res_up_ss_phr"></td></tr>
+                            <tr><th>COP</th><td id="res_up_ss_cop"></td><th>MOR</th><td id="res_up_ss_mor"></td></tr>
+                            <tr><th>CP</th><td id="res_up_ss_cp"></td><th>PER</th><td id="res_up_ss_per"></td></tr>
+                            <tr><th></th><td></td><th>PSV</th><td id="res_up_ss_psv"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <details class="dets-toggle">
+                        <summary>Show/Hide Determinants Summary</summary>
+                        <div class="grid-card" style="margin-top: 10px;">
+                            <h3>Determinants</h3>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <th>M</th><td id="res_up_det_m"></td>
+                                        <th>FM</th><td id="res_up_det_fm"></td>
+                                        <th>m</th><td id="res_up_det_m_lower"></td>
+                                        <th>FC</th><td id="res_up_det_fc"></td>
+                                        <th>CF</th><td id="res_up_det_cf"></td>
+                                        <th>C</th><td id="res_up_det_c"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>FC'</th><td id="res_up_det_fc_prime"></td>
+                                        <th>C'F</th><td id="res_up_det_cf_prime"></td>
+                                        <th>C'</th><td id="res_up_det_c_prime"></td>
+                                        <th>FV</th><td id="res_up_det_fv"></td>
+                                        <th>VF</th><td id="res_up_det_vf"></td>
+                                        <th>V</th><td id="res_up_det_v"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>FT</th><td id="res_up_det_ft"></td>
+                                        <th>TF</th><td id="res_up_det_tf"></td>
+                                        <th>T</th><td id="res_up_det_t"></td>
+                                        <th>FD</th><td id="res_up_det_fd"></td>
+                                        <th>F</th><td id="res_up_det_f"></td>
+                                        <th>Cn</th><td id="res_up_det_cn"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>FY</th><td id="res_up_det_fy"></td>
+                                        <th>YF</th><td id="res_up_det_yf"></td>
+                                        <th>Y</th><td id="res_up_det_y"></td>
+                                        <th>Fr</th><td id="res_up_det_fr"></td>
+                                        <th>rF</th><td id="res_up_det_rf"></td>
+                                        <th></th><td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+            </div>
+            
+            <div id="Lower_Section" class="tabcontent-results printable-area">
+                <div class="results-grid">
+                    <div class="grid-card">
+                        <h3>Core</h3>
+                        <table class="core-card-top-table"><tbody>
+                           <tr>
+                                <th>R</th><td id="res_lo_R"></td>
+                                <th>Lambda</th><td id="res_lo_Lambda"></td>
+                           </tr>
+                        </tbody></table>
+                        <div class="tooltip-container">
+                            &lt; Coping Style : <span id="res_lo_coping_style_text">Introversive Style</span> &gt;
+                            <div class="tooltip-text">
+                                <p>A coping style('introversive style' or 'extratensive style') is identified if the value on one side of the EB exceeds the other by two or more points when EA is 10 or less, or more than two points hen EA is grather than 1.0. When neither value is markedly different than the other, no distinctive style is indicated and the person is referred to as an 'ambient'. The first exception concerns protocols that have an EA less than 4.0. The second exception concerns protocols that have a zero on the left side of the EB and a value greather than 3.5 on the right side, and protocols that have a zero on the right side and a value of at least 3 on the left side.</p>
+                            </div>
+                        </div>
+                        <table class="core-card-main-table">
+                            <tbody>
+                                <tr>
+                                    <th>EB</th><td id="res_lo_EB"></td>
+                                    <th>EA</th><td id="res_lo_EA"></td>
+                                    <th>EBPer</th><td id="res_lo_EBPer"></td>
+                                </tr>
+                                <tr>
+                                    <th>eb</th><td id="res_lo_eb"></td>
+                                    <th>es</th><td id="res_lo_es"></td>
+                                    <th>D</th><td id="res_lo_D"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="border:none; background-color: white;"></td>
+                                    <th>Adj es</th><td id="res_lo_AdjEs"></td>
+                                    <th>Adj D</th><td id="res_lo_AdjD"></td>
+                                </tr>
+                                <tr style="border-top: 1px dotted #ccc;">
+                                    <th>FM</th><td id="res_lo_FM"></td>
+                                    <th>SumC'</th><td id="res_lo_SumCprime"></td>
+                                    <th>SumT</th><td id="res_lo_SumT"></td>
+                                </tr>
+                                <tr>
+                                    <th>m</th><td id="res_lo_m"></td>
+                                    <th>SumV</th><td id="res_lo_SumV"></td>
+                                    <th>SumY</th><td id="res_lo_SumY"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="grid-card">
+                        <h3>Information Processing</h3>
+                        <table><tbody>
+                            <tr><th>Zf</th><td id="res_lo_Zf"></td></tr>
+                            <tr><th>W : D : Dd</th><td id="res_lo_W_D_Dd"></td></tr>
+                            <tr><th>W : M</th><td id="res_lo_W_M"></td></tr>
+                            <tr><th>Zd</th><td id="res_lo_Zd"></td></tr>
+                            <tr><th>PSV</th><td id="res_lo_PSV"></td></tr>
+                            <tr><th>DQ+</th><td id="res_lo_DQ_plus"></td></tr>
+                            <tr><th>DQv</th><td id="res_lo_DQ_v"></td></tr>
+                        </tbody></table>
+                    </div>
+
+                    <div class="grid-card">
+                        <h3>Ideation</h3>
+                        <table class="ideation-card-table"><tbody>
+                            <tr>
+                                <th>a : p</th><td id="res_lo_a_p"></td>
+                                <th>Sum6</th><td id="res_lo_Sum6"></td>
+                            </tr>
+                            <tr>
+                                <th>Ma : Mp</th><td id="res_lo_Ma_Mp"></td>
+                                <th>Lv2</th><td id="res_lo_Lv2"></td>
+                            </tr>
+                            <tr>
+                                <th>2AB+Art+Ay</th><td id="res_lo_2AB_Art_Ay"></td>
+                                <th>WSum6</th><td id="res_lo_WSum6_ideation"></td>
+                            </tr>
+                            <tr>
+                                <th>MOR</th><td id="res_lo_MOR_ideation"></td>
+                                <th>M-</th><td id="res_lo_M_minus_ideation"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border:none; background-color: white;"></td>
+                                <th>Mnone</th><td id="res_lo_Mnone"></td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card">
+                        <h3>Cognitive Mediation</h3>
+                        <table><tbody>
+                            <tr><th>XA%</th><td id="res_lo_XA_pct"></td></tr>
+                            <tr><th>WDA%</th><td id="res_lo_WDA_pct"></td></tr>
+                            <tr><th>X-%</th><td id="res_lo_Xminus_pct"></td></tr>
+                            <tr><th>S-</th><td id="res_lo_S_minus"></td></tr>
+                            <tr><th>P</th><td id="res_lo_P_cog"></td></tr>
+                            <tr><th>X+%</th><td id="res_lo_Xplus_pct"></td></tr>
+                            <tr><th>Xu%</th><td id="res_lo_Xu_pct"></td></tr>
+                        </tbody></table>
+                    </div>
+
+                    <div class="grid-card">
+                        <h3>Affection</h3>
+                        <table><tbody>
+                             <tr><th>FC : CF+C</th><td id="res_lo_FC_CF_C"></td></tr>
+                             <tr><th>Pure C</th><td id="res_lo_PureC"></td></tr>
+                             <tr><th>SumC' : WSumC</th><td id="res_lo_SumC_WSumC"></td></tr>
+                             <tr><th>Afr</th><td id="res_lo_Afr"></td></tr>
+                             <tr><th>S</th><td id="res_lo_S_aff"></td></tr>
+                             <tr><th>Blends : R</th><td id="res_lo_Blends_R"></td></tr>
+                             <tr><th>CP</th><td id="res_lo_CP"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card">
+                        <h3>Self-Perception</h3>
+                        <table><tbody>
+                            <tr><th>3r+(2)/R</th><td id="res_lo_3r_2_R"></td></tr>
+                            <tr><th>Fr+rF</th><td id="res_lo_Fr_rF"></td></tr>
+                            <tr><th>SumV</th><td id="res_lo_SumV_self"></td></tr>
+                            <tr><th>FD</th><td id="res_lo_FD"></td></tr>
+                            <tr><th>An+Xy</th><td id="res_lo_An_Xy"></td></tr>
+                            <tr><th>MOR</th><td id="res_lo_MOR_self"></td></tr>
+                            <tr><th>H : (H)+Hd+(Hd)</th><td id="res_lo_H_ratio"></td></tr>
+                        </tbody></table>
+                    </div>
+
+                    <div class="grid-card">
+                        <h3>Interpersonal</h3>
+                        <table><tbody>
+                            <tr><th>COP</th><td id="res_lo_COP"></td></tr>
+                            <tr><th>AG</th><td id="res_lo_AG"></td></tr>
+                            <tr><th>GHR : PHR</th><td id="res_lo_GHR_PHR"></td></tr>
+                            <tr><th>a : p</th><td id="res_lo_a_p_inter"></td></tr>
+                            <tr><th>Food</th><td id="res_lo_Food"></td></tr>
+                            <tr><th>SumT</th><td id="res_lo_SumT_inter"></td></tr>
+                            <tr><th>Human Cont</th><td id="res_lo_HumanCont"></td></tr>
+                            <tr><th>Pure H</th><td id="res_lo_PureH"></td></tr>
+                            <tr><th>PER</th><td id="res_lo_PER"></td></tr>
+                            <tr><th>ISO Index</th><td id="res_lo_ISO_Index"></td></tr>
+                        </tbody></table>
+                    </div>
+                    <div class="grid-card">
+                        <h3>Special Indices</h3>
+                        <table class="special-indices-card-table"><tbody>
+                            <tr><th>PTI</th><td id="res_si_pti_score"></td><td id="res_si_pti_val"></td></tr>
+                            <tr><th>DEPI</th><td id="res_si_depi_score"></td><td id="res_si_depi_val"></td></tr>
+                            <tr><th>CDI</th><td id="res_si_cdi_score"></td><td id="res_si_cdi_val"></td></tr>
+                            <tr><th>S-CON</th><td id="res_si_scon_score"></td><td id="res_si_scon_val"></td></tr>
+                            <tr><th>HVI</th><td id="res_si_hvi_score"></td><td id="res_si_hvi_val"></td></tr>
+                            <tr><th>OBS</th><td id="res_si_obs_score"></td><td id="res_si_obs_val"></td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="Special_Indices" class="tabcontent-results printable-area">
+                 <div class="results-grid">
+                    <div class="grid-card">
+                        <h3>S-Constellation (Suicide Potential)</h3>
+                        <div class="criterion-item main-criterion">
+                            <div class="custom-checkbox" id="res_scon_check"></div>
+                            <div class="label">
+                                8개 이상 해당될 경우 체크
+                                <div class="note">( 주의 : 14세 이상의 수검자에게만 적용 )</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c1"></div><div class="label">FV + VF + V + FD > 2</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c2"></div><div class="label">Color-Shading Blends > 0</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c3"></div><div class="label">3r+(2)/R < .31 or > .44</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c4"></div><div class="label">MOR > 3</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c5"></div><div class="label">Zd > +3.5 or Zd < -3.5</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c6"></div><div class="label">es > EA</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c7"></div><div class="label">CF + C > FC</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c8"></div><div class="label">X+% < .70</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c9"></div><div class="label">S > 3</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c10"></div><div class="label">P < 3 or P > 8</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c11"></div><div class="label">Pure H < 2</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_scon_c12"></div><div class="label">R < 17</div></div>
+                        </div>
+                    </div>
+                    <div class="grid-card">
+                        <h3>DEPI (Depression Index)</h3>
+                        <div class="criterion-item main-criterion">
+                            <div class="custom-checkbox" id="res_depi_check"></div><div class="label">5개 이상 해당될 경우 체크</div>
+                        </div>
+                        <div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c1"></div><div class="label">(FV + VF + V > 0) or (FD > 2)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c2"></div><div class="label">(Color-Shading Blends > 0) or (S > 2)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c3"></div><div class="label">(3r+(2)/R > .44 and Fr + rF = 0) or (3r+(2)/R < .33)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c4"></div><div class="label">(Afr < .46) or (Blends < 4)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c5"></div><div class="label">(Sum Shading > FM + m) or (SumC' > 2)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c6"></div><div class="label">(MOR > 2) or (2×AB + Art + Ay > 3)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_depi_c7"></div><div class="label">(COP < 2) or ([Bt + 2×Cl + Ge + Ls + 2×Na] / R > .24)</div></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-card">
+                        <h3>PTI (Perceptual-Thinking Index)</h3>
+                        <div class="criterion-item main-criterion">
+                            <div class="custom-checkbox" id="res_pti_check"></div><div class="label"></div>
+                        </div>
+                        <div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_pti_c1"></div><div class="label">XA% < .70 and WDA% < .75</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_pti_c2"></div><div class="label">X-% > .29</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_pti_c3"></div><div class="label">Level2 > 2 and FABCOM2 > 0</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_pti_c4"></div><div class="label">(R < 17 and WSum6 > 12) or (R > 16 & WSum6 > 17)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_pti_c5"></div><div class="label">M- > 1 or X-% > .40</div></div>
+                        </div>
+                    </div>
+                    <div class="grid-card">
+                        <h3>CDI (Coping Deficit Index)</h3>
+                         <div class="criterion-item main-criterion">
+                            <div class="custom-checkbox" id="res_cdi_check"></div><div class="label">4개 이상이면 체크</div>
+                        </div>
+                        <div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_cdi_c1"></div><div class="label">(EA < 6) or (AdjD < 0)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_cdi_c2"></div><div class="label">(COP < 2) and (AG < 2)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_cdi_c3"></div><div class="label">(WSumC < 2.5) or (Afr < .46)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_cdi_c4"></div><div class="label">(Passive > Active+1) or (Pure H < 2)</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_cdi_c5"></div><div class="label">(SumT > 1) or (Isolate/R > .24) or (Food > 0)</div></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-card">
+                        <h3>HVI (Hypervigilance Index)</h3>
+                        <div class="criterion-item main-criterion">
+                            <div class="custom-checkbox" id="res_hvi_check"></div>
+                            <div class="label">(1)번을 만족시키고 아래 (2)~(8) 항목 중 최소 4개가 해당될 경우 체크</div>
+                        </div>
+                        <div>
+                           <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c1"></div><div class="label">(1) FT + TF + T = 0</div></div>
+                        </div>
+                        <div style="padding-left: 26px; margin-top: 10px;">
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c2"></div><div class="label">(2) Zf > 12</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c3"></div><div class="label">(3) Zd > +3.0</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c4"></div><div class="label">(4) S > 3</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c5"></div><div class="label">(5) H + (H) + Hd + (Hd) > 6</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c6"></div><div class="label">(6) (H) + (A) + (Hd) + (Ad) > 3</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c7"></div><div class="label">(7) H + A : Hd + Ad < 4 : 1</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_hvi_c8"></div><div class="label">(8) Cg > 3</div></div>
+                        </div>
+                    </div>
+                    <div class="grid-card">
+                        <h3>OBS (Obsessive Style Index)</h3>
+                        <div class="criterion-item main-criterion">
+                           <div class="custom-checkbox" id="res_obs_check"></div><div class="label">아래 조건 중 1개 이상 해당되면 체크</div>
+                        </div>
+                        <div class="obs-rules">                                
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_r1"></div><div class="label">(1)~(5) 모두 해당</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_r2"></div><div class="label">(1)~(4) 중에서 2개 이상 해당 & FQ+ > 3</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_r3"></div><div class="label">(1)~(5) 중에서 3개 이상 해당 & X+% > .89</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_r4"></div><div class="label">FQ+ > 3 and X+% > .89</div></div>
+                        </div>
+                        <div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_c1"></div><div class="label">(1) Dd > 3</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_c2"></div><div class="label">(2) Zf > 12</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_c3"></div><div class="label">(3) Zd > +3.0</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_c4"></div><div class="label">(4) Populars > 7</div></div>
+                            <div class="criterion-item"><div class="custom-checkbox" id="res_obs_c5"></div><div class="label">(5) FQ+ > 1</div></div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+
+            <div class="button-container no-print">
+                <button onclick="window.print()" style="background-color:#6c757d;">Print Results</button>
+                <button id="back-button" onclick="showScoring()" style="margin-left:10px;">Go Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('calc-form');
+        const inputBody = document.getElementById('input-body');
+        const initialScreenContainer = document.getElementById('initial-screen-container');
+        const resultsContainer = document.getElementById('results-container');
+        const loader = document.getElementById('loader');
+
+        const options = {
+            card: ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"],
+            location: ["", "D", "Dd", "DdS", "DS", "S", "W", "WS"],
+            dq: ["", "+", "o", "v", "v/+"],
+            determinants: ["","C","C'","CF","C'F","Cn","F","FC","FC'","FD","FM","FMa","FMa-p","FMp","FT","FV","FY","Fr","M","Ma","Ma-p","Mp","T","TF","V","VF","Y","YF","m","ma","ma-p","mp","rF"].sort(),
+            fq: ["", "+", "-", "none", "o", "u", "s-"],
+            pair: ["", "(2)"],
+            contents: ["","(A)","(Ad)","(H)","(Hd)","A","Ad","An","Art","Ay","Bl","Bt","Cg","Cl","Ex","Fd","Fi","Ge","H","Hd","Hh","Hx","Id","Ls","Na","Sc","Sx","Xy"].sort(),
+            popular: ["", "P"],
+            z: ["", "ZA", "ZD", "ZS", "ZW"],
+            special_score: ["","AB","AG","ALOG","CONTAM","COP","CP","DR1","DR2","DV1","DV2","FABCOM1","FABCOM2","GHR","INCOM1","INCOM2","MOR","PER","PHR","PSV"].sort()
+        };
+
+        const Z_SCORE_TABLE = {
+            "I":   {"ZW": 1.0, "ZA": 4.0, "ZD": 6.0, "ZS": 3.5},
+            "II":  {"ZW": 4.5, "ZA": 3.0, "ZD": 5.5, "ZS": 4.5},
+            "III": {"ZW": 5.5, "ZA": 3.0, "ZD": 4.0, "ZS": 4.5},
+            "IV":  {"ZW": 2.0, "ZA": 4.0, "ZD": 3.5, "ZS": 5.0},
+            "V":   {"ZW": 1.0, "ZA": 2.5, "ZD": 5.0, "ZS": 4.0},
+            "VI":  {"ZW": 2.5, "ZA": 2.5, "ZD": 6.0, "ZS": 6.5},
+            "VII": {"ZW": 2.5, "ZA": 1.0, "ZD": 3.0, "ZS": 4.0},
+            "VIII":{"ZW": 4.5, "ZA": 3.0, "ZD": 3.0, "ZS": 4.0},
+            "IX":  {"ZW": 5.5, "ZA": 2.5, "ZD": 4.5, "ZS": 5.0},
+            "X":   {"ZW": 5.5, "ZA": 4.0, "ZD": 4.5, "ZS": 6.0}
+        };
+
+        function classifyGPHR(r) {
+            const hasAnyContent = (arr) => Array.isArray(r.contents) && r.contents.some(c => arr.includes(c));
+            const hasAnySS = (arr) => Array.isArray(r.special_scores) && r.special_scores.some(s => arr.includes(s));
+            const hasAnyDet = (arr) => Array.isArray(r.determinants) && r.determinants.some(d => arr.includes(d));
+            const hasHumanContent = hasAnyContent(["H", "(H)", "Hd", "(Hd)", "Hx"]);
+            const hasHumanMovement = hasAnyDet(["Ma", "Mp", "Ma-p"]);
+            const hasAnimalMovement = hasAnyDet(["FMa", "FMp", "FMa-p"]);
+            const hasCopOrAg = hasAnySS(["COP", "AG"]);
+            const isEligible = hasHumanContent || hasHumanMovement || (hasAnimalMovement && hasCopOrAg);
+            if (!isEligible) { return ""; }
+            const FQ = r.fq;
+            const popular = r.popular;
+            const card = r.card;
+            const isPureH = hasAnyContent(['H']);
+            const isGoodFQ = ['+', 'o', 'u'].includes(FQ);
+            const hasBadCognitiveSS = hasAnySS(['DR1', 'DR2', 'INCOM1', 'INCOM2', 'FABCOM1', 'FABCOM2', 'ALOG', 'CONTAM']);
+            const hasAgOrMor = hasAnySS(['AG', 'MOR']);
+            if (isPureH && isGoodFQ && !hasBadCognitiveSS && !hasAgOrMor) { return "GHR"; }
+            const isBadFQ = FQ === '-' || FQ === 'none';
+            const hasLevel2SS = hasAnySS(['ALOG', 'CONTAM', 'DV2', 'INCOM2', 'DR2', 'FABCOM2']);
+            if (isBadFQ || hasLevel2SS) { return "PHR"; }
+            if (hasAnySS(['COP']) && !hasAnySS(['AG'])) { return "GHR"; }
+            if (hasAnySS(['FABCOM1', 'MOR']) || hasAnyContent(['An'])) { return "PHR"; }
+            if (popular && ['III', 'IV', 'VII', 'IX'].includes(card)) { return "GHR"; }
+            if (hasAnySS(['AG', 'INCOM1', 'DR1']) || hasAnyContent(['Hd'])) { return "PHR"; }
+            return "GHR";
+        }
+
+        function updateGPHR(rowNumber) {
+            const rowData = { determinants: [], contents: [], special_scores: [] };
+            const inputs = form.elements;
+            rowData.card = inputs[`card${rowNumber}`].value;
+            rowData.fq = inputs[`fq${rowNumber}`].value;
+            rowData.popular = !!inputs[`pop${rowNumber}`].value;
+            for (let j = 1; j <= 6; j++) {
+                const det = inputs[`det${rowNumber}_${j}`].value;
+                const con = inputs[`con${rowNumber}_${j}`].value;
+                const ss = inputs[`ss${rowNumber}_${j}`].value;
+                if (det) rowData.determinants.push(det);
+                if (con) rowData.contents.push(con);
+                if (ss) rowData.special_scores.push(ss);
+            }
+            const gphrValue = classifyGPHR(rowData);
+            inputs[`gphr${rowNumber}`].value = gphrValue;
+        }
+        
+        const sampleData = {
+          "card1":"I", "location1":"W", "dq1":"o", "det1_1":"FMa", "fq1":"u", "pair1":"(2)", "con1_1":"A", "z1":"ZW", "ss1_1":"INCOM1",
+          "card2":"I", "location2":"W", "dq2":"+", "det2_1":"Mp", "fq2":"o", "pair2":"(2)", "con2_1":"(H)", "z2":"ZW", "ss2_1":"AG",
+          "card3":"I", "location3":"WS", "dq3":"o", "det3_1":"F", "fq3":"o", "con3_1":"Art", "z3":"ZS",
+          "card4":"II", "location4":"D", "dq4":"+", "det4_1":"FMa", "det4_2":"FC", "fq4":"-", "pair4":"(2)", "con4_1":"A", "con4_2":"Sc", "z4":"ZA", "ss4_1":"ALOG",
+          "card5":"III", "location5":"D", "dq5":"+", "det5_1":"Ma", "fq5":"u", "pair5":"(2)", "con5_1":"H", "con5_2":"Sc", "z5":"ZD",
+          "card6":"IV", "location6":"W", "dq6":"+", "det6_1":"Ma", "det6_2":"FC'", "det6_3":"FD", "det6_4":"Mp", "fq6":"-", "pair6":"(2)", "con6_1":"(H)", "con6_2":"Hh", "z6":"ZW",
+          "card7":"V", "location7":"W", "dq7":"+", "det7_1":"FMa", "det7_2":"FY", "fq7":"-", "con7_1":"A", "z7":"ZW", "ss7_1":"INCOM1",
+          "card8":"V", "location8":"W", "dq8":"o", "det8_1":"FMa", "fq8":"o", "con8_1":"A", "pop8":"P", "z8":"ZW",
+          "card9":"V", "location9":"W", "dq9":"o", "det9_1":"FMa", "fq9":"o", "con9_1":"A", "z9":"ZW",
+          "card10":"VI", "location10":"Dd", "dq10":"o", "det10_1":"FMa", "fq10":"-", "con10_1":"A",
+          "card11":"VII", "location11":"Dd", "dq11":"+", "det11_1":"Mp", "fq11":"-", "con11_1":"(H)", "con11_2":"A", "con11_3":"Sx", "pop11":"P", "z11":"ZA",
+          "card12":"VII", "location12":"Dd", "dq12":"o", "det12_1":"F", "fq12":"-", "con12_1":"A", "ss12_1":"INCOM1",
+          "card13":"VIII", "location13":"W", "dq13":"+", "det13_1":"F", "fq13":"-", "con13_1":"An", "z13":"ZW", "ss13_1":"PER",
+          "card14":"VIII", "location14":"D", "dq14":"o", "det14_1":"F", "fq14":"o", "con14_1":"A", "pop14":"P",
+          "card15":"IX", "location15":"W", "dq15":"+", "det15_1":"ma", "fq15":"o", "con15_1":"Fi", "con15_2":"Hh", "z15":"ZW",
+          "card16":"X", "location16":"W", "dq16":"+", "det16_1":"FC", "fq16":"-", "con16_1":"An", "z16":"ZW"
+        };
+        
+        function updateRowCalculations(rowNumber) {
+            const cardSelect = document.querySelector(`select[name="card${rowNumber}"]`);
+            const zSelect = document.querySelector(`select[name="z${rowNumber}"]`);
+            const scoreInput = document.querySelector(`input[name="score${rowNumber}"]`);
+            const card = cardSelect.value;
+            const z = zSelect.value;
+            let score = '';
+            if (card && z && Z_SCORE_TABLE[card] && Z_SCORE_TABLE[card][z] !== undefined) {
+                score = Z_SCORE_TABLE[card][z].toFixed(1);
+            }
+            scoreInput.value = score;
+        }
+
+        for (let i = 1; i <= 20; i++) {
+            const row = document.createElement('tr');
+            let cells = `<td class="group-basic">${i}</td>`;
+            cells += `<td class="group-basic"><select name="card${i}">${options.card.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-basic"><input type="text" name="response${i}"></td>`;
+            cells += `<td class="group-loc"><select name="location${i}">${options.location.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-dq"><select name="dq${i}">${options.dq.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            for(let j=1; j<=6; j++) cells += `<td class="group-det"><select name="det${i}_${j}">${options.determinants.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-fq"><select name="fq${i}">${options.fq.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-pair"><select name="pair${i}">${options.pair.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            for(let j=1; j<=6; j++) cells += `<td class="group-con"><select name="con${i}_${j}">${options.contents.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-pop"><select name="pop${i}">${options.popular.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-z"><select name="z${i}">${options.z.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            cells += `<td class="group-calc"><input type="text" name="score${i}" class="auto-calc-input" readonly></td>`;
+            cells += `<td class="group-calc"><input type="text" name="gphr${i}" class="auto-calc-input" readonly></td>`;
+            for(let j=1; j<=6; j++) cells += `<td class="group-special"><select name="ss${i}_${j}">${options.special_score.map(o => `<option value="${o}">${o}</option>`).join('')}</select></td>`;
+            row.innerHTML = cells;
+            inputBody.appendChild(row);
+
+            document.querySelector(`select[name="card${i}"]`).addEventListener('change', () => updateRowCalculations(i));
+            document.querySelector(`select[name="z${i}"]`).addEventListener('change', () => updateRowCalculations(i));
+
+            const gphrRelatedFields = [
+                `card${i}`, `fq${i}`, `pop${i}`,
+                ...Array.from({length: 6}, (_, j) => `det${i}_${j+1}`),
+                ...Array.from({length: 6}, (_, j) => `con${i}_${j+1}`),
+                ...Array.from({length: 6}, (_, j) => `ss${i}_${j+1}`)
+            ];
+            gphrRelatedFields.forEach(fieldName => {
+                document.querySelector(`[name="${fieldName}"]`).addEventListener('change', () => updateGPHR(i));
+            });
+        }
+        
+        const listContainer = document.getElementById('list-grid-container');
+        const colorClassMap = { card: 'group-basic-bg', location: 'group-loc-bg', dq: 'group-dq-bg', determinants: 'group-det-bg', fq: 'group-fq-bg', pair: 'group-pair-bg', contents: 'group-con-bg', popular: 'group-pop-bg', z: 'group-z-bg', special_score: 'group-special-bg' };
+        for (const key in options) {
+            const card = document.createElement('div');
+            const colorClass = colorClassMap[key] || '';
+            card.className = `list-card ${colorClass}`;
+            let title = key.replace('_', ' ');
+            title = title.charAt(0).toUpperCase() + title.slice(1);
+            card.innerHTML = `<h3>${title}</h3><ul>${options[key].filter(o => o).map(o => `<li>${o}</li>`).join('')}</ul>`;
+            if (options[key].filter(o => o).length > 0) listContainer.appendChild(card);
+        }
+
+        const storageKey = 'rorschachFormData';
+        form.addEventListener('input', (e) => {
+            if(e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => { if (value) data[key] = value; });
+                localStorage.setItem(storageKey, JSON.stringify(data));
+            }
+        });
+
+        function loadData(data) {
+            for (const key in data) {
+                const element = form.elements[key];
+                if (element) {
+                    if (element.type === 'checkbox') element.checked = !!data[key];
+                    else element.value = data[key];
+                }
+            }
+            for (let i = 1; i <= 20; i++) {
+                updateRowCalculations(i);
+                updateGPHR(i);
+            }
+        }
+        
+        let isFirstLoad = true;
+        function handleScoringTabFirstLoad() {
+            if (!isFirstLoad) return;
+            isFirstLoad = false;
+            
+            const savedData = localStorage.getItem(storageKey);
+            if (savedData && Object.keys(JSON.parse(savedData)).length > 0) {
+                if (confirm('이전에 자동 저장된 내용이 있습니다. 불러올까요?')) {
+                    loadData(JSON.parse(savedData));
+                }
+            } else {
+                if (confirm('테스트용 샘플 데이터를 불러올까요?')) {
+                    loadData(sampleData);
+                }
+            }
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loader.style.display = 'block';
+            const dataObject = {};
+            new FormData(form).forEach((value, key) => { dataObject[key] = value; });
+            google.script.run.withSuccessHandler(displayResults).withFailureHandler(displayError).calculateRorschach(dataObject);
+        });
+        
+        function openInitialTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent-initial");
+            for (i=0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            tablinks = document.getElementsByClassName("tablinks-initial");
+            for (i=0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            if (tabName === 'Scoring') {
+                handleScoringTabFirstLoad();
+            }
+        }
+        function openResultsTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent-results");
+            for (i=0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            tablinks = document.getElementsByClassName("tablinks-results");
+            for (i=0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function setCheck(id, isChecked) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('checked', !!isChecked);
+            }
+        }
+
+        function displayResults(response) {
+            loader.style.display = 'none';
+
+            if (!response || !response.success) {
+                alert('Error: ' + (response ? response.error : 'Unknown server error'));
+                return;
+            }
+
+            const r = response.results;
+            if (!r) {
+                alert('Error: No results data received from server.');
+                return;
+            }
+
+            const setText = (id, value) => {
+                try {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.textContent = (value !== null && value !== undefined) ? value : '';
+                    }
+                } catch (e) {
+                    console.error(`Error setting text for ID "${id}":`, e);
+                }
+            };
+
+            try {
+                const up = r.upper_section;
+                if(up) {
+                    setText('res_up_Zf', up.Zf);
+                    setText('res_up_ZSum', up.ZSum);
+                    setText('res_up_ZEst', up.ZEst);
+                    setText('res_up_W', up.W);
+                    setText('res_up_D', up.D);
+                    setText('res_up_WD', (up.W || 0) + (up.D || 0));
+                    setText('res_up_Dd', up.Dd);
+                    setText('res_up_S', up.S);
+                    setText('res_up_dq_plus', up.dq_plus);
+                    setText('res_up_dq_o', up.dq_o);
+                    setText('res_up_dq_vplus', up.dq_vplus);
+                    setText('res_up_dq_v', up.dq_v);
+
+                    const blendsTable = document.getElementById('res_up_blends_table');
+                    if (blendsTable && Array.isArray(up.blends)) {
+                        blendsTable.innerHTML = ''; 
+                        const totalRows = 20; 
+                        const numCols = 6;
+                        up.blends.forEach(determinantArray => {
+                            const row = blendsTable.insertRow();
+                            for (let i = 0; i < numCols; i++) {
+                                const cell = row.insertCell();
+                                cell.textContent = determinantArray[i] || ''; 
+                                cell.style.padding = '4px';
+                                cell.style.fontSize = '11px';
+                                cell.style.textAlign = 'center';
+                                cell.style.border = '1px solid #eee';
+                            }
+                        });
+                        const filledRows = up.blends.length;
+                        for (let i = filledRows; i < totalRows; i++) {
+                            const row = blendsTable.insertRow();
+                            for (let j = 0; j < numCols; j++) {
+                                const cell = row.insertCell();
+                                cell.innerHTML = '&nbsp;'; 
+                                cell.style.border = '1px solid #eee';
+                            }
+                        }
+                    }
+
+                    if (up.formQuality) {
+                        const fqMapping = {
+                            '+': 'plus', 'o': 'o', 'u': 'u', '-': 'minus', 'none': 'none'
+                        };
+                        for (const fqType in up.formQuality) {
+                            const idPrefix = `res_up_fq_${fqMapping[fqType]}`;
+                            const data = up.formQuality[fqType];
+                            if (data) {
+                                setText(`${idPrefix}_fqx`, data.fqx);
+                                setText(`${idPrefix}_mqual`, data.mqual);
+                                setText(`${idPrefix}_wd`, data.wd);
+                            }
+                        }
+                    }
+
+                    if (up.singleDetCounts) {
+                        for (const det in up.singleDetCounts) {
+                            let id;
+                            if (det === 'm') {
+                                id = 'res_up_s_m_lower';
+                            } else if (det.includes("'")) {
+                                id = `res_up_s_${det.toLowerCase().replace(/'/g, '')}_prime`;
+                            } else {
+                                id = `res_up_s_${det.toLowerCase()}`;
+                            }
+                            setText(id, up.singleDetCounts[det]);
+                        }
+                    }
+
+                    if (up.detCounts) {
+                         for (const det in up.detCounts) {
+                            let id;
+                            if (det.includes("'")) {
+                                id = `res_up_det_${det.toLowerCase().replace(/'/g, '')}_prime`;
+                            } else {
+                                id = `res_up_det_${det.toLowerCase()}`;
+                            }
+
+                            if (det === 'm') {
+                                id = 'res_up_det_m_lower';
+                            }
+                            
+                            const el = document.getElementById(id);
+                            if(el) {
+                                setText(id, up.detCounts[det]);
+                            }
+                        }
+                    }
+
+                    setText('res_up_pairs', up.pairs);
+
+                    if (up.contentCounts) {
+                        for (const con in up.contentCounts) {
+                            let cleanCon = con.replace(/[()]/g, '').toLowerCase();
+                            let suffix = con.includes('(') ? '_paren' : '';
+                            let id = `res_up_c_${cleanCon}${suffix}`;
+                            setText(id, up.contentCounts[con]);
+                        }
+                    }
+                    
+                    if (up.approachData) {
+                        const cardMap = {"I":1, "II":2, "III":3, "IV":4, "V":5, "VI":6, "VII":7, "VIII":8, "IX":9, "X":10};
+                        for (const cardName in cardMap) {
+                            const cardNum = cardMap[cardName];
+                            const locations = up.approachData[cardName] || [];
+                            for (let i = 1; i <= 10; i++) {
+                                const cellId = `res_ap_${cardNum}_${i}`;
+                                const locationValue = locations[i-1] || '';
+                                setText(cellId, locationValue);
+                            }
+                        }
+                    }
+                    
+                    if (up.specialScoreCounts) {
+                        const ss = up.specialScoreCounts;
+                        setText('res_up_ss_dv1_n', ss.DV1);
+                        setText('res_up_ss_incom1_n', ss.INCOM1);
+                        setText('res_up_ss_dr1_n', ss.DR1);
+                        setText('res_up_ss_fabcom1_n', ss.FABCOM1);
+                        setText('res_up_ss_dv2_n', ss.DV2);
+                        setText('res_up_ss_incom2_n', ss.INCOM2);
+                        setText('res_up_ss_dr2_n', ss.DR2);
+                        setText('res_up_ss_fabcom2_n', ss.FABCOM2);
+                        setText('res_up_ss_alog_n', ss.ALOG);
+                        setText('res_up_ss_contam_n', ss.CONTAM);
+
+                        setText('res_up_ss_dv1_w', 'x 1');
+                        setText('res_up_ss_incom1_w', 'x 2');
+                        setText('res_up_ss_dr1_w', 'x 3');
+                        setText('res_up_ss_fabcom1_w', 'x 4');
+                        setText('res_up_ss_dv2_w', 'x 2');
+                        setText('res_up_ss_incom2_w', 'x 4');
+                        setText('res_up_ss_dr2_w', 'x 6');
+                        setText('res_up_ss_fabcom2_w', 'x 7');
+                        setText('res_up_ss_alog_w', 'x 5');
+                        setText('res_up_ss_contam_w', 'x 7');
+
+                        setText('res_up_ss_sum6', up.sum6);
+                        setText('res_up_ss_wsum6', up.wsum6);
+                        setText('res_up_ss_ab', ss.AB);
+                        setText('res_up_ss_ag', ss.AG);
+                        setText('res_up_ss_cop', ss.COP);
+                        setText('res_up_ss_cp', ss.CP);
+                        setText('res_up_ss_mor', ss.MOR);
+                        setText('res_up_ss_per', ss.PER);
+                        setText('res_up_ss_psv', ss.PSV);
+                        setText('res_up_ss_ghr', up.GHR);
+                        setText('res_up_ss_phr', up.PHR);
+                    }
+                }
+            } catch (e) {
+                console.error("Error rendering Upper Section:", e);
+                alert("An error occurred while displaying the Upper Section results. Check the console for details.");
+            }
+
+            try {
+                const lo = r.lower_section;
+                if(lo) {
+                    setText('res_lo_R', lo.R);
+                    setText('res_lo_Lambda', lo.Lambda);
+                    setText('res_lo_EB', lo.EB);
+                    setText('res_lo_EA', lo.EA);
+                    setText('res_lo_EBPer', lo.EBPer);
+                    setText('res_lo_eb', lo.eb);
+                    setText('res_lo_es', lo.es);
+                    setText('res_lo_AdjEs', lo.AdjEs);
+                    setText('res_lo_D', lo.D);
+                    setText('res_lo_AdjD', lo.AdjD);
+                    setText('res_lo_FM', lo.FM);
+                    setText('res_lo_m', lo.m);
+                    setText('res_lo_SumCprime', lo.SumCprime);
+                    setText('res_lo_SumT', lo.SumT);
+                    setText('res_lo_SumV', lo.SumV);
+                    setText('res_lo_SumY', lo.SumY);
+                    setText('res_lo_FC_CF_C', lo.FC_CF_C);
+                    setText('res_lo_PureC', lo.PureC);
+                    setText('res_lo_SumC_WSumC', lo.SumC_WSumC);
+                    setText('res_lo_Afr', lo.Afr);
+                    setText('res_lo_S_aff', lo.S_aff);
+                    setText('res_lo_Blends_R', lo.Blends_R);
+                    setText('res_lo_CP', lo.CP);
+                    setText('res_lo_COP', lo.COP);
+                    setText('res_lo_AG', lo.AG);
+                    setText('res_lo_a_p_inter', lo.a_p_inter);
+                    setText('res_lo_Food', lo.Food);
+                    setText('res_lo_SumT_inter', lo.SumT_inter);
+                    setText('res_lo_HumanCont', lo.HumanCont);
+                    setText('res_lo_PureH', lo.PureH);
+                    setText('res_lo_PER', lo.PER);
+                    setText('res_lo_ISO_Index', lo.ISO_Index);
+                    setText('res_lo_XA_pct', lo.XA_percent);
+                    setText('res_lo_WDA_pct', lo.WDA_percent);
+                    setText('res_lo_Xminus_pct', lo.X_minus_percent);
+                    setText('res_lo_S_minus', lo.S_minus);
+                    setText('res_lo_P_cog', lo.P);
+                    setText('res_lo_Xplus_pct', lo.X_plus_percent);
+                    setText('res_lo_Xu_pct', lo.Xu_percent);
+                    setText('res_lo_Zf', lo.Zf);
+                    setText('res_lo_W_D_Dd', lo.W_D_Dd);
+                    setText('res_lo_W_M', lo.W_M);
+                    setText('res_lo_Zd', lo.Zd);
+                    setText('res_lo_PSV', lo.PSV);
+                    setText('res_lo_DQ_plus', lo.DQ_plus);
+                    setText('res_lo_DQ_v', lo.DQ_v);
+                    setText('res_lo_3r_2_R', lo._3r_2_R);
+                    setText('res_lo_Fr_rF', lo.Fr_rF);
+                    setText('res_lo_SumV_self', lo.SumV_self);
+                    setText('res_lo_FD', lo.FD);
+                    setText('res_lo_An_Xy', lo.An_Xy);
+                    setText('res_lo_MOR_self', lo.MOR_self);
+                    setText('res_lo_H_ratio', lo.H_ratio);
+                    setText('res_lo_a_p', lo.a_p);
+                    setText('res_lo_Ma_Mp', lo.Ma_Mp);
+                    setText('res_lo_2AB_Art_Ay', lo._2AB_Art_Ay);
+                    setText('res_lo_MOR_ideation', lo.MOR);
+                    setText('res_lo_Sum6', lo.Sum6);
+                    setText('res_lo_Lv2', lo.Lv2);
+                    setText('res_lo_WSum6_ideation', lo.WSum6_ideation);
+                    setText('res_lo_M_minus_ideation', lo.M_minus_ideation);
+                    setText('res_lo_Mnone', lo.Mnone);
+                }
+            } catch(e) {
+                console.error("Error rendering Lower Section:", e);
+                alert("An error occurred while displaying the Lower Section results. Check the console for details.");
+            }
+            
+            try {
+                const si = r.special_indices;
+                if(si) {
+                    if (si.PTI) {
+                        const parts = si.PTI.split(',');
+                        setText('res_si_pti_score', parts[0]);
+                        setText('res_si_pti_val', parts[1]);
+                        for(let i = 1; i <= 5; i++) setCheck(`res_pti_c${i}`, si.pti_criteria[`c${i}`]);
+                        setCheck('res_pti_check', parseInt(parts[0]) >= 3);
+                    }
+                    if (si.DEPI) {
+                        const parts = si.DEPI.split(',');
+                        setText('res_si_depi_score', parts[0]);
+                        setText('res_si_depi_val', parts[1]);
+                        for(let i = 1; i <= 7; i++) setCheck(`res_depi_c${i}`, si.depi_criteria[`c${i}`]);
+                        setCheck('res_depi_check', parseInt(parts[0]) >= 5);
+                    }
+                    if (si.CDI) {
+                        const parts = si.CDI.split(',');
+                        setText('res_si_cdi_score', parts[0]);
+                        setText('res_si_cdi_val', parts[1]);
+                        for(let i = 1; i <= 5; i++) setCheck(`res_cdi_c${i}`, si.cdi_criteria[`c${i}`]);
+                        setCheck('res_cdi_check', parseInt(parts[0]) >= 4);
+                    }
+                    if (si.SCON) {
+                        const parts = si.SCON.split(',');
+                        setText('res_si_scon_score', parts[0]);
+                        setText('res_si_scon_val', parts[1]);
+                        for(let i = 1; i <= 12; i++) setCheck(`res_scon_c${i}`, si.scon_criteria[`c${i}`]);
+                        setCheck('res_scon_check', parseInt(parts[0]) >= 8);
+                    }
+                    if (si.HVI) {
+                        const parts = si.HVI.split(',');
+                        setText('res_si_hvi_score', parts[0]);
+                        setText('res_si_hvi_val', parts[1]);
+                        for(let i = 1; i <= 8; i++) setCheck(`res_hvi_c${i}`, si.hvi_criteria[`c${i}`]);
+                        setCheck('res_hvi_check', (parts[1] || '').trim() === 'Positive');
+                    }
+                    if (si.OBS) {
+                        const parts = si.OBS.split(',');
+                        setText('res_si_obs_score', parts[0]);
+                        setText('res_si_obs_val', parts[1]);
+                        for(let i = 1; i <= 5; i++) setCheck(`res_obs_c${i}`, si.obs_criteria[`c${i}`]);
+                        for(let i = 1; i <= 4; i++) setCheck(`res_obs_r${i}`, si.obs_rules[`r${i}`]);
+                        setCheck('res_obs_check', (parts[1] || '').trim() === 'Positive');
+                    }
+
+                    if (si.GHR !== undefined && si.PHR !== undefined) {
+                        setText('res_lo_GHR_PHR', `${si.GHR} : ${si.PHR}`);
+                    }
+                }
+            } catch (e) {
+                console.error("Error rendering Special Indices:", e);
+                alert("An error occurred while displaying the Special Indices results. Check the console for details.");
+            }
+
+            document.getElementById('initial-screen-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+            document.querySelector('.tablinks-results').click();
+        }
+
+
+        function showScoring() {
+            resultsContainer.style.display = 'none';
+            initialScreenContainer.style.display = 'block';
+        }
+        function displayError(error) {
+            loader.style.display = 'none';
+            alert('A server error occurred: ' + error.message);
+        }
+    </script>
+</body>
+</html>

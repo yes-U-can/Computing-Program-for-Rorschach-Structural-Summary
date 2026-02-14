@@ -1,0 +1,252 @@
+﻿@import "tailwindcss";
+
+/* Base Styles */
+@layer base {
+  body {
+    @apply text-slate-700;
+    background-color: #F7F9FB;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1 {
+    @apply text-4xl font-bold text-slate-800 tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold text-slate-800;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-slate-800;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply outline-none ring-2 ring-[#4E73AA]/50 ring-offset-2;
+  }
+}
+
+:root {
+  --color-primary: #2A5F7F;
+  --color-primary-hover: #1E4D6A;
+  --color-secondary: #4E73AA;
+  --color-accent-bg: #C1D2DC;
+  --color-page-bg: #F7F9FB;
+  --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+/* Component Styles */
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 text-lg font-semibold text-white rounded-lg shadow-sm bg-[#2A5F7F] transition-colors duration-200 hover:bg-[#1E4D6A] active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 text-lg font-semibold text-[#2A5F7F] bg-white border border-[#C1D2DC] rounded-lg transition-colors duration-200 hover:bg-[#C1D2DC]/20 hover:border-[#C1D2DC] active:bg-[#C1D2DC]/30;
+  }
+
+  .btn-tertiary {
+    @apply px-4 py-2 text-base font-medium text-slate-500 hover:text-[#2A5F7F] hover:bg-white/50 rounded-lg transition-colors duration-150;
+  }
+
+  .card {
+    @apply bg-white border border-slate-200 rounded-lg p-6 transition-shadow duration-200 hover:shadow-md;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .grid-card {
+    @apply bg-white border border-slate-200 rounded-lg p-6 transition-shadow duration-200 hover:shadow-md flex flex-col;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .card-header {
+    @apply text-xl font-semibold text-slate-800 mb-4 pb-3 border-b border-slate-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 text-base text-slate-700 bg-white border border-slate-200 rounded-xl transition-colors duration-200 focus:bg-white focus:border-[#4E73AA] focus:ring-2 focus:ring-[#4E73AA]/20;
+  }
+
+  .input-field.error {
+    @apply border-red-300 bg-red-50/30 focus:border-red-400 focus:ring-red-500/10;
+  }
+
+  .label {
+    @apply block text-sm font-semibold text-slate-600 mb-2 ml-1;
+  }
+
+  .label.required::after {
+    @apply text-red-400;
+    content: ' *';
+  }
+
+  .tab-container {
+    @apply flex gap-2 bg-slate-200/50 p-1.5 rounded-lg;
+  }
+
+  .tab-button {
+    @apply flex-1 px-6 py-2.5 text-base font-medium bg-transparent text-slate-500 rounded-lg transition-colors duration-200 hover:text-slate-800 hover:bg-white/40;
+  }
+
+  .tab-button.active {
+    @apply text-[#2A5F7F] bg-white shadow-sm font-semibold;
+  }
+
+  .mobile-card {
+    @apply bg-white rounded-lg p-6 mx-4 shadow-sm border border-slate-200;
+  }
+
+  .mobile-card-header {
+    @apply text-lg font-bold text-slate-800 mb-4 text-center;
+  }
+
+  .card-progress {
+    @apply w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-6;
+  }
+
+  .card-progress-fill {
+    @apply h-full rounded-full bg-[#2A5F7F] transition-colors duration-200;
+  }
+
+  .mobile-field-group {
+    @apply mb-6;
+  }
+
+  .mobile-nav {
+    @apply flex gap-4 mt-8;
+  }
+
+  .btn-prev {
+    @apply flex-1 px-4 py-4 text-lg font-bold rounded-lg border-none bg-slate-100/80 text-slate-500 transition-[colors,transform] duration-200 hover:bg-slate-200/80 hover:text-slate-700 active:scale-95;
+  }
+
+  .btn-next {
+    @apply flex-1 px-4 py-4 text-lg font-bold rounded-lg border-none text-white shadow-sm shadow-[#2A5F7F]/20 bg-[#2A5F7F] transition-[colors,transform] duration-200 hover:bg-[#1E4D6A] hover:shadow-[#2A5F7F]/20 active:scale-95;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+  .no-print {
+    @media print {
+      display: none !important;
+    }
+  }
+
+  .touch-target {
+    @apply min-w-[44px] min-h-[44px];
+  }
+
+  @media (max-width: 767px) {
+    .touch-target {
+      @apply min-w-[48px] min-h-[48px];
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  body {
+    background: white !important;
+    color: #1c1917 !important;
+  }
+
+  .dark {
+    color-scheme: light;
+  }
+
+  .no-print,
+  #initial-screen-container #initial-tab,
+  #initial-screen-container .tabcontent-initial,
+  #results-tab,
+  .print-guide,
+  .dets-toggle,
+  #language-selector {
+    display: none !important;
+  }
+
+  #results-container {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    visibility: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+  }
+
+  .tabcontent-results {
+    display: block !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .card,
+  .grid-card {
+    background: none !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 4px !important;
+  }
+
+  #Special_Indices {
+    display: block !important;
+  }
+
+  #Upper_Section {
+    order: 1;
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 0;
+    margin-bottom: 20px !important;
+    page-break-after: auto;
+    page-break-inside: avoid;
+    height: auto;
+  }
+
+  #Lower_Section {
+    order: 2;
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    page-break-after: always;
+    height: auto;
+  }
+
+  #Special_Indices {
+    order: 3;
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 0;
+    margin-bottom: 0 !important;
+    page-break-after: auto;
+    page-break-inside: avoid;
+    height: auto;
+  }
+
+  #response-list-container {
+    order: 4;
+    display: block !important;
+  }
+}

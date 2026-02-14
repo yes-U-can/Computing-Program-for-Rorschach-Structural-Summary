@@ -1,0 +1,356 @@
+{
+  "app": {
+    "title": "Calculadora do Sum찼rio Estrutural de Rorschach",
+    "version": "v2.0.0",
+    "provider": "Fornecido pelo Instituto de Psicologia Cl챠nica de Seul"
+  },
+  "nav": {
+    "scoring": "Codifica챌찾o e Sum찼rio Estrutural",
+    "more": "Mais",
+    "login": "Entrar / Registrar",
+    "logout": "Sair",
+    "account": "Minha Conta",
+    "loginRequired": "Login necess찼rio",
+    "aiAssistant": "Assistente de IA"
+  },
+  "buttons": {
+    "calculate": "Calcular Resultados",
+    "reset": "Redefinir Entrada",
+    "add": "Adicionar",
+    "delete": "Excluir",
+    "print": "Imprimir",
+    "rawData": "Dados Brutos",
+    "summary": "Resumo",
+    "aiInterpret": "Solicitar Interpreta챌찾o de IA",
+    "yes": "Sim",
+    "no": "N찾o",
+    "close": "Fechar",
+    "save": "Salvar",
+    "load": "Carregar",
+    "backToInput": "Voltar 횪 Entrada"
+  },
+  "modal": {
+    "welcome": {
+      "title": "Calculadora do Sum찼rio Estrutural de Rorschach",
+      "new": "Criar Novo",
+      "loadSample": "Iniciar com Dados de Exemplo",
+      "loadSaved": "Carregar Conte첬do Salvo Automaticamente",
+      "continue": "Continuar Trabalho",
+      "continueMsg": "H찼 conte첬do em que voc챗 trabalhou da 첬ltima vez."
+    },
+    "reset": {
+      "title": "Por favor, confirme novamente",
+      "message": "Deseja redefinir todos os valores inseridos?"
+    },
+    "ai": {
+      "title": "Etapa de prepara챌찾o: Baixe o arquivo CSV clicando nos bot천es verdes na tela anterior.",
+      "message": "O chatbot de IA conectado atualmente 챕 Gemini Gems, que requer uma conta do Google.",
+      "open": "Abrir em Nova Janela",
+      "cancel": "Voltar para Resultados"
+    },
+    "privacy": {
+      "title": "Pol챠tica de Privacidade",
+      "noticeTitle": "??Aviso de Uso do Armazenamento do Navegador (LocalStorage)",
+      "noticeText_part1": "Este aplicativo armazena temporariamente os dados inseridos na aba 'Codifica챌찾o e Sum찼rio Estrutural' no armazenamento local (LocalStorage) do navegador do seu computador para sua conveni챗ncia de codifica챌찾o.",
+      "noticeText_part2": "Esses dados n찾o s찾o transmitidos ao servidor nem acess챠veis pelo operador, e s찾o usados apenas para restaurar o conte첬do de entrada quando voc챗 revisitar o navegador.",
+      "noticeText_part3": "Ao usar recursos de IA ap처s o login, as chaves de API salvas s찾o gerenciadas de forma criptografada, e o contexto de refer챗ncia (docs internos e fontes de conhecimento adicionadas pelo usu찼rio) pode ser enviado com as solicita챌천es de chat para melhorar a qualidade das respostas."
+    }
+  },
+  "input": {
+    "card": "Cart찾o",
+    "response": "Resposta",
+    "location": "Localiza챌찾o",
+    "dq": "DQ",
+    "determinants": "Determinantes",
+    "fq": "FQ",
+    "pair": "Par",
+    "contents": "Conte첬dos",
+    "popular": "P",
+    "z": "Z",
+    "specialScores": "Pontua챌천es Especiais",
+    "score": "Pontua챌찾o",
+    "gphr": "G/PHR",
+    "guideResponse": "A se챌찾o [Resposta] serve para anotar as respostas verbais do sujeito; n찾o afeta os c찼lculos, portanto pode ser deixada em branco.<br>As se챌천es [Pontua챌찾o] e [G/PHR] s찾o calculados automaticamente, portanto n찾o 챕 necess찼ria entrada manual.<br>No entanto, para [Pontua챌찾o], os valores s찾o calculados automaticamente apenas ap처s a sele챌찾o dos tipos de [Cart찾o] e [Z].",
+    "tooltipInfo": "Apenas a linha inferior pode ser manipulada,\ne at챕 50 linhas s찾o poss챠veis.",
+    "rowOrderTip": "A ordem das linhas de resposta n찾o afeta os resultados do c찼lculo.\nPor exemplo, registrar conte첬do para o Cart찾o 6 na linha 8 e registrar conte첬do para o Cart찾o 2 na linha 14 est찼 bem."
+  },
+  "info": {
+    "categories": {
+      "scoring-input": "Scoring Input",
+      "result-interpretation": "Result Interpretation",
+      "upper-section": "Upper Section",
+      "lower-section": "Lower Section",
+      "special-indices": "Special Indices",
+      "core": "Core",
+      "ideation": "Ideation",
+      "affect": "Affect",
+      "mediation": "Mediation",
+      "processing": "Processing",
+      "interpersonal": "Interpersonal",
+      "selfPerception": "Self-Perception"
+    }
+  },
+  "result": {
+    "tabs": {
+      "upper": "Upper Section",
+      "lower": "Lower Section",
+      "special": "Special Indices"
+    },
+    "upper": {
+      "title": "Upper Section",
+      "location": "Localiza챌찾o",
+      "dq": "Qualidade de Desenvolvimento",
+      "formQuality": "Qualidade da Forma",
+      "determinants": "Determinantes",
+      "contents": "Conte첬dos",
+      "approach": "Abordagem",
+      "specialScores": "Pontua챌천es Especiais"
+    },
+    "core": {
+      "title": "Se챌찾o Central",
+      "R": "R",
+      "Lambda": "L",
+      "EB": "EB",
+      "EA": "EA",
+      "EBPer": "EBPer",
+      "eb": "eb",
+      "es": "es",
+      "D": "Pontua챌찾o D",
+      "AdjD": "D Ajustado",
+      "AdjEs": "es Ajustado",
+      "FM": "FM",
+      "m": "m",
+      "SumCprime": "SumC'",
+      "SumT": "SumT",
+      "SumV": "SumV",
+      "SumY": "SumY"
+    },
+    "ideation": {
+      "title": "Idea챌찾o",
+      "a_p": "a:p",
+      "Ma_Mp": "Ma:Mp",
+      "_2AB_Art_Ay": "2AB+(Art+Ay)",
+      "MOR": "MOR",
+      "Sum6": "Sum6",
+      "Lv2": "Lv2",
+      "WSum6": "WSum6",
+      "M_minus": "M-",
+      "Mnone": "Mnone"
+    },
+    "affect": {
+      "title": "Afeto",
+      "FC_CF_C": "FC:CF+C",
+      "PureC": "C Puro",
+      "SumC_WSumC": "SumC':WSumC",
+      "Afr": "Afr",
+      "S": "S",
+      "Blends_R": "Blends:R",
+      "CP": "CP"
+    },
+    "mediation": {
+      "title": "Media챌찾o",
+      "XA_percent": "XA%",
+      "WDA_percent": "WDA%",
+      "X_minus_percent": "X-%",
+      "S_minus": "S-",
+      "P": "P",
+      "X_plus_percent": "X+%",
+      "Xu_percent": "Xu%"
+    },
+    "processing": {
+      "title": "Processamento",
+      "Zf": "Zf",
+      "Zd": "Zd",
+      "W_D_Dd": "W:D:Dd",
+      "W_M": "W:M",
+      "PSV": "PSV",
+      "DQ_plus": "DQ+",
+      "DQ_v": "DQv"
+    },
+    "interpersonal": {
+      "title": "Interpessoal",
+      "COP": "COP",
+      "AG": "AG",
+      "a_p": "a:p",
+      "Food": "Fd",
+      "SumT": "SumT",
+      "HumanCont": "Cont. Humano",
+      "PureH": "H Puro",
+      "PER": "PER",
+      "ISO_Index": "횒ndice de Isolamento"
+    },
+    "selfPerception": {
+      "title": "Autopercep챌찾o",
+      "_3r_2_R": "3r+(2)/R",
+      "Fr_rF": "Fr+rF",
+      "SumV": "SumV",
+      "FD": "FD",
+      "An_Xy": "An+Xy",
+      "MOR": "MOR",
+      "H_ratio": "H:(H)+Hd+(Hd)"
+    }
+  },
+  "indices": {
+    "title": "횒ndices Especiais",
+    "PTI": "PTI",
+    "DEPI": "DEPI",
+    "CDI": "CDI",
+    "SCON": "S-CON",
+    "HVI": "HVI",
+    "OBS": "OBS",
+    "sconNote": "( Nota: Aplica-se apenas a examinandos com 14 anos ou mais )",
+    "sconMain": "Marcar se 8 ou mais crit챕rios forem atendidos",
+    "depiMain": "Marcar se 5 ou mais crit챕rios forem atendidos",
+    "cdiMain": "Marcar se 4 ou mais crit챕rios forem atendidos",
+    "hviMain": "Marcar se o crit챕rio (1) for atendido e 4 ou mais dos crit챕rios (2)~(8) forem atendidos",
+    "obsMain": "Marcar se 1 ou mais das condi챌천es abaixo forem atendidas",
+    "obsR1": "Todos os crit챕rios (1)~(5) s찾o atendidos",
+    "obsR2": "2 ou mais de (1)~(4) s찾o atendidos",
+    "obsR3": "3 ou mais de (1)~(5) s찾o atendidos",
+    "positive": "Positivo",
+    "negative": "Negativo"
+  },
+  "toast": {
+    "overScoring": {
+      "title": "Aviso de Sobre-pontua챌찾o",
+      "message": "Ter 4 ou mais determinantes 챕 raro.\\n1. O examinando realmente disse isso?\\n2. Voc챗 pontuou acidentalmente a Forma (F) v찼rias vezes?"
+    },
+    "categoryDup": {
+      "title": "Verifica챌찾o de Duplica챌찾o de Categoria",
+      "message": "N찾o se trata do n첬mero de objetos. Insira a mesma categoria (ex: Animal A) apenas uma vez."
+    },
+    "hierarchy": {
+      "title": "Verifica챌찾o de Hierarquia",
+      "message": "Muitas pontua챌천es. Tenha cuidado para n찾o inserir pontua챌천es cognitivas m첬ltiplas vezes para a mesma express찾o. (Pontua챌천es superiores incluem as inferiores.)"
+    },
+    "tooManyResponses": {
+      "title": "Aviso de Muitas Respostas (R ??45)",
+      "message": "O n첬mero de respostas 챕 muito alto. Por favor, revise o processo de administra챌찾o do teste."
+    },
+    "validity": {
+      "title": "Aviso de Validade",
+      "message": "Se o n첬mero de respostas for menor que 14, a validade do perfil pode ser baixa, reduzindo a confiabilidade da interpreta챌찾o."
+    },
+    "resetComplete": {
+      "title": "Redefini챌찾o Completa",
+      "message": "Todos os valores de entrada foram redefinidos."
+    },
+    "autoSaved": {
+      "title": "Salvo Automaticamente",
+      "message": "Sua entrada foi salva automaticamente."
+    },
+    "reflectionPair": {
+      "title": "Exclus찾o Reflexo-Par",
+      "message": "Reflexo (Fr/rF) foi pontuado, ent찾o o par (2) foi automaticamente desmarcado."
+    },
+    "dqVagueFq": {
+      "title": "Restri챌찾o DQ-FQ",
+      "message": "Quando DQ 챕 'v' (vago), FQ '+' (superior) n찾o pode ser selecionado e foi redefinido."
+    },
+    "dqVagueZ": {
+      "title": "Restri챌찾o DQ-Z",
+      "message": "Quando DQ 챕 'v' (vago), a atividade organizacional (Z) n찾o 챕 aplic찼vel."
+    },
+    "pureDeterminantFq": {
+      "title": "FQ de Determinante Puro",
+      "message": "Apenas determinantes sem forma foram pontuados, ent찾o FQ foi automaticamente definido como 'none'."
+    },
+    "specialScoreLevel": {
+      "title": "Conflito de N챠vel de Pontua챌찾o Especial",
+      "message": "N챠vel 1 e N챠vel 2 da mesma pontua챌찾o especial n찾o podem coexistir. O n챠vel anterior foi removido."
+    },
+    "apiKeySaved": {
+      "title": "Chave de API salva",
+      "message": "A chave de API de {provider} foi salva."
+    },
+    "apiKeyError": {
+      "title": "Erro",
+      "message": "Falha ao salvar a chave de API. Por favor, tente novamente."
+    }
+  },
+  "loader": {
+    "calculating": "Calculando...",
+    "subtext": "Os resultados do c찼lculo s찾o salvos automaticamente no navegador e podem ser carregados posteriormente."
+  },
+  "links": {
+    "manual": "Manual do Usu찼rio",
+    "bug": "Relatar Erros e Melhorias",
+    "patch": "Notas de Atualiza챌찾o",
+    "lab": "Instituto de Psicologia Cl챠nica de Seul",
+    "privacy": "Pol챠tica de Privacidade"
+  },
+  "language": {
+    "select": "Selecionar Idioma",
+    "ko": "Coreano",
+    "en": "Ingl챗s",
+    "ja": "Japon챗s",
+    "es": "Espanhol",
+    "pt": "Portugu챗s"
+  },
+  "export": {
+    "rawDataTitle": "Exportar todos os itens inseridos pelo usu찼rio em formato CSV",
+    "summaryTitle": "Exportar todos os itens calculados no sum찼rio estrutural em formato CSV"
+  },
+  "footer": {
+    "title": "Programa de C찼lculo do Sum찼rio Estrutural de Rorschach",
+    "copyright": "Copyright 1997-2026 Seoul Institute of Clinical Psychology (SICP). All rights reserved."
+  },
+  "codeList": {
+    "header": "Lista de c처digos e descri챌찾o de cada item de pontua챌찾o."
+  },
+  "specialIndices": {
+    "scon_main": "Marcar se 8 ou mais crit챕rios forem atendidos",
+    "scon_note": "( Nota: Aplica-se apenas a examinandos com 14 anos ou mais )",
+    "depi_main": "Marcar se 5 ou mais crit챕rios forem atendidos",
+    "pti_main": "Pontua챌찾o exibida (sem ponto de corte)",
+    "cdi_main": "Marcar se 4 ou mais crit챕rios forem atendidos",
+    "hvi_main": "Marcar se o crit챕rio (1) for atendido e 4 ou mais dos crit챕rios (2)~(8) forem atendidos",
+    "obs_main": "Marcar se 1 ou mais das condi챌천es abaixo forem atendidas",
+    "obs_r1": "Todos os crit챕rios (1)~(5) s찾o atendidos",
+    "obs_r2": "2 ou mais de (1)~(4) s찾o atendidos",
+    "obs_r3": "3 ou mais de (1)~(5) s찾o atendidos"
+  },
+  "account": {
+    "title": "Minha Conta",
+    "subtitle": "Gerencie as configura챌천es da sua conta e chaves de API.",
+    "apiKeys": {
+      "title": "Gerenciamento de Chaves de API",
+      "openai": "Chave de API da OpenAI",
+      "google": "Chave de API do Google",
+      "anthropic": "Chave de API da Anthropic",
+      "placeholder": "Digite sua chave de API do {provider}",
+      "saveButton": "Salvar",
+      "setupRequired": "Configura챌찾o da chave de API necess찼ria",
+      "deleteButton": "Excluir",
+      "saved": "Salva",
+      "notSaved": "N찾o salva"
+    },
+    "knowledgeSources": {
+      "title": "Fontes de Conhecimento",
+      "description": "Adicione suas pr처prias notas/arquivos. O chat de IA priorizar찼 essas fontes sobre os docs integrados quando relevante.",
+      "sourceTitle": "T챠tulo da fonte",
+      "pastePlaceholder": "Cole o conte첬do do conhecimento...",
+      "addButton": "Adicionar Fonte",
+      "uploadButton": "Enviar .txt/.md",
+      "removeButton": "Remover",
+      "saved": "Salvo",
+      "savedMessage": "Fonte de conhecimento salva.",
+      "uploaded": "Enviado",
+      "uploadedMessage": "{filename} importado.",
+      "fileTooLarge": "Arquivo muito grande (m찼x. 500KB)"
+    }
+  },
+  "chat": {
+    "title": "Assistente de IA",
+    "placeholder": "Fa챌a uma pergunta...",
+    "errorMessage": "Desculpe, n찾o foi poss챠vel obter uma resposta. Por favor, verifique sua chave de API e tente novamente.",
+    "history": "Hist처rico do Chat",
+    "selectChat": "Selecione um chat para ver",
+    "startNew": "Ou inicie uma nova conversa.",
+    "noSessions": "Nenhuma conversa ainda.",
+    "loading": "Carregando...",
+    "emptyStateTitle": "Selecione um chat para ver",
+    "emptyStateDescription": "Escolha uma conversa na barra lateral, ou digite uma mensagem abaixo para iniciar uma nova."
+  }
+}
+
