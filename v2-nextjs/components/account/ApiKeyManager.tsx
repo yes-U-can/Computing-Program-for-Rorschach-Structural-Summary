@@ -156,7 +156,18 @@ export default function ApiKeyManager() {
   };
 
   useEffect(() => {
-    fetchStatus();
+    const loadInitialStatus = async () => {
+      try {
+        const res = await fetch('/api/user/keys');
+        if (res.ok) {
+          const data = await res.json();
+          setKeyStatus(data);
+        }
+      } catch {
+        // silently fail
+      }
+    };
+    void loadInitialStatus();
   }, []);
 
   return (

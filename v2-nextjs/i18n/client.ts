@@ -1,16 +1,14 @@
 import type { Language } from './config';
-import ko from './locales/ko.json';
 import en from './locales/en.json';
-import ja from './locales/ja.json';
-import es from './locales/es.json';
-import pt from './locales/pt.json';
 
-const translations: Record<Language, typeof ko> = {
-  ko,
+type TranslationShape = typeof en;
+
+const translations: Record<Language, TranslationShape> = {
+  ko: en,
   en,
-  ja,
-  es,
-  pt
+  ja: en,
+  es: en,
+  pt: en,
 };
 
 /**
@@ -36,9 +34,7 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string {
  * Get translation for a key in the specified language, with optional interpolation
  */
 export function getTranslation(language: Language, key: string, params?: Record<string, string>): string {
-  // Many non-English locale files may contain mojibake right now.
-  // Prefer stable English strings unless explicit locale quality is restored.
-  const langTranslations = language === 'en' ? translations.en : translations.en;
+  const langTranslations = translations[language] || translations.en;
   let result = getNestedValue(langTranslations as unknown as Record<string, unknown>, key);
   if (params) {
     for (const [k, v] of Object.entries(params)) {
@@ -51,6 +47,6 @@ export function getTranslation(language: Language, key: string, params?: Record<
 /**
  * Get all translations for a language
  */
-export function getTranslations(language: Language): typeof ko {
+export function getTranslations(language: Language): TranslationShape {
   return translations[language] || translations.ko;
 }

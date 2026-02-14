@@ -1,16 +1,16 @@
 {
   "app": {
-    "title": "Calculadora do Sumário Estrutural de Rorschach",
+    "title": "Calculadora do Sum찼rio Estrutural de Rorschach",
     "version": "v2.0.0",
-    "provider": "Fornecido pelo Instituto de Psicologia Clínica de Seul"
+    "provider": "Fornecido pelo Instituto de Psicologia Cl챠nica de Seul"
   },
   "nav": {
-    "scoring": "Codificação e Sumário Estrutural",
+    "scoring": "Codifica챌찾o e Sum찼rio Estrutural",
     "more": "Mais",
     "login": "Entrar / Registrar",
     "logout": "Sair",
     "account": "Minha Conta",
-    "loginRequired": "Login necessário",
+    "loginRequired": "Login necess찼rio",
     "aiAssistant": "Assistente de IA"
   },
   "buttons": {
@@ -21,58 +21,58 @@
     "print": "Imprimir",
     "rawData": "Dados Brutos",
     "summary": "Resumo",
-    "aiInterpret": "Solicitar Interpretação de IA",
+    "aiInterpret": "Solicitar Interpreta챌찾o de IA",
     "yes": "Sim",
-    "no": "Não",
+    "no": "N찾o",
     "close": "Fechar",
     "save": "Salvar",
     "load": "Carregar",
-    "backToInput": "Voltar à Entrada"
+    "backToInput": "Voltar 횪 Entrada"
   },
   "modal": {
     "welcome": {
-      "title": "Calculadora do Sumário Estrutural de Rorschach",
+      "title": "Calculadora do Sum찼rio Estrutural de Rorschach",
       "new": "Criar Novo",
       "loadSample": "Iniciar com Dados de Exemplo",
-      "loadSaved": "Carregar Conteúdo Salvo Automaticamente",
+      "loadSaved": "Carregar Conte첬do Salvo Automaticamente",
       "continue": "Continuar Trabalho",
-      "continueMsg": "Há conteúdo em que você trabalhou da última vez."
+      "continueMsg": "H찼 conte첬do em que voc챗 trabalhou da 첬ltima vez."
     },
     "reset": {
       "title": "Por favor, confirme novamente",
       "message": "Deseja redefinir todos os valores inseridos?"
     },
     "ai": {
-      "title": "Etapa de preparação: Baixe o arquivo CSV clicando nos botões verdes na tela anterior.",
-      "message": "O chatbot de IA conectado atualmente é Gemini Gems, que requer uma conta do Google.",
+      "title": "Etapa de prepara챌찾o: Baixe o arquivo CSV clicando nos bot천es verdes na tela anterior.",
+      "message": "O chatbot de IA conectado atualmente 챕 Gemini Gems, que requer uma conta do Google.",
       "open": "Abrir em Nova Janela",
       "cancel": "Voltar para Resultados"
     },
     "privacy": {
-      "title": "Política de Privacidade",
-      "noticeTitle": "※ Aviso de Uso do Armazenamento do Navegador (LocalStorage)",
-      "noticeText_part1": "Este aplicativo armazena temporariamente os dados inseridos na aba 'Codificação e Sumário Estrutural' no armazenamento local (LocalStorage) do navegador do seu computador para sua conveniência de codificação.",
-      "noticeText_part2": "Esses dados não são transmitidos ao servidor nem acessíveis pelo operador, e são usados apenas para restaurar o conteúdo de entrada quando você revisitar o navegador.",
-      "noticeText_part3": "Ao usar recursos de IA após o login, as chaves de API salvas são gerenciadas de forma criptografada, e o contexto de referência (docs internos e fontes de conhecimento adicionadas pelo usuário) pode ser enviado com as solicitações de chat para melhorar a qualidade das respostas."
+      "title": "Pol챠tica de Privacidade",
+      "noticeTitle": "??Aviso de Uso do Armazenamento do Navegador (LocalStorage)",
+      "noticeText_part1": "Este aplicativo armazena temporariamente os dados inseridos na aba 'Codifica챌찾o e Sum찼rio Estrutural' no armazenamento local (LocalStorage) do navegador do seu computador para sua conveni챗ncia de codifica챌찾o.",
+      "noticeText_part2": "Esses dados n찾o s찾o transmitidos ao servidor nem acess챠veis pelo operador, e s찾o usados apenas para restaurar o conte첬do de entrada quando voc챗 revisitar o navegador.",
+      "noticeText_part3": "Ao usar recursos de IA ap처s o login, as chaves de API salvas s찾o gerenciadas de forma criptografada, e o contexto de refer챗ncia (docs internos e fontes de conhecimento adicionadas pelo usu찼rio) pode ser enviado com as solicita챌천es de chat para melhorar a qualidade das respostas."
     }
   },
   "input": {
-    "card": "Cartão",
+    "card": "Cart찾o",
     "response": "Resposta",
-    "location": "Localização",
+    "location": "Localiza챌찾o",
     "dq": "DQ",
     "determinants": "Determinantes",
     "fq": "FQ",
     "pair": "Par",
-    "contents": "Conteúdos",
+    "contents": "Conte첬dos",
     "popular": "P",
     "z": "Z",
-    "specialScores": "Pontuações Especiais",
-    "score": "Pontuação",
+    "specialScores": "Pontua챌천es Especiais",
+    "score": "Pontua챌찾o",
     "gphr": "G/PHR",
-    "guideResponse": "A seção [Resposta] serve para anotar as respostas verbais do sujeito; não afeta os cálculos, portanto pode ser deixada em branco.<br>As seções [Pontuação] e [G/PHR] são calculados automaticamente, portanto não é necessária entrada manual.<br>No entanto, para [Pontuação], os valores são calculados automaticamente apenas após a seleção dos tipos de [Cartão] e [Z].",
-    "tooltipInfo": "Apenas a linha inferior pode ser manipulada,\ne até 50 linhas são possíveis.",
-    "rowOrderTip": "A ordem das linhas de resposta não afeta os resultados do cálculo.\nPor exemplo, registrar conteúdo para o Cartão 6 na linha 8 e registrar conteúdo para o Cartão 2 na linha 14 está bem."
+    "guideResponse": "A se챌찾o [Resposta] serve para anotar as respostas verbais do sujeito; n찾o afeta os c찼lculos, portanto pode ser deixada em branco.<br>As se챌천es [Pontua챌찾o] e [G/PHR] s찾o calculados automaticamente, portanto n찾o 챕 necess찼ria entrada manual.<br>No entanto, para [Pontua챌찾o], os valores s찾o calculados automaticamente apenas ap처s a sele챌찾o dos tipos de [Cart찾o] e [Z].",
+    "tooltipInfo": "Apenas a linha inferior pode ser manipulada,\ne at챕 50 linhas s찾o poss챠veis.",
+    "rowOrderTip": "A ordem das linhas de resposta n찾o afeta os resultados do c찼lculo.\nPor exemplo, registrar conte첬do para o Cart찾o 6 na linha 8 e registrar conte첬do para o Cart찾o 2 na linha 14 est찼 bem."
   },
   "info": {
     "categories": {
@@ -98,16 +98,16 @@
     },
     "upper": {
       "title": "Upper Section",
-      "location": "Localização",
+      "location": "Localiza챌찾o",
       "dq": "Qualidade de Desenvolvimento",
       "formQuality": "Qualidade da Forma",
       "determinants": "Determinantes",
-      "contents": "Conteúdos",
+      "contents": "Conte첬dos",
       "approach": "Abordagem",
-      "specialScores": "Pontuações Especiais"
+      "specialScores": "Pontua챌천es Especiais"
     },
     "core": {
-      "title": "Seção Central",
+      "title": "Se챌찾o Central",
       "R": "R",
       "Lambda": "L",
       "EB": "EB",
@@ -115,7 +115,7 @@
       "EBPer": "EBPer",
       "eb": "eb",
       "es": "es",
-      "D": "Pontuação D",
+      "D": "Pontua챌찾o D",
       "AdjD": "D Ajustado",
       "AdjEs": "es Ajustado",
       "FM": "FM",
@@ -126,7 +126,7 @@
       "SumY": "SumY"
     },
     "ideation": {
-      "title": "Ideação",
+      "title": "Idea챌찾o",
       "a_p": "a:p",
       "Ma_Mp": "Ma:Mp",
       "_2AB_Art_Ay": "2AB+(Art+Ay)",
@@ -148,7 +148,7 @@
       "CP": "CP"
     },
     "mediation": {
-      "title": "Mediação",
+      "title": "Media챌찾o",
       "XA_percent": "XA%",
       "WDA_percent": "WDA%",
       "X_minus_percent": "X-%",
@@ -177,10 +177,10 @@
       "HumanCont": "Cont. Humano",
       "PureH": "H Puro",
       "PER": "PER",
-      "ISO_Index": "Índice de Isolamento"
+      "ISO_Index": "횒ndice de Isolamento"
     },
     "selfPerception": {
-      "title": "Autopercepção",
+      "title": "Autopercep챌찾o",
       "_3r_2_R": "3r+(2)/R",
       "Fr_rF": "Fr+rF",
       "SumV": "SumV",
@@ -191,7 +191,7 @@
     }
   },
   "indices": {
-    "title": "Índices Especiais",
+    "title": "횒ndices Especiais",
     "PTI": "PTI",
     "DEPI": "DEPI",
     "CDI": "CDI",
@@ -199,40 +199,40 @@
     "HVI": "HVI",
     "OBS": "OBS",
     "sconNote": "( Nota: Aplica-se apenas a examinandos com 14 anos ou mais )",
-    "sconMain": "Marcar se 8 ou mais critérios forem atendidos",
-    "depiMain": "Marcar se 5 ou mais critérios forem atendidos",
-    "cdiMain": "Marcar se 4 ou mais critérios forem atendidos",
-    "hviMain": "Marcar se o critério (1) for atendido e 4 ou mais dos critérios (2)~(8) forem atendidos",
-    "obsMain": "Marcar se 1 ou mais das condições abaixo forem atendidas",
-    "obsR1": "Todos os critérios (1)~(5) são atendidos",
-    "obsR2": "2 ou mais de (1)~(4) são atendidos",
-    "obsR3": "3 ou mais de (1)~(5) são atendidos",
+    "sconMain": "Marcar se 8 ou mais crit챕rios forem atendidos",
+    "depiMain": "Marcar se 5 ou mais crit챕rios forem atendidos",
+    "cdiMain": "Marcar se 4 ou mais crit챕rios forem atendidos",
+    "hviMain": "Marcar se o crit챕rio (1) for atendido e 4 ou mais dos crit챕rios (2)~(8) forem atendidos",
+    "obsMain": "Marcar se 1 ou mais das condi챌천es abaixo forem atendidas",
+    "obsR1": "Todos os crit챕rios (1)~(5) s찾o atendidos",
+    "obsR2": "2 ou mais de (1)~(4) s찾o atendidos",
+    "obsR3": "3 ou mais de (1)~(5) s찾o atendidos",
     "positive": "Positivo",
     "negative": "Negativo"
   },
   "toast": {
     "overScoring": {
-      "title": "Aviso de Sobre-pontuação",
-      "message": "Ter 4 ou mais determinantes é raro.\\n1. O examinando realmente disse isso?\\n2. Você pontuou acidentalmente a Forma (F) várias vezes?"
+      "title": "Aviso de Sobre-pontua챌찾o",
+      "message": "Ter 4 ou mais determinantes 챕 raro.\\n1. O examinando realmente disse isso?\\n2. Voc챗 pontuou acidentalmente a Forma (F) v찼rias vezes?"
     },
     "categoryDup": {
-      "title": "Verificação de Duplicação de Categoria",
-      "message": "Não se trata do número de objetos. Insira a mesma categoria (ex: Animal A) apenas uma vez."
+      "title": "Verifica챌찾o de Duplica챌찾o de Categoria",
+      "message": "N찾o se trata do n첬mero de objetos. Insira a mesma categoria (ex: Animal A) apenas uma vez."
     },
     "hierarchy": {
-      "title": "Verificação de Hierarquia",
-      "message": "Muitas pontuações. Tenha cuidado para não inserir pontuações cognitivas múltiplas vezes para a mesma expressão. (Pontuações superiores incluem as inferiores.)"
+      "title": "Verifica챌찾o de Hierarquia",
+      "message": "Muitas pontua챌천es. Tenha cuidado para n찾o inserir pontua챌천es cognitivas m첬ltiplas vezes para a mesma express찾o. (Pontua챌천es superiores incluem as inferiores.)"
     },
     "tooManyResponses": {
-      "title": "Aviso de Muitas Respostas (R ≥ 45)",
-      "message": "O número de respostas é muito alto. Por favor, revise o processo de administração do teste."
+      "title": "Aviso de Muitas Respostas (R ??45)",
+      "message": "O n첬mero de respostas 챕 muito alto. Por favor, revise o processo de administra챌찾o do teste."
     },
     "validity": {
       "title": "Aviso de Validade",
-      "message": "Se o número de respostas for menor que 14, a validade do perfil pode ser baixa, reduzindo a confiabilidade da interpretação."
+      "message": "Se o n첬mero de respostas for menor que 14, a validade do perfil pode ser baixa, reduzindo a confiabilidade da interpreta챌찾o."
     },
     "resetComplete": {
-      "title": "Redefinição Completa",
+      "title": "Redefini챌찾o Completa",
       "message": "Todos os valores de entrada foram redefinidos."
     },
     "autoSaved": {
@@ -240,24 +240,24 @@
       "message": "Sua entrada foi salva automaticamente."
     },
     "reflectionPair": {
-      "title": "Exclusão Reflexo-Par",
-      "message": "Reflexo (Fr/rF) foi pontuado, então o par (2) foi automaticamente desmarcado."
+      "title": "Exclus찾o Reflexo-Par",
+      "message": "Reflexo (Fr/rF) foi pontuado, ent찾o o par (2) foi automaticamente desmarcado."
     },
     "dqVagueFq": {
-      "title": "Restrição DQ-FQ",
-      "message": "Quando DQ é 'v' (vago), FQ '+' (superior) não pode ser selecionado e foi redefinido."
+      "title": "Restri챌찾o DQ-FQ",
+      "message": "Quando DQ 챕 'v' (vago), FQ '+' (superior) n찾o pode ser selecionado e foi redefinido."
     },
     "dqVagueZ": {
-      "title": "Restrição DQ-Z",
-      "message": "Quando DQ é 'v' (vago), a atividade organizacional (Z) não é aplicável."
+      "title": "Restri챌찾o DQ-Z",
+      "message": "Quando DQ 챕 'v' (vago), a atividade organizacional (Z) n찾o 챕 aplic찼vel."
     },
     "pureDeterminantFq": {
       "title": "FQ de Determinante Puro",
-      "message": "Apenas determinantes sem forma foram pontuados, então FQ foi automaticamente definido como 'none'."
+      "message": "Apenas determinantes sem forma foram pontuados, ent찾o FQ foi automaticamente definido como 'none'."
     },
     "specialScoreLevel": {
-      "title": "Conflito de Nível de Pontuação Especial",
-      "message": "Nível 1 e Nível 2 da mesma pontuação especial não podem coexistir. O nível anterior foi removido."
+      "title": "Conflito de N챠vel de Pontua챌찾o Especial",
+      "message": "N챠vel 1 e N챠vel 2 da mesma pontua챌찾o especial n찾o podem coexistir. O n챠vel anterior foi removido."
     },
     "apiKeySaved": {
       "title": "Chave de API salva",
@@ -270,49 +270,49 @@
   },
   "loader": {
     "calculating": "Calculando...",
-    "subtext": "Os resultados do cálculo são salvos automaticamente no navegador e podem ser carregados posteriormente."
+    "subtext": "Os resultados do c찼lculo s찾o salvos automaticamente no navegador e podem ser carregados posteriormente."
   },
   "links": {
-    "manual": "Manual do Usuário",
+    "manual": "Manual do Usu찼rio",
     "bug": "Relatar Erros e Melhorias",
-    "patch": "Notas de Atualização",
-    "lab": "Instituto de Psicologia Clínica de Seul",
-    "privacy": "Política de Privacidade"
+    "patch": "Notas de Atualiza챌찾o",
+    "lab": "Instituto de Psicologia Cl챠nica de Seul",
+    "privacy": "Pol챠tica de Privacidade"
   },
   "language": {
     "select": "Selecionar Idioma",
     "ko": "Coreano",
-    "en": "Inglês",
-    "ja": "Japonês",
+    "en": "Ingl챗s",
+    "ja": "Japon챗s",
     "es": "Espanhol",
-    "pt": "Português"
+    "pt": "Portugu챗s"
   },
   "export": {
-    "rawDataTitle": "Exportar todos os itens inseridos pelo usuário em formato CSV",
-    "summaryTitle": "Exportar todos os itens calculados no sumário estrutural em formato CSV"
+    "rawDataTitle": "Exportar todos os itens inseridos pelo usu찼rio em formato CSV",
+    "summaryTitle": "Exportar todos os itens calculados no sum찼rio estrutural em formato CSV"
   },
   "footer": {
-    "title": "Programa de Cálculo do Sumário Estrutural de Rorschach",
-    "copyright": "© 1997–2026 Instituto de Psicologia Clínica de Seul (Seoul Institute of Clinical Psychology, SICP). Todos os direitos reservados."
+    "title": "Programa de C찼lculo do Sum찼rio Estrutural de Rorschach",
+    "copyright": "Copyright 1997-2026 Seoul Institute of Clinical Psychology (SICP). All rights reserved."
   },
   "codeList": {
-    "header": "Lista de códigos e descrição de cada item de pontuação."
+    "header": "Lista de c처digos e descri챌찾o de cada item de pontua챌찾o."
   },
   "specialIndices": {
-    "scon_main": "Marcar se 8 ou mais critérios forem atendidos",
+    "scon_main": "Marcar se 8 ou mais crit챕rios forem atendidos",
     "scon_note": "( Nota: Aplica-se apenas a examinandos com 14 anos ou mais )",
-    "depi_main": "Marcar se 5 ou mais critérios forem atendidos",
-    "pti_main": "Pontuação exibida (sem ponto de corte)",
-    "cdi_main": "Marcar se 4 ou mais critérios forem atendidos",
-    "hvi_main": "Marcar se o critério (1) for atendido e 4 ou mais dos critérios (2)~(8) forem atendidos",
-    "obs_main": "Marcar se 1 ou mais das condições abaixo forem atendidas",
-    "obs_r1": "Todos os critérios (1)~(5) são atendidos",
-    "obs_r2": "2 ou mais de (1)~(4) são atendidos",
-    "obs_r3": "3 ou mais de (1)~(5) são atendidos"
+    "depi_main": "Marcar se 5 ou mais crit챕rios forem atendidos",
+    "pti_main": "Pontua챌찾o exibida (sem ponto de corte)",
+    "cdi_main": "Marcar se 4 ou mais crit챕rios forem atendidos",
+    "hvi_main": "Marcar se o crit챕rio (1) for atendido e 4 ou mais dos crit챕rios (2)~(8) forem atendidos",
+    "obs_main": "Marcar se 1 ou mais das condi챌천es abaixo forem atendidas",
+    "obs_r1": "Todos os crit챕rios (1)~(5) s찾o atendidos",
+    "obs_r2": "2 ou mais de (1)~(4) s찾o atendidos",
+    "obs_r3": "3 ou mais de (1)~(5) s찾o atendidos"
   },
   "account": {
     "title": "Minha Conta",
-    "subtitle": "Gerencie as configurações da sua conta e chaves de API.",
+    "subtitle": "Gerencie as configura챌천es da sua conta e chaves de API.",
     "apiKeys": {
       "title": "Gerenciamento de Chaves de API",
       "openai": "Chave de API da OpenAI",
@@ -320,16 +320,16 @@
       "anthropic": "Chave de API da Anthropic",
       "placeholder": "Digite sua chave de API do {provider}",
       "saveButton": "Salvar",
-      "setupRequired": "Configuração da chave de API necessária",
+      "setupRequired": "Configura챌찾o da chave de API necess찼ria",
       "deleteButton": "Excluir",
       "saved": "Salva",
-      "notSaved": "Não salva"
+      "notSaved": "N찾o salva"
     },
     "knowledgeSources": {
       "title": "Fontes de Conhecimento",
-      "description": "Adicione suas próprias notas/arquivos. O chat de IA priorizará essas fontes sobre os docs integrados quando relevante.",
-      "sourceTitle": "Título da fonte",
-      "pastePlaceholder": "Cole o conteúdo do conhecimento...",
+      "description": "Adicione suas pr처prias notas/arquivos. O chat de IA priorizar찼 essas fontes sobre os docs integrados quando relevante.",
+      "sourceTitle": "T챠tulo da fonte",
+      "pastePlaceholder": "Cole o conte첬do do conhecimento...",
       "addButton": "Adicionar Fonte",
       "uploadButton": "Enviar .txt/.md",
       "removeButton": "Remover",
@@ -337,14 +337,14 @@
       "savedMessage": "Fonte de conhecimento salva.",
       "uploaded": "Enviado",
       "uploadedMessage": "{filename} importado.",
-      "fileTooLarge": "Arquivo muito grande (máx. 500KB)"
+      "fileTooLarge": "Arquivo muito grande (m찼x. 500KB)"
     }
   },
   "chat": {
     "title": "Assistente de IA",
-    "placeholder": "Faça uma pergunta...",
-    "errorMessage": "Desculpe, não foi possível obter uma resposta. Por favor, verifique sua chave de API e tente novamente.",
-    "history": "Histórico do Chat",
+    "placeholder": "Fa챌a uma pergunta...",
+    "errorMessage": "Desculpe, n찾o foi poss챠vel obter uma resposta. Por favor, verifique sua chave de API e tente novamente.",
+    "history": "Hist처rico do Chat",
     "selectChat": "Selecione um chat para ver",
     "startNew": "Ou inicie uma nova conversa.",
     "noSessions": "Nenhuma conversa ainda.",
@@ -353,3 +353,4 @@
     "emptyStateDescription": "Escolha uma conversa na barra lateral, ou digite uma mensagem abaixo para iniciar uma nova."
   }
 }
+

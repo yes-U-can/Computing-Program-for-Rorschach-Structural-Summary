@@ -97,7 +97,7 @@ const UserMenu = () => {
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const { t, language } = useTranslation();
+  const { language } = useTranslation();
 
   return (
     <header className="relative z-10 print:hidden">
