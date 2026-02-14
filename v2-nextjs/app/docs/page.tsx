@@ -1,10 +1,15 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllDocRoutes, resolveDocContent } from '@/lib/docsCatalog';
+import type { Language } from '@/types';
 
 type DocsPageProps = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; lang?: string }>;
 };
+
+function normalizeLang(lang?: string): Language {
+  return lang === 'ko' || lang === 'ja' || lang === 'es' || lang === 'pt' ? lang : 'en';
+}
 
 export const metadata: Metadata = {
   title: 'Documentation',
@@ -20,13 +25,14 @@ function includesQuery(value: string, q: string): boolean {
 }
 
 export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
-  const { q } = await searchParams;
+  const { q, lang } = await searchParams;
   const query = (q ?? '').trim();
+  const activeLang = normalizeLang(lang);
 
   const routes = getAllDocRoutes().filter((route) => route.kind === 'entry');
   const filteredRoutes = routes.filter((route) => {
     if (!query) return true;
-    const content = resolveDocContent(route, 'en');
+    const content = resolveDocContent(route, activeLang);
     return (
       includesQuery(content.title, query) ||
       includesQuery(content.description, query) ||
@@ -39,11 +45,11 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
     '@type': 'ItemList',
     name: 'Rorschach Documentation Pages',
     itemListElement: filteredRoutes.slice(0, 50).map((route, index) => {
-      const content = resolveDocContent(route, 'en');
+      const content = resolveDocContent(route, activeLang);
       return {
         '@type': 'ListItem',
         position: index + 1,
-        url: `/docs/${route.slug.join('/')}`,
+        url: `/docs/${route.slug.join('/')}?lang=${activeLang}`,
         name: content.title,
       };
     }),
@@ -62,6 +68,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
       </p>
 
       <form action="/docs" method="get" className="mt-6">
+        <input type="hidden" name="lang" value={activeLang} />
         <label htmlFor="docs-query" className="sr-only">
           Search documentation
         </label>
@@ -86,6 +93,17 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
         {filteredRoutes.length} result{filteredRoutes.length === 1 ? '' : 's'}
         {query ? ` for "${query}"` : ''}
       </p>
+      <div className="mt-3 flex flex-wrap gap-2 text-xs">
+        {(['ko', 'en', 'ja', 'es', 'pt'] as const).map((l) => (
+          <Link
+            key={l}
+            href={`/docs?lang=${l}${query ? `&q=${encodeURIComponent(query)}` : ''}`}
+            className={`rounded border px-2 py-1 ${activeLang === l ? 'border-[#2A5F7F] text-[#2A5F7F]' : 'border-slate-300 text-slate-600'}`}
+          >
+            {l.toUpperCase()}
+          </Link>
+        ))}
+      </div>
 
       {filteredRoutes.length === 0 ? (
         <div className="mt-8 rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
@@ -101,7 +119,7 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
                 className="rounded-lg border border-slate-200 bg-white p-4"
               >
                 <Link
-                  href={`/docs/${route.slug.join('/')}`}
+                  href={`/docs/${route.slug.join('/')}?lang=${activeLang}`}
                   className="break-words text-base font-semibold text-slate-800 hover:text-[#4E73AA]"
                 >
                   {content.title}

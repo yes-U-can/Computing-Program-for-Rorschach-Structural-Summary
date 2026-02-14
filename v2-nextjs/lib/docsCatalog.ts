@@ -3,6 +3,7 @@ import { getCategoryDescription, getCodeDescription } from '@/lib/infoTranslatio
 import { resultVariableDescriptions } from '@/lib/result-variables';
 import { Code, Language } from '@/types';
 import { GROUP_COLORS, HEADER_ACCENT } from '@/lib/colors';
+import { buildDetailedDocDescription } from '@/lib/docsDetailed';
 
 export type DocKind = 'category' | 'entry';
 
@@ -163,8 +164,14 @@ function fallbackCategoryDescription(title: string, lang: Language): string {
 export function resolveDocContent(item: DocRouteItem, lang: Language = 'en'): { title: string; description: string } {
   if (item.kind === 'entry') {
     const title = resolveEntryTitle(item.id, lang);
-    const resultDesc = resultVariableDescriptions[item.id]?.[lang]?.description;
-    if (resultDesc) return { title, description: resultDesc };
+    const resultDesc = resultVariableDescriptions[item.id]?.[lang]?.description
+      ?? resultVariableDescriptions[item.id]?.en?.description
+      ?? '';
+    const detailed = buildDetailedDocDescription(item, lang, title, resultDesc);
+    if (detailed) return { title, description: detailed };
+
+    const fallbackResultDesc = resultVariableDescriptions[item.id]?.[lang]?.description;
+    if (fallbackResultDesc) return { title, description: fallbackResultDesc };
 
     const codeDesc = getCodeDescription(item.id as Code, lang);
     if (codeDesc?.description) return { title, description: codeDesc.description };
@@ -173,6 +180,9 @@ export function resolveDocContent(item: DocRouteItem, lang: Language = 'en'): { 
   }
 
   const title = resolveCategoryTitle(item.id);
+  const detailed = buildDetailedDocDescription(item, lang, title, '');
+  if (detailed) return { title, description: detailed };
+
   const infoCategory = INFO_CATEGORIES_MAP[item.id as keyof typeof INFO_CATEGORIES_MAP];
   if (infoCategory) {
     const desc = getCategoryDescription(infoCategory, lang);

@@ -3,17 +3,25 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import CopyDocButton from '@/components/docs/CopyDocButton';
 import { findDocRouteBySlug, getAllDocRoutes, resolveDocContent } from '@/lib/docsCatalog';
+import type { Language } from '@/types';
 
 type PageProps = {
   params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<{ lang?: string }>;
 };
+
+function normalizeLang(lang?: string): Language {
+  return lang === 'ko' || lang === 'ja' || lang === 'es' || lang === 'pt' ? lang : 'en';
+}
 
 export async function generateStaticParams() {
   return getAllDocRoutes().map((item) => ({ slug: item.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const { lang } = await searchParams;
+  const activeLang = normalizeLang(lang);
   if (!slug?.length) {
     return {
       title: 'Documentation',
@@ -31,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
     };
   }
-  const content = resolveDocContent(route, 'en');
+  const content = resolveDocContent(route, activeLang);
   return {
     title: `${content.title} | Docs`,
     description: content.description,
@@ -41,23 +49,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function DocDetailPage({ params }: PageProps) {
+export default async function DocDetailPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const { lang } = await searchParams;
+  const activeLang = normalizeLang(lang);
   if (!slug?.length) notFound();
   const route = findDocRouteBySlug(slug);
   if (!route) notFound();
 
-  const content = resolveDocContent(route, 'en');
+  const content = resolveDocContent(route, activeLang);
   const parentSegments = slug.slice(0, -1);
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <nav className="mb-6 text-sm text-slate-500">
-        <Link href="/docs" className="hover:text-slate-700">
+        <Link href={`/docs?lang=${activeLang}`} className="hover:text-slate-700">
           Docs
         </Link>
         {parentSegments.map((seg, idx) => {
-          const href = `/docs/${slug.slice(0, idx + 1).join('/')}`;
+          const href = `/docs/${slug.slice(0, idx + 1).join('/')}?lang=${activeLang}`;
           return (
             <span key={`${seg}-${idx}`}>
               {' '}
