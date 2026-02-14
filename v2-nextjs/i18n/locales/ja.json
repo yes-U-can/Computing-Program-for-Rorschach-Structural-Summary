@@ -6,12 +6,13 @@
   },
   "nav": {
     "scoring": "スコアリング & 構造一覧表",
-    "more": "その他",
+    "more": "Docs",
     "login": "ログイン / 会員登録",
     "logout": "ログアウト",
     "account": "マイアカウント",
     "loginRequired": "ログインが必要です",
-    "aiAssistant": "AIアシスタント"
+    "aiAssistant": "AIアシスタント",
+    "aiGuide": "Googleログイン後にAPIキーを登録すると、検査結果の解釈を支援するAIとチャットできます。"
   },
   "buttons": {
     "calculate": "結果を計算する",
@@ -353,6 +354,6 @@
     "emptyStateDescription": "サイドバーから会話を選択するか、下にメッセージを入力して新しい会話を開始してください。"
   },
   "auth": {
-    "googleContinue": "Google ???"
+    "googleContinue": "Googleで続行"
   }
 }

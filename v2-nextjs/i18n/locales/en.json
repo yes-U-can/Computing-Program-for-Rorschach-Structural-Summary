@@ -6,12 +6,13 @@
   },
   "nav": {
     "scoring": "Scoring & Structural Summary",
-    "more": "More",
+    "more": "Docs",
     "login": "Login / Sign Up",
     "logout": "Logout",
     "account": "My Account",
     "loginRequired": "Login required",
-    "aiAssistant": "AI Assistant"
+    "aiAssistant": "AI Assistant",
+    "aiGuide": "After Google login and API key registration, you can chat with an AI that helps interpret test results."
   },
   "buttons": {
     "calculate": "Calculate Results",

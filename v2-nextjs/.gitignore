@@ -35,7 +35,9 @@ yarn-error.log*
 *.log
 
 # local/private working folders
-/docs
+!/docs/
+!/docs/**
+/docs/ref/
 /gas
 /nul
 /.secrets

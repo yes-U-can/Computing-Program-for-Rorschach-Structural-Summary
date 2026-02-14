@@ -6,12 +6,13 @@
   },
   "nav": {
     "scoring": "Codificação e Sumário Estrutural",
-    "more": "Mais",
+    "more": "Docs",
     "login": "Entrar / Registrar",
     "logout": "Sair",
     "account": "Minha Conta",
     "loginRequired": "Login necessário",
-    "aiAssistant": "Assistente de IA"
+    "aiAssistant": "Assistente de IA",
+    "aiGuide": "Apos fazer login com o Google e registrar sua chave de API, voce pode conversar com uma IA que ajuda a interpretar os resultados da avaliacao."
   },
   "buttons": {
     "calculate": "Calcular Resultados",

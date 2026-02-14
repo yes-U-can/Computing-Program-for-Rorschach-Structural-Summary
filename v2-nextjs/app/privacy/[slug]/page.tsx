@@ -1,19 +1,29 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getPrivacySection, PRIVACY_SECTIONS } from '@/lib/privacySections';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { getPrivacySection, getPrivacySections, PRIVACY_SECTIONS } from '@/lib/privacySections';
+import type { Language } from '@/types';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
 };
+
+function normalizeLang(lang?: string): Language {
+  return lang === 'ko' || lang === 'ja' || lang === 'es' || lang === 'pt' ? lang : 'en';
+}
 
 export function generateStaticParams() {
   return PRIVACY_SECTIONS.map((section) => ({ slug: section.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const section = getPrivacySection(slug);
+  const { lang } = await searchParams;
+  const activeLang = normalizeLang(lang);
+  const section = getPrivacySection(slug, activeLang) ?? getPrivacySection(slug, 'en');
 
   if (!section) {
     return {
@@ -31,27 +41,63 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function PrivacyDetailPage({ params }: PageProps) {
+export default async function PrivacyDetailPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const section = getPrivacySection(slug);
+  const { lang } = await searchParams;
+  const activeLang = normalizeLang(lang);
+  const section = getPrivacySection(slug, activeLang) ?? getPrivacySection(slug, 'en');
   if (!section) notFound();
+  const sections = getPrivacySections(activeLang);
+
+  const policyLabel: Record<Language, string> = {
+    en: 'Privacy Policy',
+    ko: '개인정보 처리방침',
+    ja: 'プライバシーポリシー',
+    es: 'Politica de Privacidad',
+    pt: 'Politica de Privacidade',
+  };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <nav className="mb-6 text-sm text-slate-500">
-        <Link href="/privacy" className="hover:text-[#4E73AA]">
-          Privacy Policy
-        </Link>
-      </nav>
+    <div className="min-h-screen bg-[#F7F9FB]">
+      <Header />
+      <main className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <section className="mb-6 rounded-xl border border-[var(--brand-200)] bg-white p-4 shadow-sm">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+              <Link href={`/privacy?lang=${activeLang}`} className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:border-[var(--brand-200)] hover:bg-slate-50">
+                {policyLabel[activeLang]}
+              </Link>
+              <span>/</span>
+              <span className="rounded-md border border-[var(--brand-200)] bg-[#E9F0F5] px-2 py-1 font-medium text-[var(--brand-700)]">{section.title}</span>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3">
+              {sections.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/privacy/${item.slug}?lang=${activeLang}`}
+                  className={`rounded-md border px-2.5 py-1 text-xs transition-colors ${
+                    item.slug === slug
+                      ? 'border-[var(--brand-700)] bg-[var(--brand-700)] text-white'
+                      : 'border-slate-300 bg-white text-slate-600 hover:border-[var(--brand-200)] hover:bg-slate-50'
+                  }`}
+                >
+                  {item.title}
+                </Link>
+              ))}
+            </div>
+          </section>
 
-      <article className="rounded-lg border border-slate-200 bg-white p-5">
-        <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">{section.title}</h1>
-        <div className="mt-6 space-y-3 text-base leading-7 text-slate-700">
-          {section.body.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
+          <article className="rounded-lg border border-slate-200 bg-white p-5">
+            <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">{section.title}</h1>
+            <div className="mt-6 space-y-3 text-base leading-7 text-slate-700">
+              {section.body.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+          </article>
         </div>
-      </article>
-    </main>
+      </main>
+      <Footer />
+    </div>
   );
 }

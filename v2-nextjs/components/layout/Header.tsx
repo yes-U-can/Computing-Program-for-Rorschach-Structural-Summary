@@ -6,7 +6,7 @@ import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '@/hooks/useTranslation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRightOnRectangleIcon, UserCircleIcon, Cog8ToothIcon } from '@heroicons/react/24/outline';
+import { ArrowRightOnRectangleIcon, UserCircleIcon, Cog8ToothIcon, HomeIcon } from '@heroicons/react/24/outline';
 
 function GoogleIcon() {
   return (
@@ -32,13 +32,13 @@ const UserMenu = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="block rounded-lg border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4E73AA]"
-        aria-label="Open user menu"
+        className="block rounded-lg border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)]"
+        aria-label={t('nav.account')}
       >
         {user.image ? (
           <Image
             src={user.image}
-            alt={user.name || 'User profile picture'}
+            alt={user.name || t('nav.account')}
             width={40}
             height={40}
             className="rounded-lg"
@@ -89,20 +89,27 @@ const UserMenu = () => {
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   return (
     <header className="relative z-10 print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col">
-            <h1 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">
-              Computing Program for Rorschach Structural Summary
-            </h1>
+            <Link
+              href={`/?lang=${language}`}
+              className="group inline-flex items-center gap-2 rounded-xl border border-[var(--brand-200)] bg-gradient-to-b from-white to-[#F8FBFD] px-3 py-2 shadow-[0_4px_14px_rgba(78,115,170,0.08)] transition-all hover:-translate-y-0.5 hover:border-[var(--brand-500)] hover:shadow-[0_8px_18px_rgba(78,115,170,0.14)]"
+              aria-label="Go to workspace home"
+            >
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#E9F0F5] text-[var(--brand-700)] transition-colors group-hover:bg-[var(--brand-700)] group-hover:text-white">
+                <HomeIcon className="h-4 w-4" />
+              </span>
+              <h1 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight group-hover:text-[var(--brand-700)]">
+                {t('app.title')}
+              </h1>
+            </Link>
           </div>
           <div className="flex items-center gap-3 self-end sm:self-auto">
-            <LanguageSelector />
-            <div className="w-px h-6 bg-slate-200"></div>
             {status === 'loading' ? (
               <div className="h-10 w-44 bg-slate-200 rounded-md animate-pulse"></div>
             ) : session ? (
@@ -110,12 +117,14 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => signIn('google', { callbackUrl: '/' })}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-md text-sm font-medium text-[#4E73AA] hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4E73AA]"
+                className="inline-flex items-center gap-2 rounded-md border border-[var(--brand-200)] bg-white px-4 py-2 text-sm font-medium text-[var(--brand-500)] hover:bg-[#EEF3F7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)]"
               >
                 <GoogleIcon />
                 <span>{t('auth.googleContinue')}</span>
               </button>
             )}
+            <div className="w-px h-6 bg-slate-200"></div>
+            <LanguageSelector />
           </div>
         </div>
       </div>

@@ -6,12 +6,13 @@
   },
   "nav": {
     "scoring": "채점 & 구조 요약",
-    "more": "더보기",
+    "more": "Docs",
     "login": "로그인 / 회원가입",
     "logout": "로그아웃",
     "account": "내 계정",
     "loginRequired": "로그인이 필요합니다",
-    "aiAssistant": "AI 어시스턴트"
+    "aiAssistant": "AI 어시스턴트",
+    "aiGuide": "Google 로그인 후 API 키를 등록하면, 검사 결과 해석을 돕는 AI와 채팅할 수 있습니다."
   },
   "buttons": {
     "calculate": "결과 계산하기",
@@ -353,6 +354,6 @@
     "emptyStateDescription": "사이드바에서 대화를 선택하거나, 아래에 메시지를 입력하여 새 대화를 시작하세요."
   },
   "auth": {
-    "googleContinue": "Google? ???/????"
+    "googleContinue": "Google로 계속하기"
   }
 }
