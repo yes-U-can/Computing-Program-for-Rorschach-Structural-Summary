@@ -23,6 +23,7 @@ const UserMenu = () => {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   if (!session || !session.user) return null;
 
@@ -35,13 +36,14 @@ const UserMenu = () => {
         className="block rounded-lg border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)]"
         aria-label={t('nav.account')}
       >
-        {user.image ? (
+        {user.image && !imageError ? (
           <Image
             src={user.image}
             alt={user.name || t('nav.account')}
             width={40}
             height={40}
             className="rounded-lg"
+            onError={() => setImageError(true)}
           />
         ) : (
           <UserCircleIcon className="h-10 w-10 text-slate-500" />
@@ -113,7 +115,16 @@ export default function Header() {
             {status === 'loading' ? (
               <div className="h-10 w-44 bg-slate-200 rounded-md animate-pulse"></div>
             ) : session ? (
-              <UserMenu />
+              <div className="flex items-center gap-2">
+                <UserMenu />
+                <button
+                  onClick={() => signOut({ callbackUrl: `/?lang=${language}` })}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--brand-200)] bg-white px-3 py-2 text-xs font-medium text-slate-700 hover:bg-[#EEF3F7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)]"
+                >
+                  <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                  <span>{t('nav.logout')}</span>
+                </button>
+              </div>
             ) : (
               <button
                 onClick={() => signIn('google', { callbackUrl: '/' })}
