@@ -6,7 +6,7 @@
   },
   "nav": {
     "scoring": "채점 & 구조 요약",
-    "more": "문서",
+    "more": "사전",
     "login": "로그인 / 회원가입",
     "logout": "로그아웃",
     "account": "내 계정",
@@ -358,7 +358,8 @@
     "noSessions": "아직 대화가 없습니다.",
     "loading": "로딩 중...",
     "emptyStateTitle": "대화를 선택하여 확인하세요",
-    "emptyStateDescription": "사이드바에서 대화를 선택하거나, 아래에 메시지를 입력하여 새 대화를 시작하세요."
+    "emptyStateDescription": "사이드바에서 대화를 선택하거나, 아래에 메시지를 입력하여 새 대화를 시작하세요.",
+    "newChat": "새 대화"
   },
   "auth": {
     "googleContinue": "Google로 계속하기"

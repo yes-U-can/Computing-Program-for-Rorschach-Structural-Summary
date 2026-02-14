@@ -160,3 +160,4 @@ export default async function DocsIndexPage({ searchParams }: DocsPageProps) {
     </div>
   );
 }
+

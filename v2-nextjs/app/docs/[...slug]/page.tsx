@@ -76,7 +76,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
 
   const docsLabel: Record<Language, string> = {
     en: 'Docs',
-    ko: '문서',
+    ko: '사전',
     ja: 'ドキュメント',
     es: 'Documentacion',
     pt: 'Documentacao',
@@ -186,4 +186,5 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
     </div>
   );
 }
+
 
