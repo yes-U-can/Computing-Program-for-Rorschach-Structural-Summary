@@ -7,6 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { getCategoryDescription, getCodeDescription } from '@/lib/infoTranslations';
 import { INFO_CATEGORIES_MAP, DOC_STRUCTURE } from '@/lib/constants';
+import { resolveDocContent } from '@/lib/docsCatalog';
 import { resultVariableDescriptions } from '@/lib/result-variables';
 import { BookOpenIcon, ChevronRightIcon, TagIcon, MagnifyingGlassIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 
@@ -230,39 +231,18 @@ function fallbackCategoryDescription(title: string, lang: Language): string {
 }
 
 function resolveContent(selected: SelectedItem, lang: Language, t: (key: string) => string): ResolvedContent {
-  if (selected.type === 'entry') {
-    const title = resolveEntryTitle(selected.id, lang);
-    const fromResultVars = resultVariableDescriptions[selected.id]?.[lang];
-    if (fromResultVars) {
-      return { title, description: fromResultVars.description };
-    }
-
-    const fromCodeDesc = getCodeDescription(selected.id as Code, lang);
-    if (fromCodeDesc?.description) {
-      return { title, description: fromCodeDesc.description };
-    }
-
-    return {
-      title,
-      description: fallbackEntryDescription(title, lang),
-    };
-  }
-
-  const categoryTitle = resolveCategoryLabel(selected.id, t);
-  const infoCategory = INFO_CATEGORIES_MAP[selected.id as keyof typeof INFO_CATEGORIES_MAP];
-  if (infoCategory) {
-    const description = getCategoryDescription(infoCategory, lang);
-    if (description) {
-      return {
-        title: categoryTitle,
-        description,
-      };
-    }
-  }
+  const mapped = resolveDocContent(
+    {
+      kind: selected.type === 'entry' ? 'entry' : 'category',
+      id: selected.id,
+      slug: selected.slug,
+    },
+    lang
+  );
 
   return {
-    title: categoryTitle,
-    description: fallbackCategoryDescription(categoryTitle, lang),
+    title: mapped.title || resolveCategoryLabel(selected.id, t),
+    description: mapped.description || fallbackCategoryDescription(resolveCategoryLabel(selected.id, t), lang),
   };
 }
 
