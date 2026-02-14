@@ -54,15 +54,7 @@ export default function HomePage() {
     validResponseCount
   } = useRorschachForm();
 
-  const handleAutoSave = useCallback(() => {
-    showToast({
-      type: 'info',
-      title: t('toast.autoSaved.title'),
-      message: t('toast.autoSaved.message')
-    });
-  }, [showToast, t]);
-
-  const { load, hasSavedData, clear } = useAutoSave(responses, { onSave: handleAutoSave });
+  const { load, hasSavedData, clear } = useAutoSave(responses);
 
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
@@ -258,28 +250,33 @@ export default function HomePage() {
             // Input Section
             <div className="space-y-6">
               {/* Initial Tab Navigation */}
-              <div className="print:hidden overflow-x-auto">
-                <div className="inline-flex min-w-max bg-white p-1 rounded-lg shadow-sm border border-slate-200">
-                  <button
-                    onClick={() => setInitialTab('scoring')}
-                    className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                      initialTab === 'scoring'
-                        ? 'bg-[#2A5F7F] text-white shadow-sm'
-                        : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
-                    }`}
-                  >
-                    {t('nav.scoring')}
-                  </button>
-                  <button
-                    onClick={() => setInitialTab('info')}
-                    className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                      initialTab === 'info'
-                        ? 'bg-[#2A5F7F] text-white shadow-sm'
-                        : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
-                    }`}
-                  >
-                    {t('nav.more')}
-                  </button>
+              <div className="print:hidden">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="overflow-x-auto">
+                    <div className="inline-flex min-w-max bg-white p-1 rounded-lg shadow-sm border border-slate-200">
+                      <button
+                        onClick={() => setInitialTab('scoring')}
+                        className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+                          initialTab === 'scoring'
+                            ? 'bg-[var(--brand-700)] text-white shadow-sm'
+                            : 'text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]'
+                        }`}
+                      >
+                        {t('nav.scoring')}
+                      </button>
+                      <button
+                        onClick={() => setInitialTab('info')}
+                        className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+                          initialTab === 'info'
+                            ? 'bg-[var(--brand-700)] text-white shadow-sm'
+                            : 'text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]'
+                        }`}
+                      >
+                        {t('nav.more')}
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-[var(--brand-700)] lg:text-right">{t('nav.aiGuide')}</p>
                 </div>
               </div>
 
@@ -383,8 +380,8 @@ export default function HomePage() {
                       onClick={() => setActiveTab(tab)}
                       className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                         activeTab === tab
-                          ? 'bg-[#2A5F7F] text-white shadow-sm'
-                          : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+                          ? 'bg-[var(--brand-700)] text-white shadow-sm'
+                          : 'text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]'
                       }`}
                     >
                       {t(`result.tabs.${tab}`)}
@@ -415,7 +412,7 @@ export default function HomePage() {
                     <ExclamationTriangleIcon className="w-12 h-12 mx-auto" />
                   </div>
                   <h3 className="text-lg font-semibold text-slate-800 mb-2">
-                    Calculation Error
+                    {t('errors.calculation')}
                   </h3>
                   <p className="text-slate-600">
                     {result.errors.map(e => e.message).join('\n')}
@@ -443,8 +440,8 @@ export default function HomePage() {
         <button
           onClick={() => setShowChatWidget(true)}
           disabled={!session}
-          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[#2A5F7F] text-white p-3 sm:p-4 rounded-full shadow-lg hover:bg-[#1E4D6A] transition-colors z-40 disabled:bg-slate-300 disabled:cursor-not-allowed"
-          aria-label="Open AI Chat"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[var(--brand-700)] text-white p-3 sm:p-4 rounded-full shadow-lg hover:bg-[var(--brand-700-hover)] transition-colors z-40 disabled:bg-slate-300 disabled:cursor-not-allowed"
+          aria-label={t('buttons.aiChat')}
           title={!session ? t('nav.loginRequired') : t('buttons.aiChat')}
         >
           <SparklesIcon className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -456,6 +453,7 @@ export default function HomePage() {
         isOpen={showWelcomeModal}
         onClose={() => setShowWelcomeModal(false)}
         size="md"
+        showCloseButton={false}
       >
         <div className="space-y-4">
           {/* Language Selector - icon buttons */}
@@ -466,14 +464,14 @@ export default function HomePage() {
           <div className="space-y-3">
             <button
               onClick={handleNewStart}
-              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-[#C1D2DC] hover:bg-[#C1D2DC]/20 transition-colors"
+              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-[var(--brand-200)] hover:bg-[var(--brand-200)]/20 transition-colors"
             >
               <span className="font-semibold text-slate-800">{t('modal.welcome.new')}</span>
             </button>
 
             <button
               onClick={handleLoadSample}
-              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-[#C1D2DC] hover:bg-[#C1D2DC]/20 transition-colors"
+              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-[var(--brand-200)] hover:bg-[var(--brand-200)]/20 transition-colors"
             >
               <span className="font-semibold text-slate-800">{t('modal.welcome.loadSample')}</span>
             </button>
@@ -481,10 +479,10 @@ export default function HomePage() {
             {hasSavedData() && (
               <button
                 onClick={handleLoadSaved}
-                className="w-full px-4 py-3 text-left rounded-xl border border-[#C1D2DC] bg-[#C1D2DC]/20 hover:bg-[#C1D2DC]/30 transition-colors"
+                className="w-full px-4 py-3 text-left rounded-xl border border-[var(--brand-200)] bg-[var(--brand-200)]/20 hover:bg-[var(--brand-200)]/30 transition-colors"
               >
-                <span className="font-semibold text-[#2A5F7F]">{t('modal.welcome.loadSaved')}</span>
-                <span className="block text-sm text-[#2A5F7F] mt-1">{t('modal.welcome.continueMsg')}</span>
+                <span className="font-semibold text-[var(--brand-700)]">{t('modal.welcome.loadSaved')}</span>
+                <span className="block text-sm text-[var(--brand-700)] mt-1">{t('modal.welcome.continueMsg')}</span>
               </button>
             )}
           </div>
@@ -514,6 +512,9 @@ export default function HomePage() {
     </div>
   );
 }
+
+
+
 
 
 
