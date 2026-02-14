@@ -42,6 +42,23 @@ export const FIXED_EN_CATEGORY_LABELS: Record<string, string> = {
   selfPerception: 'Self-Perception',
 };
 
+const TOP_LEVEL_CATEGORY_LABELS: Record<string, Record<Language, string>> = {
+  'scoring-input': {
+    en: 'Scoring Input',
+    ko: '채점 입력',
+    ja: '採点入力',
+    es: 'Entrada de codificacion',
+    pt: 'Entrada de codificacao',
+  },
+  'result-interpretation': {
+    en: 'Result Interpretation',
+    ko: '결과 해석',
+    ja: '結果解釈',
+    es: 'Interpretacion de resultados',
+    pt: 'Interpretacao de resultados',
+  },
+};
+
 export const CANONICAL_ENTRY_LABELS: Record<string, string> = {
   Zf: 'Zf',
   ZSum: 'ZSum',
@@ -128,7 +145,9 @@ function fallbackLabel(id: string): string {
     .replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
-export function resolveCategoryTitle(id: string): string {
+export function resolveCategoryTitle(id: string, lang: Language = 'en'): string {
+  const topLevel = TOP_LEVEL_CATEGORY_LABELS[id];
+  if (topLevel) return topLevel[lang] ?? topLevel.en;
   return FIXED_EN_CATEGORY_LABELS[id] ?? fallbackLabel(id);
 }
 
@@ -179,7 +198,7 @@ export function resolveDocContent(item: DocRouteItem, lang: Language = 'en'): { 
     return { title, description: fallbackEntryDescription(title, lang) };
   }
 
-  const title = resolveCategoryTitle(item.id);
+  const title = resolveCategoryTitle(item.id, lang);
   const detailed = buildDetailedDocDescription(item, lang, title, '');
   if (detailed) return { title, description: detailed };
 
@@ -248,5 +267,12 @@ export function findDocRouteBySlug(slug?: string[]): DocRouteItem | undefined {
   if (!slug?.length) return undefined;
   const key = slug.join('/');
   return DOC_ROUTE_ITEMS.find((item) => item.slug.join('/') === key);
+}
+
+export function getDocChildren(parentSlug: string[]): DocRouteItem[] {
+  return DOC_ROUTE_ITEMS.filter((item) => {
+    if (item.slug.length !== parentSlug.length + 1) return false;
+    return parentSlug.every((segment, idx) => item.slug[idx] === segment);
+  });
 }
 

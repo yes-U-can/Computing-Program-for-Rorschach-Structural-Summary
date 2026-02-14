@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useRorschachForm } from '@/hooks/useRorschachForm';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -14,17 +13,19 @@ import LanguageSelector from '@/components/layout/LanguageSelector';
 
 import InputTable from '@/components/input/InputTable';
 import MobileCard from '@/components/input/MobileCard';
-import InfoTab from '@/components/info/InfoTab';
-import UpperSection from '@/components/result/UpperSection';
-import LowerSection from '@/components/result/LowerSection';
-import SpecialIndices from '@/components/result/SpecialIndices';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import { Card } from '@/components/ui/Card';
 
 import { exportToCSV, exportSummaryToCSV } from '@/lib/csv';
 
-import ChatWidget from '@/components/chat/ChatWidget';
+import DraggableFab from '@/components/ui/DraggableFab';
+
+// Lazy-loaded heavy components (only loaded when actually needed)
+const UpperSection = lazy(() => import('@/components/result/UpperSection'));
+const LowerSection = lazy(() => import('@/components/result/LowerSection'));
+const SpecialIndices = lazy(() => import('@/components/result/SpecialIndices'));
+const ChatWidget = lazy(() => import('@/components/chat/ChatWidget'));
 import {
   CalculatorIcon,
   ArrowPathIcon,
@@ -37,7 +38,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function HomePage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const [showChatWidget, setShowChatWidget] = useState(false);
   const { showToast } = useToast();
@@ -60,7 +61,6 @@ export default function HomePage() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'upper' | 'lower' | 'special'>('lower');
-  const [initialTab, setInitialTab] = useState<'scoring' | 'info'>('scoring');
   const [isMobile, setIsMobile] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState('');
 
@@ -250,108 +250,52 @@ export default function HomePage() {
           {!showResult ? (
             // Input Section
             <div className="space-y-6">
-              {/* Initial Tab Navigation */}
-              <div className="print:hidden">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="overflow-x-auto">
-                    <div className="inline-flex min-w-max bg-white p-1 rounded-lg shadow-sm border border-slate-200">
-                      <button
-                        onClick={() => setInitialTab('scoring')}
-                        className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                          initialTab === 'scoring'
-                            ? 'bg-[var(--brand-700)] text-white shadow-sm'
-                            : 'text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]'
-                        }`}
-                      >
-                        {t('nav.scoring')}
-                      </button>
-                      <button
-                        onClick={() => setInitialTab('info')}
-                        className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                          initialTab === 'info'
-                            ? 'bg-[var(--brand-700)] text-white shadow-sm'
-                            : 'text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]'
-                        }`}
-                      >
-                        {t('nav.more')}
-                      </button>
-                    </div>
-                  </div>
-                  {session ? (
-                    <div className="overflow-x-auto lg:ml-auto">
-                      <div className="inline-flex min-w-max bg-white p-1 rounded-lg shadow-sm border border-slate-200">
-                        <Link
-                          href={`/chat?lang=${language}`}
-                          className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]"
-                        >
-                          {t('nav.chatSession')}
-                        </Link>
-                        <Link
-                          href={`/account?lang=${language}`}
-                          className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]"
-                        >
-                          {t('nav.accountManage')}
-                        </Link>
-                      </div>
-                    </div>
+              <>
+                {/* Input Table */}
+                <div className="print:hidden">
+                  {isMobile ? (
+                    <MobileCard
+                      responses={responses}
+                      onChange={setResponses}
+                    />
                   ) : (
-                    <p className="text-xs text-[var(--brand-700)] lg:text-right">{t('nav.aiGuide')}</p>
+                    <InputTable
+                      responses={responses}
+                      onChange={setResponses}
+                    />
                   )}
                 </div>
-              </div>
 
-              {/* Tab Content */}
-              {initialTab === 'scoring' ? (
-                <>
-                  {/* Input Table */}
-                  <div className="print:hidden">
-                    {isMobile ? (
-                      <MobileCard
-                        responses={responses}
-                        onChange={setResponses}
-                      />
+                {/* Action Buttons */}
+                <div className="flex flex-wrap justify-center gap-4 print:hidden">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={handleCalculate}
+                    disabled={isCalculating || validResponseCount === 0}
+                  >
+                    {isCalculating ? (
+                      <>
+                        <ArrowPathIcon className="w-5 h-5 mr-2 animate-spin" />
+                        {t('loader.calculating')}
+                      </>
                     ) : (
-                      <InputTable
-                        responses={responses}
-                        onChange={setResponses}
-                      />
+                      <>
+                        <CalculatorIcon className="w-5 h-5 mr-2" />
+                        {t('buttons.calculate')}
+                      </>
                     )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap justify-center gap-4 print:hidden">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      onClick={handleCalculate}
-                      disabled={isCalculating || validResponseCount === 0}
-                    >
-                      {isCalculating ? (
-                        <>
-                          <ArrowPathIcon className="w-5 h-5 mr-2 animate-spin" />
-                          {t('loader.calculating')}
-                        </>
-                      ) : (
-                        <>
-                          <CalculatorIcon className="w-5 h-5 mr-2" />
-                          {t('buttons.calculate')}
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      onClick={() => setShowResetModal(true)}
-                    >
-                      <ArrowPathIcon className="w-5 h-5 mr-2" />
-                      {t('buttons.reset')}
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                /* Info Tab Content */
-                <InfoTab />
-              )}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    onClick={() => setShowResetModal(true)}
+                  >
+                    <ArrowPathIcon className="w-5 h-5 mr-2" />
+                    {t('buttons.reset')}
+                  </Button>
+                </div>
+              </>
             </div>
           ) : (
             // Result Section
@@ -412,17 +356,19 @@ export default function HomePage() {
 
               {/* Result Content */}
               {result?.success && result.data && (
-                <div id="results-container">
-                  <div className={activeTab === 'upper' ? '' : 'hidden print:block'}>
-                    <UpperSection data={result.data.upper_section} />
+                <Suspense fallback={null}>
+                  <div id="results-container">
+                    <div className={activeTab === 'upper' ? '' : 'hidden print:block'}>
+                      <UpperSection data={result.data.upper_section} />
+                    </div>
+                    <div className={activeTab === 'lower' ? '' : 'hidden print:block'}>
+                      <LowerSection data={result.data.lower_section} specialIndices={result.data.special_indices} />
+                    </div>
+                    <div className={activeTab === 'special' ? '' : 'hidden print:block'}>
+                      <SpecialIndices data={result.data.special_indices} />
+                    </div>
                   </div>
-                  <div className={activeTab === 'lower' ? '' : 'hidden print:block'}>
-                    <LowerSection data={result.data.lower_section} specialIndices={result.data.special_indices} />
-                  </div>
-                  <div className={activeTab === 'special' ? '' : 'hidden print:block'}>
-                    <SpecialIndices data={result.data.special_indices} />
-                  </div>
-                </div>
+                </Suspense>
               )}
 
               {/* Error Message */}
@@ -447,25 +393,28 @@ export default function HomePage() {
       </div>
 
       {/* AI Chat Widget and Button */}
-      <ChatWidget
-        isOpen={showChatWidget}
-        onClose={() => {
-          setShowChatWidget(false);
-          setInitialChatMessage('');
-        }}
-        initialMessage={initialChatMessage}
-      />
+      {showChatWidget && (
+        <Suspense fallback={null}>
+          <ChatWidget
+            isOpen={showChatWidget}
+            onClose={() => {
+              setShowChatWidget(false);
+              setInitialChatMessage('');
+            }}
+            initialMessage={initialChatMessage}
+          />
+        </Suspense>
+      )}
 
-      {!showChatWidget && (
-        <button
+      {session && !showChatWidget && (
+        <DraggableFab
           onClick={() => setShowChatWidget(true)}
-          disabled={!session}
-          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[var(--brand-700)] text-white p-3 sm:p-4 rounded-full shadow-lg hover:bg-[var(--brand-700-hover)] transition-colors z-40 disabled:bg-slate-300 disabled:cursor-not-allowed"
-          aria-label={t('buttons.aiChat')}
-          title={!session ? t('nav.loginRequired') : t('buttons.aiChat')}
+          label={t('nav.aiAssistant')}
+          className="border border-white/20 bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-500)] px-4 py-3 text-white shadow-[0_12px_30px_rgba(36,72,114,0.35)] transition-shadow hover:shadow-[0_16px_34px_rgba(36,72,114,0.45)]"
         >
-          <SparklesIcon className="w-6 h-6 sm:w-8 sm:h-8" />
-        </button>
+          <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+          <span className="text-sm font-semibold tracking-tight">{t('nav.aiAssistant')}</span>
+        </DraggableFab>
       )}
 
       {/* Welcome Modal */}
@@ -532,9 +481,6 @@ export default function HomePage() {
     </div>
   );
 }
-
-
-
 
 
 

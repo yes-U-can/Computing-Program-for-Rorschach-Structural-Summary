@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { getPrivacySections } from '@/lib/privacySections';
+import { buildLanguageAlternates } from '@/lib/seo';
 import type { Language } from '@/types';
 
 type PrivacyPageProps = {
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   description: 'Privacy policy index and subpages for this service.',
   alternates: {
     canonical: '/privacy',
+    languages: buildLanguageAlternates('/privacy'),
   },
 };
 
@@ -28,7 +30,7 @@ export default async function PrivacyPage({ searchParams }: PrivacyPageProps) {
 
   const intro: Record<Language, string> = {
     en: 'This page explains how account, API key, and AI chat data are handled in this service.',
-    ko: '이 페이지는 본 서비스에서 계정, API 키, AI 채팅 데이터가 어떻게 처리되는지 설명합니다.',
+  ko: '계정 정보, API키, AI 채팅 데이터가 어떻게 처리되는지 안내합니다.',
     ja: 'このページでは、本サービスにおけるアカウント、APIキー、AIチャットデータの取り扱いを説明します。',
     es: 'Esta pagina explica como se gestionan los datos de cuenta, clave API y chat de IA en este servicio.',
     pt: 'Esta pagina explica como os dados de conta, chave API e chat de IA sao tratados neste servico.',

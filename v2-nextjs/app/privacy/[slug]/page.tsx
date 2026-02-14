@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { getPrivacySection, getPrivacySections, PRIVACY_SECTIONS } from '@/lib/privacySections';
+import { buildLanguageAlternates } from '@/lib/seo';
 import type { Language } from '@/types';
 
 type PageProps = {
@@ -28,7 +29,10 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   if (!section) {
     return {
       title: 'Privacy Policy',
-      alternates: { canonical: '/privacy' },
+      alternates: {
+        canonical: '/privacy',
+        languages: buildLanguageAlternates('/privacy'),
+      },
     };
   }
 
@@ -37,6 +41,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     description: section.body[0],
     alternates: {
       canonical: `/privacy/${section.slug}`,
+      languages: buildLanguageAlternates(`/privacy/${section.slug}`),
     },
   };
 }
@@ -48,29 +53,26 @@ export default async function PrivacyDetailPage({ params, searchParams }: PagePr
   const section = getPrivacySection(slug, activeLang) ?? getPrivacySection(slug, 'en');
   if (!section) notFound();
   const sections = getPrivacySections(activeLang);
-
-  const policyLabel: Record<Language, string> = {
+  const indexLabel: Record<Language, string> = {
     en: 'Privacy Policy',
-    ko: '개인정보 처리방침',
+    ko: '개인정보처리방침',
     ja: 'プライバシーポリシー',
     es: 'Politica de Privacidad',
     pt: 'Politica de Privacidade',
   };
-
   return (
     <div className="min-h-screen bg-[#F7F9FB]">
       <Header />
       <main className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <section className="mb-6 rounded-xl border border-[var(--brand-200)] bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-              <Link href={`/privacy?lang=${activeLang}`} className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:border-[var(--brand-200)] hover:bg-slate-50">
-                {policyLabel[activeLang]}
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/privacy?lang=${activeLang}`}
+                className="rounded-md border border-[var(--brand-200)] bg-[var(--brand-200)]/25 px-2.5 py-1 text-xs font-semibold text-[var(--brand-700)] transition-colors hover:bg-[var(--brand-200)]/40"
+              >
+                ← {indexLabel[activeLang]}
               </Link>
-              <span>/</span>
-              <span className="rounded-md border border-[var(--brand-200)] bg-[#E9F0F5] px-2 py-1 font-medium text-[var(--brand-700)]">{section.title}</span>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3">
               {sections.map((item) => (
                 <Link
                   key={item.slug}
