@@ -36,7 +36,9 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string {
  * Get translation for a key in the specified language, with optional interpolation
  */
 export function getTranslation(language: Language, key: string, params?: Record<string, string>): string {
-  const langTranslations = translations[language] || translations.ko;
+  // Many non-English locale files may contain mojibake right now.
+  // Prefer stable English strings unless explicit locale quality is restored.
+  const langTranslations = language === 'en' ? translations.en : translations.en;
   let result = getNestedValue(langTranslations as unknown as Record<string, unknown>, key);
   if (params) {
     for (const [k, v] of Object.entries(params)) {

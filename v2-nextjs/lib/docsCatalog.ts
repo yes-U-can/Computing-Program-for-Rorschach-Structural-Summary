@@ -1,4 +1,4 @@
-import { DOC_STRUCTURE, INFO_CATEGORIES_MAP } from '@/lib/constants';
+﻿import { DOC_STRUCTURE, INFO_CATEGORIES_MAP } from '@/lib/constants';
 import { getCategoryDescription, getCodeDescription } from '@/lib/infoTranslations';
 import { resultVariableDescriptions } from '@/lib/result-variables';
 import { Code, Language } from '@/types';
@@ -141,10 +141,10 @@ export function resolveEntryTitle(id: string, lang: Language): string {
 function fallbackEntryDescription(title: string, lang: Language): string {
   const messages: Record<Language, string> = {
     en: `Temporary note for ${title}. This documentation will be refined later.`,
-    ko: `${title}에 대한 임시 설명입니다. 추후 상세 문구로 보완 예정입니다.`,
-    ja: `${title}の暫定説明です。後で詳細説明に更新予定です。`,
-    es: `Nota temporal para ${title}. Esta documentación se completará más adelante.`,
-    pt: `Nota temporária para ${title}. Esta documentação será refinada depois.`,
+    ko: `Temporary note for ${title}. This documentation will be refined later.`,
+    ja: `Temporary note for ${title}. This documentation will be refined later.`,
+    es: `Temporary note for ${title}. This documentation will be refined later.`,
+    pt: `Temporary note for ${title}. This documentation will be refined later.`,
   };
   return messages[lang];
 }
@@ -152,10 +152,10 @@ function fallbackEntryDescription(title: string, lang: Language): string {
 function fallbackCategoryDescription(title: string, lang: Language): string {
   const messages: Record<Language, string> = {
     en: `Temporary overview for ${title}. Detailed guidance will be added later.`,
-    ko: `${title}에 대한 임시 개요입니다. 자세한 가이드는 추후 추가됩니다.`,
-    ja: `${title}の暫定概要です。詳細ガイドは後で追加されます。`,
-    es: `Resumen temporal de ${title}. La guía detallada se añadirá más adelante.`,
-    pt: `Visão geral temporária de ${title}. O guia detalhado será adicionado depois.`,
+    ko: `Temporary overview for ${title}. Detailed guidance will be added later.`,
+    ja: `Temporary overview for ${title}. Detailed guidance will be added later.`,
+    es: `Temporary overview for ${title}. Detailed guidance will be added later.`,
+    pt: `Temporary overview for ${title}. Detailed guidance will be added later.`,
   };
   return messages[lang];
 }
@@ -239,3 +239,4 @@ export function findDocRouteBySlug(slug?: string[]): DocRouteItem | undefined {
   const key = slug.join('/');
   return DOC_ROUTE_ITEMS.find((item) => item.slug.join('/') === key);
 }
+

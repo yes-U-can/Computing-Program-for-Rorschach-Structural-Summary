@@ -7,7 +7,6 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { getCategoryDescription, getCodeDescription } from '@/lib/infoTranslations';
 import { INFO_CATEGORIES_MAP, DOC_STRUCTURE } from '@/lib/constants';
-import { resolveToneBySlug } from '@/lib/docsCatalog';
 import { resultVariableDescriptions } from '@/lib/result-variables';
 import { BookOpenIcon, ChevronRightIcon, TagIcon, MagnifyingGlassIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 
@@ -523,7 +522,6 @@ function Sidebar({ query, onQueryChange, selected, onSelect }: SidebarProps) {
 function ContentDisplay({ item, lang }: { item: SelectedItem; lang: Language }) {
   const { t } = useTranslation();
   const { showToast } = useToast();
-  const tone = resolveToneBySlug(item.slug);
 
   const content = useMemo(() => {
     return resolveContent(item, lang, t);
@@ -561,20 +559,9 @@ function ContentDisplay({ item, lang }: { item: SelectedItem; lang: Language }) 
     <article className="prose prose-blue max-w-none flex-1">
       <div
         className="flex items-center gap-2 rounded-lg bg-slate-50 px-4 py-2"
-        style={
-          tone
-            ? {
-                backgroundColor: tone.bg,
-                borderLeft: `4px solid ${tone.accent}`,
-              }
-            : undefined
-        }
       >
-        <TagIcon className="h-6 w-6 text-slate-400" style={tone ? { color: tone.accent } : undefined} />
-        <h1
-          className="text-2xl font-bold tracking-tight text-gray-800"
-          style={tone ? { color: tone.accent } : undefined}
-        >
+        <TagIcon className="h-6 w-6 text-slate-400" />
+        <h1 className="text-2xl font-bold tracking-tight text-gray-800">
           {content.title}
         </h1>
       </div>
