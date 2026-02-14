@@ -12,9 +12,9 @@ export default function LanguageSelector() {
         <button
           key={lang}
           onClick={() => setLanguage(lang)}
-          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
             language === lang
-              ? 'bg-purple-100 border border-purple-400 text-purple-800 shadow-sm'
+              ? 'bg-slate-200 border border-slate-300 text-slate-800 shadow-sm'
               : 'bg-slate-50 border border-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-700'
           }`}
         >

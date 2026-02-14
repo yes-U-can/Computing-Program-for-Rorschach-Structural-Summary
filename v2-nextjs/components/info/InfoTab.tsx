@@ -9,7 +9,6 @@ import { getCategoryDescription, getCodeDescription } from '@/lib/infoTranslatio
 import { INFO_CATEGORIES_MAP, DOC_STRUCTURE } from '@/lib/constants';
 import { resolveToneBySlug } from '@/lib/docsCatalog';
 import { resultVariableDescriptions } from '@/lib/result-variables';
-import { GROUP_COLORS, HEADER_ACCENT } from '@/lib/colors';
 import { BookOpenIcon, ChevronRightIcon, TagIcon, MagnifyingGlassIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 
 type SelectedItem =
@@ -29,28 +28,7 @@ type ResolvedContent = {
   description: string;
 };
 
-type ColorKey = keyof typeof GROUP_COLORS.header;
-type CategoryTone = {
-  bg: string;
-  accent: string;
-};
-
 const CATEGORY_ONLY_DOC_IDS = new Set(['pair', 'popular']);
-
-const CATEGORY_COLOR_KEYS: Partial<Record<string, ColorKey>> = {
-  card: 'basic',
-  location: 'location',
-  dq: 'dq',
-  determinants: 'determinants',
-  fq: 'fq',
-  pair: 'pair',
-  contents: 'contents',
-  popular: 'popular',
-  z: 'z',
-  score: 'score',
-  gphr: 'gphr',
-  'special-score': 'special',
-};
 
 const CANONICAL_ENTRY_LABELS: Record<string, string> = {
   // Upper Section
@@ -172,15 +150,6 @@ function fallbackLabel(id: string): string {
     .replace(/_/g, ' ')
     .replace(/-/g, ' ')
     .replace(/\b\w/g, (m) => m.toUpperCase());
-}
-
-function resolveCategoryTone(id: string): CategoryTone | null {
-  const key = CATEGORY_COLOR_KEYS[id];
-  if (!key) return null;
-  return {
-    bg: GROUP_COLORS.header[key],
-    accent: HEADER_ACCENT.light[key],
-  };
 }
 
 function includesQuery(text: string, query: string): boolean {
@@ -387,8 +356,6 @@ function NavItem({ node, nodePath, level, selected, onSelect, openNodes, onToggl
   const selectedKey = selected.slug.join('/');
   const currentNodeKey = nodePath.join('/');
   const isCategorySelected = selected.type === 'category' && selectedKey === currentNodeKey;
-  const categoryTone = resolveCategoryTone(node.id);
-
   const label = resolveCategoryLabel(node.id, t);
 
   const handleSelectCategory = (e: React.MouseEvent) => {
@@ -405,28 +372,19 @@ function NavItem({ node, nodePath, level, selected, onSelect, openNodes, onToggl
         className={`flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm transition-opacity hover:opacity-90 ${
           isCategorySelected ? 'font-semibold' : 'font-semibold'
         }`}
-        style={
-          categoryTone
-            ? {
-                backgroundColor: categoryTone.bg,
-                borderLeft: `3px solid ${categoryTone.accent}`,
-              }
-            : undefined
-        }
         onClick={handleSelectCategory}
       >
         <span
           className={`${level === 0 ? 'text-base font-bold' : ''} ${
             isCategorySelected ? 'font-bold' : ''
           }`}
-          style={categoryTone && isCategorySelected ? { color: categoryTone.accent } : { color: '#334155' }}
+          style={{ color: '#334155' }}
         >
           {label}
         </span>
         {hasExpandableContent && (
           <ChevronRightIcon
             className={`h-4 w-4 transform transition-transform ${isOpen ? 'rotate-90' : ''}`}
-            style={categoryTone && isCategorySelected ? { color: categoryTone.accent } : undefined}
           />
         )}
       </div>
@@ -438,28 +396,14 @@ function NavItem({ node, nodePath, level, selected, onSelect, openNodes, onToggl
               const leafPath = [...nodePath, childNode.id];
               const isSelected =
                 selected.type === 'entry' && selected.slug.join('/') === leafPath.join('/');
-              const leafTone = resolveCategoryTone(childNode.id) ?? categoryTone;
               return (
                 <li key={childNode.id}>
                   <button
                     type="button"
                     className={`block w-full rounded-md px-3 py-1.5 text-left text-sm transition-colors ${
-                      isSelected ? 'font-semibold' : 'text-slate-600 hover:bg-[#C1D2DC]/20'
+                      isSelected ? 'font-semibold bg-slate-100' : 'text-slate-600 hover:bg-slate-100'
                     }`}
-                    style={
-                      leafTone
-                        ? {
-                            backgroundColor: leafTone.bg,
-                            color: leafTone.accent,
-                            borderLeft: `3px solid ${leafTone.accent}`,
-                            fontWeight: isSelected ? 700 : 600,
-                          }
-                        : isSelected
-                          ? {
-                              fontWeight: 600,
-                            }
-                          : undefined
-                    }
+                    style={isSelected ? { fontWeight: 600 } : undefined}
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelect({ type: 'entry', id: childNode.id, slug: leafPath });
@@ -492,16 +436,8 @@ function NavItem({ node, nodePath, level, selected, onSelect, openNodes, onToggl
                   <button
                     type="button"
                     className={`block w-full rounded-md px-3 py-1.5 text-left text-sm transition-colors ${
-                      isCodeSelected ? 'font-semibold' : 'text-slate-600 hover:bg-[#C1D2DC]/20'
+                      isCodeSelected ? 'font-semibold bg-slate-100' : 'text-slate-600 hover:bg-slate-100'
                     }`}
-                    style={
-                      isCodeSelected && categoryTone
-                        ? {
-                            backgroundColor: categoryTone.bg,
-                            color: categoryTone.accent,
-                          }
-                        : undefined
-                    }
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelect({ type: 'entry', id: code, slug: codePath });

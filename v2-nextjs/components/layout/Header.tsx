@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
@@ -13,9 +13,7 @@ const UserMenu = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!session || !session.user) {
-    return null;
-  }
+  if (!session || !session.user) return null;
 
   const { user } = session;
 
@@ -24,6 +22,7 @@ const UserMenu = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="block rounded-lg border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4E73AA]"
+        aria-label="Open user menu"
       >
         {user.image ? (
           <Image
@@ -77,7 +76,6 @@ const UserMenu = () => {
   );
 };
 
-
 export default function Header() {
   const { data: session, status } = useSession();
   const { t } = useTranslation();
@@ -91,7 +89,7 @@ export default function Header() {
               Computing Program for Rorschach Structural Summary
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              筌?1997??026 ??戮곕뮲?熬곣뫕留?????⑤슢???(Seoul Institute of Clinical Psychology, SICP). All rights reserved.
+              Copyright 1997-2026 Seoul Institute of Clinical Psychology (SICP). All rights reserved.
             </p>
           </div>
           <div className="flex items-center gap-3 self-end sm:self-auto">
@@ -115,6 +113,3 @@ export default function Header() {
     </header>
   );
 }
-
-
-

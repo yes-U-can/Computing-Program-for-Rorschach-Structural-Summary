@@ -6,7 +6,7 @@ import type { RorschachResponse } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { SCORING_CONFIG } from '@/lib/constants';
-import { HEADER_ACCENT, ROW_COLORS } from '@/lib/colors';
+import { ROW_COLORS } from '@/lib/colors';
 import InputRow from './InputRow';
 import Button from '@/components/ui/Button';
 import Tooltip from '@/components/ui/Tooltip';
@@ -106,7 +106,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
   const gphrTooltipText = "?꾩룇瑗????筌롫챷????㉱????怨몃뮔(Contents??H, (H) ????????筌롫챷???????????Determinants??M, FM ??????????? ???섎?嶺??????????깅굵 ??リ턃????琉우뿰 ???吏??怨쀬Ŧ ?遊붋??筌???덈펲. ???브퀗?쀦뤃???寃몃쳴???? ???곷さ嶺???戮?뻣??? ???용????덈펲.";
 
   const { showToast } = useToast();
-  const accent = HEADER_ACCENT.light;
   const rows = ROW_COLORS.light;
   const [editingResponseIndex, setEditingResponseIndex] = useState<number | null>(null);
   const portalRoot = typeof document !== 'undefined' ? document.body : null;
@@ -223,18 +222,18 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
   const headers = [
     { key: 'no',           label: 'No.',           accent: 'transparent',       className: 'w-10' },
     { key: 'action',       label: <PencilSquareIcon className="w-4 h-4 text-slate-400 mx-auto" />, tooltip: memoTooltipText, accent: 'transparent', className: 'w-10' },
-    { key: 'card',         label: 'Card',          accent: accent.basic,        className: '' },
-    { key: 'location',     label: 'Location',      accent: accent.location,     className: '' },
-    { key: 'dq',           label: 'DQ',            accent: accent.dq,           className: '' },
-    { key: 'determinants', label: 'Determinants',   accent: accent.determinants, className: '' },
-    { key: 'fq',           label: 'FQ',            accent: accent.fq,           className: '' },
-    { key: 'pair',         label: 'Pair',          accent: accent.pair,         className: '' },
-    { key: 'contents',     label: 'Contents',      accent: accent.contents,     className: '' },
-    { key: 'popular',      label: 'P',             accent: accent.popular,      className: '' },
-    { key: 'z',            label: 'Z',             accent: accent.z,            className: '' },
-    { key: 'score',        label: 'Score',         tooltip: scoreTooltipText, accent: accent.score,       className: 'w-14' },
-    { key: 'gphr',         label: 'G/PHR',         tooltip: gphrTooltipText, accent: accent.gphr,       className: 'w-14' },
-    { key: 'special',      label: 'Special Score', accent: accent.special,      className: '' },
+    { key: 'card',         label: 'Card',          accent: 'transparent', className: '' },
+    { key: 'location',     label: 'Location',      accent: 'transparent', className: '' },
+    { key: 'dq',           label: 'DQ',            accent: 'transparent', className: '' },
+    { key: 'determinants', label: 'Determinants',  accent: 'transparent', className: '' },
+    { key: 'fq',           label: 'FQ',            accent: 'transparent', className: '' },
+    { key: 'pair',         label: 'Pair',          accent: 'transparent', className: '' },
+    { key: 'contents',     label: 'Contents',      accent: 'transparent', className: '' },
+    { key: 'popular',      label: 'P',             accent: 'transparent', className: '' },
+    { key: 'z',            label: 'Z',             accent: 'transparent', className: '' },
+    { key: 'score',        label: 'Score',         tooltip: scoreTooltipText, accent: 'transparent', className: 'w-14' },
+    { key: 'gphr',         label: 'G/PHR',         tooltip: gphrTooltipText, accent: 'transparent', className: 'w-14' },
+    { key: 'special',      label: 'Special Score', accent: 'transparent', className: '' },
   ];
 
   return (
@@ -248,7 +247,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
                 <th
                   key={h.key}
                   className={`px-2 py-3 text-center text-[11px] font-semibold text-slate-500 uppercase tracking-wider ${h.className}`}
-                  style={{ borderBottom: `2.5px solid ${h.accent}` }}
+                  style={{ borderBottom: '1px solid #e2e8f0' }}
                 >
                   {h.tooltip ? (
                     <Tooltip content={h.tooltip}>
