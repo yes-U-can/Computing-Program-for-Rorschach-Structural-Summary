@@ -12,7 +12,9 @@
     "account": "My Account",
     "loginRequired": "Login required",
     "aiAssistant": "AI Assistant",
-    "aiGuide": "After Google login and API key registration, you can chat with an AI that helps interpret test results."
+    "aiGuide": "After Google login and API key registration, you can chat with an AI that helps interpret test results.",
+    "chatSession": "AI Assistant",
+    "accountManage": "Account Settings"
   },
   "buttons": {
     "calculate": "Calculate Results",
@@ -71,9 +73,14 @@
     "specialScores": "Special Scores",
     "score": "Score",
     "gphr": "G/PHR",
-    "guideResponse": "The [Response] section is for noting the subject's verbal responses; it does not affect calculations, so it can be left blank.<br>The [Score] and [G/PHR] sections are calculated automatically, so no manual input is needed.<br>However, for [Score], values are automatically calculated only after selecting the [Card] and [Z] types.",
+    "guideResponse": "Used to memo the subject's verbal responses; it is not used in calculations, so it may be left blank.",
     "tooltipInfo": "Only the bottommost row can be manipulated,\nand up to 50 rows are possible.",
-    "rowOrderTip": "The order of response rows does not affect the calculation results.\nFor example, it's fine to record content for Card 6 in the 8th row and content for Card 2 in the 14th row."
+    "rowOrderTip": "The order of response rows does not affect the calculation results.\nFor example, it's fine to record content for Card 6 in the 8th row and content for Card 2 in the 14th row.",
+    "scoreTooltip": "Automatically calculated from [Card] and [Z] selection.",
+    "gphrTooltip": "Automatically classified from [Contents], [Determinants], [FQ], and [Special Score].",
+    "responseNumber": "Response #{index}",
+    "responseMemo": "Response memo",
+    "pairDisabledTooltip": "Reflection (Fr/rF) already implies symmetry. Pair (2) cannot be recorded concurrently."
   },
   "info": {
     "categories": {

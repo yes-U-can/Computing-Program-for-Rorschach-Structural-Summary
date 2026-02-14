@@ -12,7 +12,9 @@
     "account": "Minha Conta",
     "loginRequired": "Login necessário",
     "aiAssistant": "Assistente de IA",
-    "aiGuide": "Apos fazer login com o Google e registrar sua chave de API, voce pode conversar com uma IA que ajuda a interpretar os resultados da avaliacao."
+    "aiGuide": "Apos fazer login com o Google e registrar sua chave de API, voce pode conversar com uma IA que ajuda a interpretar os resultados da avaliacao.",
+    "chatSession": "Assistente de IA",
+    "accountManage": "Gerenciamento de conta"
   },
   "buttons": {
     "calculate": "Calcular Resultados",
@@ -71,9 +73,14 @@
     "specialScores": "Pontuações Especiais",
     "score": "Pontuação",
     "gphr": "G/PHR",
-    "guideResponse": "A seção [Resposta] serve para anotar as respostas verbais do sujeito; não afeta os cálculos, portanto pode ser deixada em branco.<br>As seções [Pontuação] e [G/PHR] são calculados automaticamente, portanto não é necessária entrada manual.<br>No entanto, para [Pontuação], os valores são calculados automaticamente apenas após a seleção dos tipos de [Cartão] e [Z].",
+    "guideResponse": "Usado para registrar as respostas verbais do avaliado; nao entra no calculo, portanto pode ficar em branco.",
     "tooltipInfo": "Apenas a linha inferior pode ser manipulada,\ne até 50 linhas são possíveis.",
-    "rowOrderTip": "A ordem das linhas de resposta não afeta os resultados do cálculo.\nPor exemplo, registrar conteúdo para o Cartão 6 na linha 8 e registrar conteúdo para o Cartão 2 na linha 14 está bem."
+    "rowOrderTip": "A ordem das linhas de resposta não afeta os resultados do cálculo.\nPor exemplo, registrar conteúdo para o Cartão 6 na linha 8 e registrar conteúdo para o Cartão 2 na linha 14 está bem.",
+    "scoreTooltip": "Calculado automaticamente com base em [Card] e [Z].",
+    "gphrTooltip": "Classificado automaticamente com base em [Contents], [Determinants], [FQ] e [Special Score].",
+    "responseNumber": "Resposta #{index}",
+    "responseMemo": "Memo da resposta",
+    "pairDisabledTooltip": "Reflection (Fr/rF) ja implica simetria. Pair (2) nao pode ser registrado ao mesmo tempo."
   },
   "info": {
     "categories": {

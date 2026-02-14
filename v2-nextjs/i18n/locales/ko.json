@@ -12,7 +12,9 @@
     "account": "내 계정",
     "loginRequired": "로그인이 필요합니다",
     "aiAssistant": "AI 어시스턴트",
-    "aiGuide": "Google 로그인 후 API 키를 등록하면, 검사 결과 해석을 돕는 AI와 채팅할 수 있습니다."
+    "aiGuide": "Google 로그인 후 API 키를 등록하면, 검사 결과 해석을 돕는 AI와 채팅할 수 있습니다.",
+    "chatSession": "AI 도우미",
+    "accountManage": "계정 관리"
   },
   "buttons": {
     "calculate": "결과 계산하기",
@@ -71,9 +73,14 @@
     "specialScores": "특수점수",
     "score": "Score",
     "gphr": "G/PHR",
-    "guideResponse": "[Response] 항목은 피검자의 언어 반응을 메모하는 공간이며, 계산에 영향을 주지 않으므로 비워둬도 괜찮습니다.<br>[Score]와 [G/PHR] 항목은 자동으로 계산되므로 직접 입력할 필요가 없습니다.<br>단, [Score]는 [Card]와 [Z] 유형을 선택해야 값이 자동 계산됩니다.",
+    "guideResponse": "피검자의 언어 반응 메모용이며, 계산에는 반영되지 않으므로 비워둬도 됩니다.",
     "tooltipInfo": "최하단의 행에 대해서만 조작 가능하며,\n최대 50개까지 가능합니다.",
-    "rowOrderTip": "반응 행의 순서는 결과 계산에 영향을 미치지 않습니다.\n예를 들어, 8번째 행에 6번 카드 내용을, 14번째 행에 2번 카드 내용을 기록해도 문제 없습니다."
+    "rowOrderTip": "반응 행의 순서는 결과 계산에 영향을 미치지 않습니다.\n예를 들어, 8번째 행에 6번 카드 내용을, 14번째 행에 2번 카드 내용을 기록해도 문제 없습니다.",
+    "scoreTooltip": "[Card]와 [Z] 선택에 따라 자동 계산됩니다.",
+    "gphrTooltip": "[Contents], [Determinants], [FQ], [Special Score]를 기반으로 자동 분류됩니다.",
+    "responseNumber": "반응 #{index}",
+    "responseMemo": "반응 메모",
+    "pairDisabledTooltip": "Reflection (Fr/rF)은 이미 대칭성을 포함하므로 Pair (2)와 동시 기록할 수 없습니다."
   },
   "info": {
     "categories": {

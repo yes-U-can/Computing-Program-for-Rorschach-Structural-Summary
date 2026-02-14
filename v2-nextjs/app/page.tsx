@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useRorschachForm } from '@/hooks/useRorschachForm';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -36,7 +37,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function HomePage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { data: session } = useSession();
   const [showChatWidget, setShowChatWidget] = useState(false);
   const { showToast } = useToast();
@@ -276,7 +277,26 @@ export default function HomePage() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-xs text-[var(--brand-700)] lg:text-right">{t('nav.aiGuide')}</p>
+                  {session ? (
+                    <div className="overflow-x-auto lg:ml-auto">
+                      <div className="inline-flex min-w-max bg-white p-1 rounded-lg shadow-sm border border-slate-200">
+                        <Link
+                          href={`/chat?lang=${language}`}
+                          className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]"
+                        >
+                          {t('nav.chatSession')}
+                        </Link>
+                        <Link
+                          href={`/account?lang=${language}`}
+                          className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap text-slate-600 hover:text-[var(--brand-700)] hover:bg-[#EEF3F7]"
+                        >
+                          {t('nav.accountManage')}
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-[var(--brand-700)] lg:text-right">{t('nav.aiGuide')}</p>
+                  )}
                 </div>
               </div>
 
@@ -457,7 +477,7 @@ export default function HomePage() {
       >
         <div className="space-y-4">
           {/* Language Selector - icon buttons */}
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center mb-5">
             <LanguageSelector />
           </div>
 
@@ -512,8 +532,6 @@ export default function HomePage() {
     </div>
   );
 }
-
-
 
 
 

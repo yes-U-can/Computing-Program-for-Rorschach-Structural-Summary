@@ -2,6 +2,7 @@
 
 import type { RorschachResponse } from '@/types';
 import { OPTIONS } from '@/lib/options';
+import { useTranslation } from '@/hooks/useTranslation';
 import SlotSelect from './SlotSelect';
 import DeterminantSlots from './DeterminantSlots';
 import ContentSlots from './ContentSlots';
@@ -19,6 +20,8 @@ interface InputRowProps {
 }
 
 export default function InputRow({ index, response, onChange, zScore, gphr, onResponseClick, rowBg }: InputRowProps) {
+  const { t } = useTranslation();
+
   const updateField = <K extends keyof RorschachResponse>(
     field: K,
     value: RorschachResponse[K]
@@ -52,7 +55,7 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
           type="button"
           onClick={() => onResponseClick(index)}
           className="p-1 rounded-md hover:bg-slate-100 transition-colors inline-flex"
-          title="Response memo"
+          title={t('input.responseMemo')}
         >
           {response.response ? (
             <DocumentTextIcon className="w-4 h-4 text-slate-500" />
@@ -118,9 +121,9 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
           checked={response.pair === '(2)'}
           onChange={(e) => updateField('pair', e.target.checked ? '(2)' : 'none')}
           disabled={hasReflection}
-          className={`w-4 h-4 rounded border-slate-300 text-[#2A5F7F]
-            focus:ring-[#4E73AA] ${hasReflection ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
-          title={hasReflection ? 'Reflection (Fr/rF) already implies symmetry. Pair (2) cannot be recorded concurrently.' : undefined}
+          className={`w-4 h-4 rounded border-slate-300 text-[var(--brand-700)]
+            focus:ring-[var(--brand-500)] ${hasReflection ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
+          title={hasReflection ? t('input.pairDisabledTooltip') : undefined}
         />
       </td>
 
@@ -138,8 +141,8 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
           type="checkbox"
           checked={response.popular}
           onChange={(e) => updateField('popular', e.target.checked)}
-          className="w-4 h-4 rounded border-slate-300 text-[#2A5F7F]
-            focus:ring-[#4E73AA] cursor-pointer"
+          className="w-4 h-4 rounded border-slate-300 text-[var(--brand-700)]
+            focus:ring-[var(--brand-500)] cursor-pointer"
         />
       </td>
 
@@ -182,5 +185,6 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
     </tr>
   );
 }
+
 
 

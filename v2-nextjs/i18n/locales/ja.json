@@ -12,7 +12,9 @@
     "account": "マイアカウント",
     "loginRequired": "ログインが必要です",
     "aiAssistant": "AIアシスタント",
-    "aiGuide": "Googleログイン後にAPIキーを登録すると、検査結果の解釈を支援するAIとチャットできます。"
+    "aiGuide": "Googleログイン後にAPIキーを登録すると、検査結果の解釈を支援するAIとチャットできます。",
+    "chatSession": "AIアシスタント",
+    "accountManage": "アカウント管理"
   },
   "buttons": {
     "calculate": "結果を計算する",
@@ -71,9 +73,14 @@
     "specialScores": "特殊スコア",
     "score": "Score",
     "gphr": "G/PHR",
-    "guideResponse": "[Response]項目は被検者の言語反応をメモする場所であり、計算には影響しないため空欄でも構いません。<br>[Score]と[G/PHR]項目は自動的に計算されるため、直接入力する必要はありません。<br>ただし、[Score]は[Card]（図版）と[Z]（組織化）のタイプを選択しないと値が自動計算されません。",
+    "guideResponse": "被検者の言語反応をメモするための項目であり、計算には反映されないため空欄でも問題ありません。",
     "tooltipInfo": "最下行のみ操作可能で、\n最大50個まで可能です。",
-    "rowOrderTip": "反応行の順序は結果計算に影響しません。\n例えば8行目に6番カードの内容を記録し、14行目に2番カードの内容を記録しても問題ありません。"
+    "rowOrderTip": "反応行の順序は結果計算に影響しません。\n例えば8行目に6番カードの内容を記録し、14行目に2番カードの内容を記録しても問題ありません。",
+    "scoreTooltip": "[Card]と[Z]の選択に基づいて自動計算されます。",
+    "gphrTooltip": "[Contents]、[Determinants]、[FQ]、[Special Score]に基づいて自動分類されます。",
+    "responseNumber": "反応 #{index}",
+    "responseMemo": "反応メモ",
+    "pairDisabledTooltip": "Reflection (Fr/rF)はすでに対称性を含むため、Pair (2)と同時に記録できません。"
   },
   "info": {
     "categories": {

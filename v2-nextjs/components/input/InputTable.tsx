@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useMemo, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
@@ -102,8 +102,9 @@ function classifyGPHR(response: RorschachResponse): string {
 export default function InputTable({ responses, onChange, maxRows = 50 }: InputTableProps) {
   const { t } = useTranslation();
   const memoTooltipText = t('input.guideResponse');
-  const scoreTooltipText = 'Score is auto-calculated from Card and Z selection.';
-  const gphrTooltipText = 'G/PHR is auto-classified from contents, determinants, FQ, and special scores.';
+  const rowTooltipText = t('input.tooltipInfo').replace(/,\s*/g, ',\n');
+  const scoreTooltipText = t('input.scoreTooltip');
+  const gphrTooltipText = t('input.gphrTooltip');
 
   const { showToast } = useToast();
   const rows = ROW_COLORS.light;
@@ -286,7 +287,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
           <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4 border border-slate-200">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-slate-700">
-                Response #{editingResponseIndex + 1}
+                {t('input.responseNumber', { index: String(editingResponseIndex + 1) })}
               </h3>
               <button
                 type="button"
@@ -307,7 +308,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
                 onChange(newResponses);
               }}
               className="w-full h-32 px-3 py-2.5 text-sm rounded-lg bg-slate-50 border border-slate-200
-                focus:outline-none focus:ring-2 focus:ring-[#4E73AA]/50 focus:border-[#4E73AA] transition-colors resize-none"
+                focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/50 focus:border-[var(--brand-500)] transition-colors resize-none"
               placeholder="..."
               autoFocus
             />
@@ -315,7 +316,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
               <button
                 type="button"
                 onClick={closeResponsePopup}
-                className="px-5 py-2 text-sm font-medium text-white bg-[#2A5F7F] hover:bg-[#1E4D6A] rounded-lg transition-colors shadow-sm"
+                className="px-5 py-2 text-sm font-medium text-white bg-[var(--brand-700)] hover:bg-[var(--brand-700-hover)] rounded-lg transition-colors shadow-sm"
               >
                 OK
               </button>
@@ -330,13 +331,9 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
         <p className="text-xs text-slate-500 pr-4 whitespace-pre-line">{t('input.rowOrderTip')}</p>
         <div className="flex items-center gap-3">
           {/* Tooltip info icon */}
-          <div className="relative group">
+          <Tooltip content={rowTooltipText}>
             <InformationCircleIcon className="w-5 h-5 text-slate-400 cursor-help" />
-            <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg
-              opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-colors z-50 whitespace-pre-line">
-              {t('input.tooltipInfo')}
-            </div>
-          </div>
+          </Tooltip>
 
           <Button
             variant="secondary"
@@ -359,6 +356,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     </div>
   );
 }
+
 
 
 

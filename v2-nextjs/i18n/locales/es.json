@@ -12,7 +12,9 @@
     "account": "Mi Cuenta",
     "loginRequired": "Se requiere iniciar sesión",
     "aiAssistant": "Asistente de IA",
-    "aiGuide": "Despues de iniciar sesion con Google y registrar tu clave API, puedes chatear con una IA que ayuda a interpretar los resultados de la prueba."
+    "aiGuide": "Despues de iniciar sesion con Google y registrar tu clave API, puedes chatear con una IA que ayuda a interpretar los resultados de la prueba.",
+    "chatSession": "Asistente de IA",
+    "accountManage": "Gestion de cuenta"
   },
   "buttons": {
     "calculate": "Calcular Resultados",
@@ -71,9 +73,14 @@
     "specialScores": "Códigos Especiales",
     "score": "Puntuación",
     "gphr": "G/PHR",
-    "guideResponse": "La sección [Response] es para anotar las respuestas verbales del sujeto; no afecta a los cálculos, por lo que puede dejarse en blanco.<br>Las secciones [Score] y [G/PHR] se calculan automáticamente, por lo que no es necesario introducirlas manualmente.<br>Sin embargo, para [Score], los valores solo se calculan automáticamente después de seleccionar los tipos de [Card] (Lámina) y [Z].",
+    "guideResponse": "Se usa para anotar las respuestas verbales del evaluado; no se usa en los calculos, por lo que puede dejarse en blanco.",
     "tooltipInfo": "Solo se puede manipular la fila inferior,\ny hasta 50 filas son posibles.",
-    "rowOrderTip": "El orden de las filas de respuesta no afecta los resultados del cálculo.\nPor ejemplo, registrar contenido para la Lámina 6 en la fila 8 y registrar contenido para la Lámina 2 en la fila 14 está bien."
+    "rowOrderTip": "El orden de las filas de respuesta no afecta los resultados del cálculo.\nPor ejemplo, registrar contenido para la Lámina 6 en la fila 8 y registrar contenido para la Lámina 2 en la fila 14 está bien.",
+    "scoreTooltip": "Se calcula automaticamente segun [Card] y [Z].",
+    "gphrTooltip": "Clasificado automaticamente segun [Contents], [Determinants], [FQ] y [Special Score].",
+    "responseNumber": "Respuesta #{index}",
+    "responseMemo": "Memo de respuesta",
+    "pairDisabledTooltip": "Reflection (Fr/rF) ya implica simetria. Pair (2) no puede registrarse al mismo tiempo."
   },
   "info": {
     "categories": {
