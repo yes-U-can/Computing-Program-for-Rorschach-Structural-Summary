@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Fragment, forwardRef } from 'react';
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption, Transition } from '@headlessui/react';
@@ -33,7 +33,7 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(
         <div className={`relative ${className}`}>
           <ListboxButton
             ref={ref}
-            className={`relative w-full cursor-pointer rounded-lg bg-white/80 backdrop-blur-sm text-left border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${sizeStyles[size]}`}
+            className={`relative w-full cursor-pointer rounded-lg bg-white text-left border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4E73AA]/50 focus:border-[#4E73AA] disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${sizeStyles[size]}`}
           >
             <span className={`block truncate ${!selectedOption ? 'text-slate-400' : 'text-slate-700'}`}>
               {selectedOption?.label || placeholder}
@@ -57,7 +57,7 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(
                   key={option.value}
                   className={({ active, selected }) =>
                     `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                      active ? 'bg-purple-50 text-purple-900' : 'text-slate-700'
+                      active ? 'bg-[#C1D2DC]/20 text-slate-900' : 'text-slate-700'
                     } ${selected ? 'font-medium' : 'font-normal'}`
                   }
                   value={option.value}
@@ -68,7 +68,7 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(
                         {option.label}
                       </span>
                       {selected && (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#2A5F7F]">
                           <CheckIcon className="h-4 w-4" aria-hidden="true" />
                         </span>
                       )}

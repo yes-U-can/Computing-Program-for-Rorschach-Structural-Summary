@@ -88,7 +88,7 @@ function cellClass(value: string | number | undefined | null): string {
 }
 
 const TH = 'px-1 py-1.5 text-[10px] font-normal text-left bg-slate-50 border border-gray-200 whitespace-nowrap overflow-hidden';
-const TD = 'px-2 py-1.5 text-[11px] text-center border border-gray-200';
+const TD = 'px-2 py-1.5 text-[11px] text-center border border-gray-200 tabular-nums';
 const EMPTY_CELL = 'border-0 bg-white';
 
 function GridCard({ title, children }: { title: string; children: React.ReactNode }) {

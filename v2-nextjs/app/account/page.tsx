@@ -26,7 +26,7 @@ export default function AccountPage() {
 
   if (status === 'loading' || !session) {
     return (
-      <div className="min-h-screen bg-[#f9f9f9]">
+      <div className="min-h-screen bg-[#F7F9FB]">
         <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="h-96 bg-slate-200 rounded-md animate-pulse"></div>
@@ -37,7 +37,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9]">
+    <div className="min-h-screen bg-[#F7F9FB]">
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-12">
@@ -50,10 +50,10 @@ export default function AccountPage() {
             <div className="md:col-span-1">
               {/* Navigation can go here */}
               <ul className="space-y-2">
-                <li><a href="#api-keys" className="font-semibold text-sky-600">{t('account.apiKeys.title')}</a></li>
-                <li><a href="#knowledge-sources" className="text-slate-600 hover:text-sky-600">{t('account.knowledgeSources.title')}</a></li>
-                <li><a href="#ai-assistant" className="text-slate-600 hover:text-sky-600">{t('nav.aiAssistant')}</a></li>
-                <li><a href="#account-settings" className="text-slate-600 hover:text-sky-600">{t('nav.account')}</a></li>
+                <li><a href="#api-keys" className="font-semibold text-[#4E73AA]">{t('account.apiKeys.title')}</a></li>
+                <li><a href="#knowledge-sources" className="text-slate-600 hover:text-[#4E73AA]">{t('account.knowledgeSources.title')}</a></li>
+                <li><a href="#ai-assistant" className="text-slate-600 hover:text-[#4E73AA]">{t('nav.aiAssistant')}</a></li>
+                <li><a href="#account-settings" className="text-slate-600 hover:text-[#4E73AA]">{t('nav.account')}</a></li>
               </ul>
             </div>
             <div className="md:col-span-2 space-y-10">
@@ -89,7 +89,7 @@ export default function AccountPage() {
                         alt={session.user.name || 'User avatar'}
                         width={56}
                         height={56}
-                        className="rounded-full"
+                        className="rounded-lg"
                       />
                     )}
                     <div>
@@ -112,3 +112,7 @@ export default function AccountPage() {
     </div>
   );
 }
+
+
+
+

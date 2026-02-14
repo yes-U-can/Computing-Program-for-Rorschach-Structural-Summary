@@ -87,11 +87,11 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
   const progress = ((currentIndex + 1) / responses.length) * 100;
 
   return (
-    <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/60">
+    <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
       {/* Progress Bar */}
       <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-4">
         <div
-          className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-300"
+          className="h-full bg-[#2A5F7F] rounded-full transition-[colors,transform] duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -105,7 +105,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
           <button
             onClick={addRow}
             disabled={responses.length >= maxRows}
-            className="p-2 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-200 disabled:opacity-50 transition-colors"
+            className="p-2 rounded-lg bg-[#C1D2DC]/30 text-[#2A5F7F] hover:bg-[#C1D2DC]/50 disabled:opacity-50 transition-colors"
           >
             <PlusIcon className="w-5 h-5" />
           </button>
@@ -208,7 +208,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
             type="checkbox"
             checked={currentResponse.popular}
             onChange={(e) => updateField('popular', e.target.checked)}
-            className="w-5 h-5 rounded border-slate-300 text-purple-600 focus:ring-purple-400"
+            className="w-5 h-5 rounded border-slate-300 text-[#2A5F7F] focus:ring-[#4E73AA]"
           />
         </div>
 
@@ -228,16 +228,16 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
             value={currentResponse.response}
             onChange={(e) => updateField('response', e.target.value)}
             className="w-full h-20 px-3 py-2 text-sm rounded-lg bg-white/50 border border-slate-200
-              focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none"
+              focus:outline-none focus:ring-2 focus:ring-[#4E73AA] focus:border-[#4E73AA] resize-none"
             placeholder="..."
           />
         </div>
 
         {/* Calculated Score */}
         <div className="flex justify-center">
-          <div className="px-4 py-2 bg-purple-50 rounded-lg">
+          <div className="px-4 py-2 bg-[#C1D2DC]/20 rounded-lg">
             <span className="text-sm font-medium text-slate-600">Score: </span>
-            <span className="text-lg font-bold text-purple-600">
+            <span className="text-lg font-bold text-[#2A5F7F]">
               {zScore !== null ? zScore.toFixed(1) : '-'}
             </span>
           </div>
@@ -249,14 +249,14 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
         <button
           onClick={goToPrevious}
           disabled={currentIndex === 0}
-          className="flex-1 px-4 py-4 text-lg font-bold rounded-2xl bg-slate-100/80 text-slate-500 hover:bg-slate-200/80 hover:text-slate-700 disabled:opacity-50 transition-all"
+          className="flex-1 px-4 py-4 text-lg font-bold rounded-lg bg-slate-100/80 text-slate-500 hover:bg-slate-200/80 hover:text-slate-700 disabled:opacity-50 transition-[colors,transform]"
         >
           <ChevronLeftIcon className="w-6 h-6 mx-auto" />
         </button>
         <button
           onClick={goToNext}
           disabled={currentIndex === responses.length - 1}
-          className="flex-1 px-4 py-4 text-lg font-bold rounded-2xl text-white shadow-lg shadow-purple-500/20 bg-gradient-to-r from-purple-500 to-purple-600 hover:shadow-purple-500/30 disabled:opacity-50 transition-all"
+          className="flex-1 px-4 py-4 text-lg font-bold rounded-lg text-white shadow-lg shadow-[#2A5F7F]/20 bg-[#2A5F7F] hover:shadow-[#2A5F7F]/20 hover:bg-[#1E4D6A] disabled:opacity-50 transition-[colors,transform]"
         >
           <ChevronRightIcon className="w-6 h-6 mx-auto" />
         </button>
@@ -264,3 +264,13 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+

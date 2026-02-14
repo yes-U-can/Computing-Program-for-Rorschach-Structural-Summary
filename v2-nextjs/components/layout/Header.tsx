@@ -23,7 +23,7 @@ const UserMenu = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="block rounded-full border-2 border-transparent transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+        className="block rounded-lg border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4E73AA]"
       >
         {user.image ? (
           <Image
@@ -31,7 +31,7 @@ const UserMenu = () => {
             alt={user.name || 'User profile picture'}
             width={40}
             height={40}
-            className="rounded-full"
+            className="rounded-lg"
           />
         ) : (
           <UserCircleIcon className="h-10 w-10 text-slate-500" />
@@ -91,7 +91,7 @@ export default function Header() {
               Computing Program for Rorschach Structural Summary
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              © 1997–2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP). All rights reserved.
+              筌?1997??026 ??戮곕뮲?熬곣뫕留?????⑤슢???(Seoul Institute of Clinical Psychology, SICP). All rights reserved.
             </p>
           </div>
           <div className="flex items-center gap-3 self-end sm:self-auto">
@@ -104,7 +104,7 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => signIn('google')}
-                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-sky-700 bg-sky-100 hover:bg-sky-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-[#2A5F7F] bg-[#C1D2DC]/30 hover:bg-[#C1D2DC]/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4E73AA]"
               >
                 {t('nav.login')}
               </button>
@@ -115,3 +115,6 @@ export default function Header() {
     </header>
   );
 }
+
+
+

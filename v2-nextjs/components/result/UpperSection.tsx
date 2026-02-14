@@ -40,7 +40,7 @@ function cellClass(value: string | number | undefined | null): string {
 
 /** Common table cell styles */
 const TH = 'px-1.5 py-1 text-[11px] font-normal text-left bg-slate-50 border border-gray-200';
-const TD = 'px-1.5 py-1 text-[11px] text-center border border-gray-200';
+const TD = 'px-1.5 py-1 text-[11px] text-center border border-gray-200 tabular-nums';
 
 /** Card wrapper */
 function GridCard({ children, className = '', style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {

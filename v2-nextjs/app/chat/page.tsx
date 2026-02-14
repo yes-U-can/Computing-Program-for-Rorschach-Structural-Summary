@@ -150,7 +150,7 @@ export default function ChatPage() {
   if (status === 'loading' || !session) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-blue-500 border-t-transparent"></div>
+        <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-[#2A5F7F] border-t-transparent"></div>
       </div>
     );
   }
@@ -227,7 +227,7 @@ export default function ChatPage() {
                               className={`max-w-xs lg:max-w-xl px-4 py-2.5 rounded-2xl ${
                                 message.role === 'ai'
                                   ? 'bg-slate-100 text-slate-800 rounded-bl-none'
-                                  : 'bg-sky-600 text-white rounded-br-none'
+                                  : 'bg-[#2A5F7F] text-white rounded-br-none'
                               }`}
                             >
                               <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -271,7 +271,7 @@ export default function ChatPage() {
                 <select
                   value={provider}
                   onChange={(e) => setProvider(e.target.value)}
-                  className="hidden sm:block shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs text-slate-600 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  className="hidden sm:block shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs text-slate-600 focus:border-[#4E73AA] focus:ring-1 focus:ring-[#4E73AA]"
                 >
                   <option value="openai">OpenAI</option>
                   <option value="google">Google</option>
@@ -281,7 +281,7 @@ export default function ChatPage() {
                 <select
                   value={provider}
                   onChange={(e) => setProvider(e.target.value)}
-                  className="block sm:hidden shrink-0 w-16 rounded-lg border border-slate-200 bg-slate-50 px-1 py-2.5 text-[10px] text-slate-600 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  className="block sm:hidden shrink-0 w-16 rounded-lg border border-slate-200 bg-slate-50 px-1 py-2.5 text-[10px] text-slate-600 focus:border-[#4E73AA] focus:ring-1 focus:ring-[#4E73AA]"
                 >
                   <option value="openai">GPT</option>
                   <option value="google">Gem</option>
@@ -293,11 +293,11 @@ export default function ChatPage() {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder={t('chat.placeholder')}
-                  className="flex-1 rounded-xl border-transparent bg-slate-100 px-4 py-2.5 text-sm transition focus:border-sky-500 focus:bg-white focus:ring-1 focus:ring-sky-500"
+                  className="flex-1 rounded-xl border-transparent bg-slate-100 px-4 py-2.5 text-sm transition-colors focus:border-[#4E73AA] focus:bg-white focus:ring-1 focus:ring-[#4E73AA]"
                 />
                 <button
                   type="submit"
-                  className="shrink-0 rounded-xl bg-sky-600 p-3 text-white shadow-sm hover:bg-sky-700 disabled:opacity-50"
+                  className="shrink-0 rounded-xl bg-[#2A5F7F] p-3 text-white shadow-sm hover:bg-[#1E4D6A] disabled:opacity-50"
                   disabled={inputText.trim() === '' || isLoading}
                 >
                   <PaperAirplaneIcon className="h-5 w-5" />
@@ -310,3 +310,7 @@ export default function ChatPage() {
     </div>
   );
 }
+
+
+
+

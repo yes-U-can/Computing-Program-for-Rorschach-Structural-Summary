@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Fragment, ReactNode } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
@@ -40,7 +40,7 @@ export default function Modal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/30" />
         </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -55,7 +55,7 @@ export default function Modal({
               leaveTo="opacity-0 scale-95"
             >
               <DialogPanel
-                className={`w-full ${sizes[size]} transform overflow-visible rounded-2xl bg-white/95 backdrop-blur-md p-6 text-left align-middle shadow-xl transition-all border border-white/50`}
+                className={`w-full ${sizes[size]} transform overflow-visible rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-colors border border-slate-200`}
               >
                 {(title || showCloseButton) && (
                   <div className="flex items-start justify-between mb-4">

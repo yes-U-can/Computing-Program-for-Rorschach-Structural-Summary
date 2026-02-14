@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 
@@ -9,12 +9,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 shadow-sm focus:ring-blue-500',
-      secondary: 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 focus:ring-blue-400',
-      ghost: 'text-slate-600 hover:text-slate-800 hover:bg-slate-100 focus:ring-blue-300',
+      primary: 'bg-[#2A5F7F] text-white hover:bg-[#1E4D6A] active:bg-[#1E4D6A] shadow-sm focus:ring-[#4E73AA]',
+      secondary: 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 focus:ring-[#4E73AA]',
+      ghost: 'text-slate-600 hover:text-slate-800 hover:bg-slate-100 focus:ring-[#4E73AA]',
       danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm focus:ring-red-500'
     };
 

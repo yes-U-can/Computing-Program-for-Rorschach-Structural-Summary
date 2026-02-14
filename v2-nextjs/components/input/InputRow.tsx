@@ -100,7 +100,7 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
         />
       </td>
 
-      {/* FQ — '+' disabled when DQ is 'v' */}
+      {/* FQ ??'+' disabled when DQ is 'v' */}
       <td className="px-1 py-2">
         <SlotSelect
           value={response.fq}
@@ -111,15 +111,15 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
         />
       </td>
 
-      {/* Pair — disabled when Fr/rF (reflection) is present */}
+      {/* Pair ??disabled when Fr/rF (reflection) is present */}
       <td className="px-1 py-2 text-center">
         <input
           type="checkbox"
           checked={response.pair === '(2)'}
           onChange={(e) => updateField('pair', e.target.checked ? '(2)' : 'none')}
           disabled={hasReflection}
-          className={`w-4 h-4 rounded border-slate-300 text-blue-600
-            focus:ring-blue-400 ${hasReflection ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
+          className={`w-4 h-4 rounded border-slate-300 text-[#2A5F7F]
+            focus:ring-[#4E73AA] ${hasReflection ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
           title={hasReflection ? 'Reflection (Fr/rF) already implies symmetry. Pair (2) cannot be recorded concurrently.' : undefined}
         />
       </td>
@@ -138,12 +138,12 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
           type="checkbox"
           checked={response.popular}
           onChange={(e) => updateField('popular', e.target.checked)}
-          className="w-4 h-4 rounded border-slate-300 text-blue-600
-            focus:ring-blue-400 cursor-pointer"
+          className="w-4 h-4 rounded border-slate-300 text-[#2A5F7F]
+            focus:ring-[#4E73AA] cursor-pointer"
         />
       </td>
 
-      {/* Z — disabled when DQ is 'v' (no organizational activity for vague responses) */}
+      {/* Z ??disabled when DQ is 'v' (no organizational activity for vague responses) */}
       <td className="px-1 py-2">
         <SlotSelect
           value={response.z}
@@ -182,3 +182,5 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
     </tr>
   );
 }
+
+

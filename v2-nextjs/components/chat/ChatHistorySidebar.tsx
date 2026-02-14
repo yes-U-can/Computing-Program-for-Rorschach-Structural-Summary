@@ -61,13 +61,13 @@ export default function ChatHistorySidebar({ onSessionSelect, selectedSessionId 
                 onClick={() => onSessionSelect(session.id)}
                 className={`w-full text-left p-2 rounded-md transition-colors ${
                   selectedSessionId === session.id
-                    ? 'bg-sky-100 text-sky-800'
+                    ? 'bg-[#C1D2DC]/30 text-[#2A5F7F]'
                     : 'hover:bg-slate-100'
                 }`}
               >
                 <p className="font-semibold truncate">{session.title}</p>
                 <p className={`text-xs ${
-                  selectedSessionId === session.id ? 'text-sky-600' : 'text-slate-500'
+                  selectedSessionId === session.id ? 'text-[#4E73AA]' : 'text-slate-500'
                 }`}>{new Date(session.updatedAt).toLocaleString()}</p>
               </button>
             </li>
@@ -77,3 +77,5 @@ export default function ChatHistorySidebar({ onSessionSelect, selectedSessionId 
     </div>
   );
 }
+
+

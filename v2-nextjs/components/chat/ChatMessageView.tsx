@@ -46,7 +46,7 @@ export default function ChatMessageView({ sessionId }: { sessionId: string | nul
               className={`max-w-xs lg:max-w-xl px-4 py-2.5 rounded-2xl ${
                 message.role === 'ai'
                   ? 'bg-slate-100 text-slate-800 rounded-bl-none'
-                  : 'bg-sky-600 text-white rounded-br-none'
+                  : 'bg-[#2A5F7F] text-white rounded-br-none'
               }`}
             >
               <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -57,3 +57,4 @@ export default function ChatMessageView({ sessionId }: { sessionId: string | nul
     </div>
   );
 }
+

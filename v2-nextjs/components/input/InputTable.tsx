@@ -15,7 +15,7 @@ import { InformationCircleIcon, XMarkIcon, PencilSquareIcon } from '@heroicons/r
 // Determinants with NO form component (Pure C, T, V, Y, Cn)
 const FORMLESS_DETERMINANTS = ['C', 'T', 'V', 'Y', 'Cn'];
 
-// Special score level pairs (Level 1 ↔ Level 2)
+// Special score level pairs (Level 1 ??Level 2)
 const LEVEL_PAIRS: [string, string][] = [
   ['DV1', 'DV2'],
   ['DR1', 'DR2'],
@@ -101,9 +101,9 @@ function classifyGPHR(response: RorschachResponse): string {
 
 export default function InputTable({ responses, onChange, maxRows = 50 }: InputTableProps) {
   const { t } = useTranslation();
-  const memoTooltipText = "피검자의 언어 반응을 메모하는 공간이며, 계산에 영향을 주지 않으므로 비워둬도 괜찮습니다.";
-  const scoreTooltipText = "[Card]와 [Z] 유형을 선택하면 자동으로 계산됩니다. [Z] 유형이 선택되지 않은 경우에는 표시되지 않습니다.";
-  const gphrTooltipText = "반응에 인간 관련 내용(Contents에 H, (H) 등)이나 인간/동물 운동(Determinants에 M, FM 등)이 포함될 때, 다른 채점 항목들을 종합하여 자동으로 부여됩니다. 이 조건이 충족되지 않으면 표시되지 않습니다.";
+  const memoTooltipText = "??????踰??筌뤾쑬???꾩룇瑗???嶺뚮∥????濡ル츎 ??ㅻ??????? ??ｌ뫒亦????⑤갭????낅슣?? ???곷さ亦껋깢?????????????곕츋揶???鍮??";
+  const scoreTooltipText = "[Card]?? [Z] ??ル쪇援????ルㅎ臾??濡?듆 ???吏??怨쀬Ŧ ??ｌ뫒亦??紐껊퉵?? [Z] ??ル쪇援????ルㅎ臾??? ??? ?롪퍔?????裕???戮?뻣??? ???용????덈펲.";
+  const gphrTooltipText = "?꾩룇瑗????筌롫챷????㉱????怨몃뮔(Contents??H, (H) ????????筌롫챷???????????Determinants??M, FM ??????????? ???섎?嶺??????????깅굵 ??リ턃????琉우뿰 ???吏??怨쀬Ŧ ?遊붋??筌???덈펲. ???브퀗?쀦뤃???寃몃쳴???? ???곷さ嶺???戮?뻣??? ???용????덈펲.";
 
   const { showToast } = useToast();
   const accent = HEADER_ACCENT.light;
@@ -133,7 +133,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     const activeDets = r.determinants.filter(d => d !== '');
 
     // Rule 1: Reflection-Pair Mutual Exclusion
-    // Fr/rF takes priority → pair must be cleared
+    // Fr/rF takes priority ??pair must be cleared
     const hasReflection = activeDets.some(d => d === 'Fr' || d === 'rF');
     if (hasReflection && r.pair === '(2)') {
       r.pair = 'none';
@@ -150,7 +150,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
       }
     }
 
-    // Rule 3: DQ 'v' → Z must be empty (no Z score for vague responses)
+    // Rule 3: DQ 'v' ??Z must be empty (no Z score for vague responses)
     if (r.dq === 'v' && r.z !== '') {
       r.z = '';
       if (prev.dq !== 'v' || prev.z !== '') {
@@ -159,7 +159,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }
 
     // Rule 4: Pure Determinant FQ Handling
-    // If ALL active determinants are formless → FQ must be 'none'
+    // If ALL active determinants are formless ??FQ must be 'none'
     if (activeDets.length > 0 && activeDets.every(d => FORMLESS_DETERMINANTS.includes(d))) {
       if (r.fq !== 'none') {
         r.fq = 'none';
@@ -172,7 +172,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }
 
     // Rule 5: Special Score Integrity
-    // DV, DR, INCOM, FABCOM — only one level per category
+    // DV, DR, INCOM, FABCOM ??only one level per category
     const activeScores = r.specialScores.filter(s => s !== '');
     let levelConflict = false;
     for (const [lv1, lv2] of LEVEL_PAIRS) {
@@ -219,7 +219,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }
   };
 
-  // Header columns with accent colors — original labels preserved
+  // Header columns with accent colors ??original labels preserved
   const headers = [
     { key: 'no',           label: 'No.',           accent: 'transparent',       className: 'w-10' },
     { key: 'action',       label: <PencilSquareIcon className="w-4 h-4 text-slate-400 mx-auto" />, tooltip: memoTooltipText, accent: 'transparent', className: 'w-10' },
@@ -308,7 +308,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
                 onChange(newResponses);
               }}
               className="w-full h-32 px-3 py-2.5 text-sm rounded-lg bg-slate-50 border border-slate-200
-                focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 transition-all resize-none"
+                focus:outline-none focus:ring-2 focus:ring-[#4E73AA]/50 focus:border-[#4E73AA] transition-colors resize-none"
               placeholder="..."
               autoFocus
             />
@@ -316,7 +316,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
               <button
                 type="button"
                 onClick={closeResponsePopup}
-                className="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
+                className="px-5 py-2 text-sm font-medium text-white bg-[#2A5F7F] hover:bg-[#1E4D6A] rounded-lg transition-colors shadow-sm"
               >
                 OK
               </button>
@@ -334,7 +334,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
           <div className="relative group">
             <InformationCircleIcon className="w-5 h-5 text-slate-400 cursor-help" />
             <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg
-              opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-pre-line">
+              opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-colors z-50 whitespace-pre-line">
               {t('input.tooltipInfo')}
             </div>
           </div>
@@ -360,3 +360,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     </div>
   );
 }
+
+
+

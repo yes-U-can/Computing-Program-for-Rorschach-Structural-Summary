@@ -66,7 +66,6 @@ export default function HomePage() {
 
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
-  const [showAIModal, setShowAIModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'upper' | 'lower' | 'special'>('lower');
   const [initialTab, setInitialTab] = useState<'scoring' | 'info'>('scoring');
   const [isMobile, setIsMobile] = useState(false);
@@ -249,7 +248,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen relative bg-[#f9f9f9]">
+    <div className="min-h-screen relative bg-[#F7F9FB]">
       {/* Main Content */}
       <div className="relative z-10">
         <Header />
@@ -263,9 +262,9 @@ export default function HomePage() {
                 <div className="inline-flex min-w-max bg-white p-1 rounded-lg shadow-sm border border-slate-200">
                   <button
                     onClick={() => setInitialTab('scoring')}
-                    className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                       initialTab === 'scoring'
-                        ? 'bg-blue-600 text-white shadow-sm'
+                        ? 'bg-[#2A5F7F] text-white shadow-sm'
                         : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
                     }`}
                   >
@@ -273,9 +272,9 @@ export default function HomePage() {
                   </button>
                   <button
                     onClick={() => setInitialTab('info')}
-                    className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                       initialTab === 'info'
-                        ? 'bg-blue-600 text-white shadow-sm'
+                        ? 'bg-[#2A5F7F] text-white shadow-sm'
                         : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
                     }`}
                   >
@@ -382,9 +381,9 @@ export default function HomePage() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
+                      className={`px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                         activeTab === tab
-                          ? 'bg-blue-600 text-white shadow-sm'
+                          ? 'bg-[#2A5F7F] text-white shadow-sm'
                           : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
                       }`}
                     >
@@ -444,7 +443,7 @@ export default function HomePage() {
         <button
           onClick={() => setShowChatWidget(true)}
           disabled={!session}
-          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-sky-600 text-white p-3 sm:p-4 rounded-full shadow-lg hover:bg-sky-700 transition-colors z-40 disabled:bg-slate-300 disabled:cursor-not-allowed"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[#2A5F7F] text-white p-3 sm:p-4 rounded-full shadow-lg hover:bg-[#1E4D6A] transition-colors z-40 disabled:bg-slate-300 disabled:cursor-not-allowed"
           aria-label="Open AI Chat"
           title={!session ? t('nav.loginRequired') : t('buttons.aiChat')}
         >
@@ -467,14 +466,14 @@ export default function HomePage() {
           <div className="space-y-3">
             <button
               onClick={handleNewStart}
-              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-colors"
+              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-[#C1D2DC] hover:bg-[#C1D2DC]/20 transition-colors"
             >
               <span className="font-semibold text-slate-800">{t('modal.welcome.new')}</span>
             </button>
 
             <button
               onClick={handleLoadSample}
-              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-colors"
+              className="w-full px-4 py-3 text-left rounded-xl border border-slate-200 hover:border-[#C1D2DC] hover:bg-[#C1D2DC]/20 transition-colors"
             >
               <span className="font-semibold text-slate-800">{t('modal.welcome.loadSample')}</span>
             </button>
@@ -482,10 +481,10 @@ export default function HomePage() {
             {hasSavedData() && (
               <button
                 onClick={handleLoadSaved}
-                className="w-full px-4 py-3 text-left rounded-xl border border-purple-300 bg-purple-50 hover:bg-purple-100 transition-colors"
+                className="w-full px-4 py-3 text-left rounded-xl border border-[#C1D2DC] bg-[#C1D2DC]/20 hover:bg-[#C1D2DC]/30 transition-colors"
               >
-                <span className="font-semibold text-purple-800">{t('modal.welcome.loadSaved')}</span>
-                <span className="block text-sm text-purple-600 mt-1">{t('modal.welcome.continueMsg')}</span>
+                <span className="font-semibold text-[#2A5F7F]">{t('modal.welcome.loadSaved')}</span>
+                <span className="block text-sm text-[#2A5F7F] mt-1">{t('modal.welcome.continueMsg')}</span>
               </button>
             )}
           </div>
@@ -512,31 +511,14 @@ export default function HomePage() {
         </div>
       </Modal>
 
-      {/* AI Interpretation Modal */}
-      <Modal
-        isOpen={showAIModal}
-        onClose={() => setShowAIModal(false)}
-        title={t('modal.ai.title')}
-        size="md"
-      >
-        <div className="space-y-4">
-          <p className="text-slate-600">{t('modal.ai.message')}</p>
-          <div className="flex gap-3 justify-end">
-            <Button variant="ghost" onClick={() => setShowAIModal(false)}>
-              {t('modal.ai.cancel')}
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                window.open('https://gemini.google.com/share/e73a8ac57bf2', '_blank');
-                setShowAIModal(false);
-              }}
-            >
-              {t('modal.ai.open')}
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }
+
+
+
+
+
+
+
+

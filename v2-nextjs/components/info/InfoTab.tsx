@@ -242,10 +242,10 @@ function resolveEntryTitle(id: string, lang: Language): string {
 function fallbackEntryDescription(title: string, lang: Language): string {
   const messages: Record<Language, string> = {
     en: `Temporary note for ${title}. This documentation will be refined later.`,
-    ko: `${title}에 대한 임시 설명입니다. 추후 상세 문구로 보완 예정입니다.`,
-    ja: `${title}の暫定説明です。後で詳細説明に更新予定です。`,
-    es: `Nota temporal para ${title}. Esta documentación se completará más adelante.`,
-    pt: `Nota temporária para ${title}. Esta documentação será refinada depois.`,
+    ko: `[${title}] description is temporarily unavailable.`,
+    ja: `[${title}] description is temporarily unavailable.`,
+    es: `[${title}] description is temporarily unavailable.`,
+    pt: `[${title}] description is temporarily unavailable.`,
   };
   return messages[lang];
 }
@@ -253,10 +253,10 @@ function fallbackEntryDescription(title: string, lang: Language): string {
 function fallbackCategoryDescription(title: string, lang: Language): string {
   const messages: Record<Language, string> = {
     en: `Temporary overview for ${title}. Detailed guidance will be added later.`,
-    ko: `${title}에 대한 임시 개요입니다. 자세한 가이드는 추후 추가됩니다.`,
-    ja: `${title}の暫定概要です。詳細ガイドは後で追加されます。`,
-    es: `Resumen temporal de ${title}. La guía detallada se añadirá más adelante.`,
-    pt: `Visão geral temporária de ${title}. O guia detalhado será adicionado depois.`,
+    ko: `[${title}] overview is temporarily unavailable.`,
+    ja: `[${title}] overview is temporarily unavailable.`,
+    es: `[${title}] overview is temporarily unavailable.`,
+    pt: `[${title}] overview is temporarily unavailable.`,
   };
   return messages[lang];
 }
@@ -444,7 +444,7 @@ function NavItem({ node, nodePath, level, selected, onSelect, openNodes, onToggl
                   <button
                     type="button"
                     className={`block w-full rounded-md px-3 py-1.5 text-left text-sm transition-colors ${
-                      isSelected ? 'font-semibold' : 'text-slate-600 hover:bg-sky-50'
+                      isSelected ? 'font-semibold' : 'text-slate-600 hover:bg-[#C1D2DC]/20'
                     }`}
                     style={
                       leafTone
@@ -492,7 +492,7 @@ function NavItem({ node, nodePath, level, selected, onSelect, openNodes, onToggl
                   <button
                     type="button"
                     className={`block w-full rounded-md px-3 py-1.5 text-left text-sm transition-colors ${
-                      isCodeSelected ? 'font-semibold' : 'text-slate-600 hover:bg-sky-50'
+                      isCodeSelected ? 'font-semibold' : 'text-slate-600 hover:bg-[#C1D2DC]/20'
                     }`}
                     style={
                       isCodeSelected && categoryTone
@@ -558,7 +558,7 @@ function Sidebar({ query, onQueryChange, selected, onSelect }: SidebarProps) {
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search docs..."
-            className="w-full rounded-md border border-slate-200 bg-white py-2 pl-8 pr-3 text-sm text-slate-700 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+            className="w-full rounded-md border border-slate-200 bg-white py-2 pl-8 pr-3 text-sm text-slate-700 focus:border-[#4E73AA] focus:outline-none focus:ring-2 focus:ring-[#4E73AA]/20"
           />
         </div>
       </div>
@@ -646,7 +646,7 @@ function ContentDisplay({ item, lang }: { item: SelectedItem; lang: Language }) 
         <div className="flex items-center gap-3">
           <Link
             href={`/docs/${item.slug.join('/')}`}
-            className="text-sm font-medium text-sky-700 hover:text-sky-800"
+            className="text-sm font-medium text-[#4E73AA] hover:text-[#2A5F7F]"
           >
             Open As Page
           </Link>
@@ -690,3 +690,6 @@ const InfoTab = () => {
 };
 
 export default InfoTab;
+
+
+

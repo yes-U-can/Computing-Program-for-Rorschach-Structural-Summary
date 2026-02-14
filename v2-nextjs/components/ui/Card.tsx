@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { HTMLAttributes, forwardRef } from 'react';
 
@@ -11,7 +11,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className = '', variant = 'glass', padding = 'md', children, ...props }, ref) => {
     const variants = {
       default: 'bg-white border border-slate-200 shadow-sm',
-      glass: 'bg-white/70 backdrop-blur-md border border-white/50 shadow-lg shadow-slate-200/50',
+      glass: 'bg-white border border-slate-200 shadow-sm',
       solid: 'bg-white border border-slate-200 shadow-md'
     };
 
@@ -25,7 +25,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`rounded-2xl transition-all duration-300 hover:shadow-xl ${variants[variant]} ${paddings[padding]} ${className}`}
+        className={`rounded-lg transition-shadow duration-200 hover:shadow-md ${variants[variant]} ${paddings[padding]} ${className}`}
         {...props}
       >
         {children}
@@ -43,7 +43,7 @@ const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
     return (
       <div
         ref={ref}
-        className={`text-xl font-semibold text-slate-800 mb-4 pb-3 border-b border-purple-100/50 ${className}`}
+        className={`text-xl font-semibold text-slate-800 mb-4 pb-3 border-b border-slate-200 ${className}`}
         {...props}
       >
         {children}
