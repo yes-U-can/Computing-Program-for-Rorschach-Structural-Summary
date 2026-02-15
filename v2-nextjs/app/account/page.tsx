@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { SparklesIcon, BookOpenIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
@@ -51,6 +52,7 @@ export default function AccountPage() {
               {/* Navigation can go here */}
               <ul className="space-y-2">
                 <li><a href="#api-keys" className="font-semibold text-[var(--brand-500)]">{t('account.apiKeys.title')}</a></li>
+                <li><a href="#my-skillbooks" className="text-slate-600 hover:text-[var(--brand-500)]">{t('skillBook.myBooks.title')}</a></li>
                 <li><a href="#knowledge-sources" className="text-slate-600 hover:text-[var(--brand-500)]">{t('account.knowledgeSources.title')}</a></li>
                 <li><a href="#ai-assistant" className="text-slate-600 hover:text-[var(--brand-500)]">{t('nav.aiAssistant')}</a></li>
                 <li><a href="#account-settings" className="text-slate-600 hover:text-[var(--brand-500)]">{t('nav.account')}</a></li>
@@ -61,6 +63,32 @@ export default function AccountPage() {
                 <h2 className="text-xl font-semibold text-slate-700">{t('account.apiKeys.title')}</h2>
                 <div className="mt-4 p-8 bg-white rounded-lg shadow-sm border border-slate-200">
                   <ApiKeyManager />
+                </div>
+              </section>
+              <section id="my-skillbooks">
+                <h2 className="text-xl font-semibold text-slate-700">{t('skillBook.myBooks.title')}</h2>
+                <p className="mt-1 text-sm text-slate-500">{t('skillBook.myBooks.subtitle')}</p>
+                <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
+                  <SparklesIcon className="mx-auto h-10 w-10 text-slate-300" />
+                  <span className="mt-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                    {t('skillBook.myBooks.comingSoon')}
+                  </span>
+                  <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate-500">
+                    {t('skillBook.myBooks.comingSoonDesc')}
+                  </p>
+                  <div className="mt-6 flex items-center justify-center gap-4">
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-400">
+                      <BookOpenIcon className="h-4 w-4" />
+                      {t('skillBook.myBooks.created')}
+                    </div>
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-400">
+                      <ArrowDownTrayIcon className="h-4 w-4" />
+                      {t('skillBook.myBooks.purchased')}
+                    </div>
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-400">
+                      {t('skillBook.myBooks.export')}
+                    </div>
+                  </div>
                 </div>
               </section>
               <section id="ai-assistant">

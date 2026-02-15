@@ -11,6 +11,8 @@ type Message = {
   id: number;
   role: 'ai' | 'user';
   content: string;
+  hidden?: boolean;
+  uiOnly?: boolean;
 };
 
 type ChatWidgetProps = {
@@ -27,7 +29,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatSessionId, setChatSessionId] = useState<string | null>(null);
-  const pendingInitialMessage = useRef<string | null>(null);
+  const handledInitialMessageRef = useRef<string | null>(null);
 
   // Load user knowledge once per mount, not per message
   const userKnowledgeRef = useRef<ReturnType<typeof toChatKnowledgePayload> | null>(null);
@@ -41,10 +43,38 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
 
   useEffect(scrollToBottom, [messages]);
 
-  const sendMessage = useCallback(async (messageText: string, currentMessages: Message[]) => {
+  const getFriendlyErrorMessage = useCallback((rawError: string) => {
+    const message = rawError.toLowerCase();
+    if (message.includes('api key not found') || message.includes('api key not configured')) {
+      return t('chat.apiKeyMissing');
+    }
+    if (
+      message.includes('insufficient_quota') ||
+      message.includes('quota') ||
+      message.includes('billing') ||
+      message.includes('credit')
+    ) {
+      return t('chat.billingOrQuota');
+    }
+    if (message.includes('invalid') && message.includes('key')) {
+      return t('chat.invalidApiKey');
+    }
+    return t('chat.errorMessage');
+  }, [t]);
+
+  const sendMessage = useCallback(async (
+    messageText: string,
+    currentMessages: Message[],
+    options?: { hideUserBubble?: boolean; finalAiMessage?: string }
+  ) => {
     if (messageText.trim() === '' || isLoading) return;
 
-    const userMessage: Message = { id: Date.now(), role: 'user', content: messageText };
+    const userMessage: Message = {
+      id: Date.now(),
+      role: 'user',
+      content: messageText,
+      hidden: options?.hideUserBubble ?? false,
+    };
     const newMessages = [...currentMessages, userMessage];
 
     setMessages(newMessages);
@@ -57,7 +87,9 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: newMessages,
+          messages: newMessages
+            .filter((m) => !m.uiOnly)
+            .map((m) => ({ role: m.role, content: m.content })),
           provider,
           chatSessionId,
           knowledgeItems: userKnowledge,
@@ -66,7 +98,21 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
       });
 
       if (!response.ok || !response.body) {
-        throw new Error('Failed to get response from server.');
+        let serverError = 'Failed to get response from server.';
+        try {
+          const data = await response.json();
+          if (data?.error && typeof data.error === 'string') {
+            serverError = data.error;
+          }
+        } catch {
+          try {
+            const text = await response.text();
+            if (text) serverError = text;
+          } catch {
+            // no-op
+          }
+        }
+        throw new Error(serverError);
       }
 
       const newSessionId = response.headers.get('X-Chat-Session-Id');
@@ -77,58 +123,93 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let aiResponseText = '';
-      const aiMessageId = Date.now() + 1;
 
-      setMessages(prev => [...prev, { id: aiMessageId, role: 'ai', content: '' }]);
-
-      try {
+      if (options?.finalAiMessage) {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-
           aiResponseText += decoder.decode(value, { stream: true });
-          setMessages(prev => prev.map(msg =>
-            msg.id === aiMessageId ? { ...msg, content: aiResponseText } : msg
-          ));
         }
-      } catch (streamError) {
-        console.error('Stream interrupted:', streamError);
-        if (aiResponseText) {
-          setMessages(prev => prev.map(msg =>
-            msg.id === aiMessageId ? { ...msg, content: aiResponseText + '\n\n[Stream interrupted]' } : msg
-          ));
+        setMessages((prev) => [
+          ...prev.filter((m) => !m.uiOnly),
+          { id: Date.now() + 2, role: 'ai', content: options.finalAiMessage as string },
+        ]);
+      } else {
+        const aiMessageId = Date.now() + 1;
+        setMessages(prev => [...prev, { id: aiMessageId, role: 'ai', content: '' }]);
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            aiResponseText += decoder.decode(value, { stream: true });
+            setMessages(prev => prev.map(msg =>
+              msg.id === aiMessageId ? { ...msg, content: aiResponseText } : msg
+            ));
+          }
+        } catch (streamError) {
+          console.error('Stream interrupted:', streamError);
+          if (aiResponseText) {
+            setMessages(prev => prev.map(msg =>
+              msg.id === aiMessageId ? { ...msg, content: aiResponseText + '\n\n[Stream interrupted]' } : msg
+            ));
+          }
         }
       }
 
     } catch (error) {
       console.error(error);
-      setMessages(prev => [...prev, { id: Date.now() + 2, role: 'ai', content: t('chat.errorMessage') }]);
+      const message = getFriendlyErrorMessage(error instanceof Error ? error.message : '');
+      if (options?.finalAiMessage) {
+        setMessages((prev) => [
+          ...prev.filter((m) => !m.uiOnly),
+          { id: Date.now() + 3, role: 'ai', content: message },
+        ]);
+      } else {
+        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'ai', content: message }]);
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, provider, chatSessionId, language, t]);
+  }, [chatSessionId, getFriendlyErrorMessage, isLoading, language, provider]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     sendMessage(inputText, messages);
   };
 
-  // Handle initialMessage safely without setTimeout race condition
   useEffect(() => {
-    if (initialMessage && isOpen) {
-      pendingInitialMessage.current = initialMessage;
-      setMessages([]);
-      setChatSessionId(null);
+    if (!isOpen) {
+      handledInitialMessageRef.current = null;
+      return;
     }
-  }, [initialMessage, isOpen]);
+
+    if (!initialMessage || handledInitialMessageRef.current === initialMessage) return;
+    handledInitialMessageRef.current = initialMessage;
+
+    const loadingMessage: Message = {
+      id: Date.now(),
+      role: 'ai',
+      content: t('chat.readingResults'),
+      uiOnly: true,
+    };
+
+    setMessages([loadingMessage]);
+    setChatSessionId(null);
+
+    sendMessage(initialMessage, [loadingMessage], {
+      hideUserBubble: true,
+      finalAiMessage: t('chat.resultsReady'),
+    });
+  }, [initialMessage, isOpen, sendMessage, t]);
 
   useEffect(() => {
-    if (pendingInitialMessage.current && messages.length === 0 && !isLoading) {
-      const msg = pendingInitialMessage.current;
-      pendingInitialMessage.current = null;
-      sendMessage(msg, []);
+    if (!initialMessage && isOpen) {
+      setChatSessionId(null);
+      setMessages([]);
     }
-  }, [messages, isLoading, sendMessage]);
+  }, [initialMessage, isOpen]);
 
   if (!isOpen) {
     return null;
@@ -189,7 +270,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
               </div>
             </div>
           )}
-          {messages.map((message) => (
+          {messages.filter((m) => !m.hidden).map((message) => (
             <div
               key={message.id}
               className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}

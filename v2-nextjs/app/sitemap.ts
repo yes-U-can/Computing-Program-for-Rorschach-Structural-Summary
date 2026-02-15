@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${siteUrl}/docs`,
+      url: `${siteUrl}/ref`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.9,
@@ -53,7 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const docRoutes = getAllDocRoutes()
     .filter((item) => item.kind === 'entry')
     .map((item) => ({
-      url: `${siteUrl}/docs/${item.slug.join('/')}`,
+      url: `${siteUrl}/ref/${item.slug.join('/')}`,
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.65,

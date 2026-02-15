@@ -6,7 +6,7 @@
   },
   "nav": {
     "scoring": "채점 & 구조 요약",
-    "more": "사전",
+    "more": "참조",
     "login": "로그인 / 회원가입",
     "logout": "로그아웃",
     "account": "내 계정",
@@ -280,6 +280,14 @@
     "apiKeyError": {
       "title": "오류",
       "message": "API 키를 저장하지 못했습니다. 다시 시도해주세요."
+    },
+    "aiInterpretLogin": {
+      "title": "로그인이 필요합니다",
+      "message": "AI 해석 기능을 사용하려면 Google 계정으로 로그인해 주세요."
+    },
+    "aiInterpretApiKey": {
+      "title": "API 키 설정이 필요합니다",
+      "message": "계정관리에서 API 키를 등록해 주시면 AI 해석을 바로 도와드릴 수 있어요."
     }
   },
   "loader": {
@@ -365,7 +373,37 @@
     "loading": "로딩 중...",
     "emptyStateTitle": "대화를 선택하여 확인하세요",
     "emptyStateDescription": "사이드바에서 대화를 선택하거나, 아래에 메시지를 입력하여 새 대화를 시작하세요.",
-    "newChat": "새 대화"
+    "newChat": "새 대화",
+    "readingResults": "검사 결과를 읽고 있습니다. 잠시만 기다려주세요...",
+    "resultsReady": "검사 결과를 모두 읽었습니다. 궁금한 점을 질문해 주세요!",
+    "apiKeyMissing": "API 키가 아직 등록되지 않았습니다. 계정관리에서 키를 등록해 주세요.",
+    "billingOrQuota": "현재 API 사용 한도 또는 결제 상태를 확인해 주세요. 설정 후 다시 시도하시면 바로 도와드릴게요.",
+    "invalidApiKey": "입력된 API 키를 확인해 주세요. 키가 잘못되었거나 만료되었을 수 있어요."
+  },
+  "skillBook": {
+    "store": {
+      "title": "스킬북 스토어",
+      "subtitle": "다른 전문가들이 만든 해석 스킬북을 탐색하고 적용하세요.",
+      "comingSoon": "준비 중",
+      "comingSoonDesc": "전문가들이 만든 로샤 해석 스킬북을 크레딧으로 구매하고, 나만의 스킬북을 판매할 수 있는 마켓플레이스가 곧 열립니다."
+    },
+    "builder": {
+      "title": "스킬북 생성 모드",
+      "subtitle": "나만의 해석 스킬북을 만들어보세요.",
+      "comingSoon": "준비 중",
+      "comingSoonDesc": "교재, 필기, 임상 경험을 업로드하면 AI가 나만의 로샤 해석 스킬북으로 변환해 드립니다.",
+      "toggle": "스킬북 생성 모드"
+    },
+    "myBooks": {
+      "title": "내 스킬북",
+      "subtitle": "만들었거나 구매한 스킬북을 관리합니다.",
+      "created": "내가 만든 스킬북",
+      "purchased": "구매한 스킬북",
+      "export": "내보내기",
+      "comingSoon": "준비 중",
+      "comingSoonDesc": "스킬북을 만들고, 관리하고, 내보내기(.md)할 수 있는 기능이 곧 추가됩니다.",
+      "empty": "아직 스킬북이 없습니다."
+    }
   },
   "auth": {
     "googleContinue": "Google로 계속하기"

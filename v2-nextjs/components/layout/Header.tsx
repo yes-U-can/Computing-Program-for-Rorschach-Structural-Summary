@@ -58,7 +58,7 @@ export default function Header() {
   } as const;
 
   const navItems = [
-    { href: `/docs?lang=${language}`, label: t('nav.more'), active: pathname === '/docs' || pathname.startsWith('/docs/') },
+    { href: `/ref?lang=${language}`, label: t('nav.more'), active: pathname === '/ref' || pathname.startsWith('/ref/') },
     { href: `/chat?lang=${language}`, label: t('nav.aiAssistant'), active: pathname === '/chat' },
     { href: `/account?lang=${language}`, label: t('nav.accountManage'), active: pathname === '/account' },
   ];
@@ -133,23 +133,29 @@ export default function Header() {
                 <div />
               )}
 
-              <nav className="overflow-x-auto lg:ml-4 lg:flex-shrink-0">
-                <div className="inline-flex min-w-max overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm divide-x divide-slate-300">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`px-3 py-2 text-sm font-medium transition-colors ${
-                        item.active
-                          ? 'bg-[var(--brand-700)] text-white'
-                          : 'text-slate-700 hover:bg-[#EEF3F7] hover:text-[var(--brand-700)]'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </nav>
+              {session ? (
+                <nav className="overflow-x-auto lg:ml-4 lg:flex-shrink-0">
+                  <div className="inline-flex min-w-max overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm divide-x divide-slate-300">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`px-3 py-2 text-sm font-medium transition-colors ${
+                          item.active
+                            ? 'bg-[var(--brand-700)] text-white'
+                            : 'text-slate-700 hover:bg-[#EEF3F7] hover:text-[var(--brand-700)]'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </nav>
+              ) : (
+                <p className="text-xs text-slate-600 lg:ml-4 lg:max-w-xl">
+                  {t('nav.aiGuide')}
+                </p>
+              )}
             </div>
           )}
         </div>

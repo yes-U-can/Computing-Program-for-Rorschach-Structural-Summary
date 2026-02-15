@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
@@ -17,7 +17,7 @@ import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import { Card } from '@/components/ui/Card';
 
-import { exportToCSV, exportSummaryToCSV } from '@/lib/csv';
+import { exportToCSV, exportSummaryToCSV, generateRawDataCsv, generateSummaryCsv } from '@/lib/csv';
 
 import DraggableFab from '@/components/ui/DraggableFab';
 import AdModal from '@/components/ads/AdModal';
@@ -67,87 +67,53 @@ export default function HomePage() {
   const [showAdModal, setShowAdModal] = useState(false);
   const [adModalKey, setAdModalKey] = useState(0);
 
+  const buildInterpretationBootstrapPrompt = () => {
+    if (!result?.data) return '';
+    const rawCsv = generateRawDataCsv(responses);
+    const summaryCsv = generateSummaryCsv(result.data);
+
+    return [
+      'You are assisting with interpretation of a Rorschach Structural Summary.',
+      'Read both CSV datasets below and store them as the primary context for this chat session.',
+      'Do not provide a full interpretation yet. Wait for follow-up clinical questions.',
+      '',
+      '[RAW_DATA_CSV]',
+      '```csv',
+      rawCsv,
+      '```',
+      '',
+      '[STRUCTURAL_SUMMARY_CSV]',
+      '```csv',
+      summaryCsv,
+      '```',
+    ].join('\n');
+  };
+
   const handleRequestInterpretation = () => {
+    if (status !== 'authenticated' || !session?.user) {
+      showToast({
+        type: 'warning',
+        title: t('toast.aiInterpretLogin.title'),
+        message: t('toast.aiInterpretLogin.message'),
+      });
+      return;
+    }
+
+    if (!session.user.hasSavedApiKeys) {
+      showToast({
+        type: 'info',
+        title: t('toast.aiInterpretApiKey.title'),
+        message: t('toast.aiInterpretApiKey.message'),
+      });
+      return;
+    }
+
     if (!result?.data) return;
-    const ls = result.data.lower_section;
 
-    const summaryData = {
-      "Core Section": {
-        R: ls.R,
-        Lambda: ls.Lambda,
-        EB: ls.EB,
-        EA: ls.EA,
-        EBPer: ls.EBPer,
-        eb: ls.eb,
-        es: ls.es,
-        D: ls.D,
-        AdjD: ls.AdjD,
-        AdjEs: ls.AdjEs,
-      },
-      "Ideation": {
-        a_p: ls.a_p,
-        Ma_Mp: ls.Ma_Mp,
-        _2AB_Art_Ay: ls._2AB_Art_Ay,
-        MOR: ls.MOR,
-        Sum6: ls.Sum6,
-        Lv2: ls.Lv2,
-        WSum6: ls.WSum6_ideation,
-        M_minus: ls.M_minus_ideation,
-        Mnone: ls.Mnone,
-      },
-      "Affect": {
-        FC_CF_C: ls.FC_CF_C,
-        PureC: ls.PureC,
-        SumC_WSumC: ls.SumC_WSumC,
-        Afr: ls.Afr,
-        S: ls.S_aff,
-        Blends_R: ls.Blends_R,
-        CP: ls.CP,
-      },
-      "Mediation": {
-        XA_percent: ls.XA_percent,
-        WDA_percent: ls.WDA_percent,
-        X_minus_percent: ls.X_minus_percent,
-        S_minus: ls.S_minus,
-        P: ls.P,
-        X_plus_percent: ls.X_plus_percent,
-        Xu_percent: ls.Xu_percent,
-      },
-      "Processing": {
-        Zf: ls.Zf,
-        Zd: ls.Zd,
-        W_D_Dd: ls.W_D_Dd,
-        W_M: ls.W_M,
-        PSV: ls.PSV,
-        DQ_plus: ls.DQ_plus,
-        DQ_v: ls.DQ_v,
-      },
-      "Interpersonal": {
-        COP: ls.COP,
-        AG: ls.AG,
-        a_p: ls.a_p_inter,
-        Food: ls.Food,
-        SumT: ls.SumT_inter,
-        HumanCont: ls.HumanCont,
-        PureH: ls.PureH,
-        PER: ls.PER,
-        ISO_Index: ls.ISO_Index,
-      },
-      "Self-Perception": {
-        _3r_2_R: ls._3r_2_R,
-        Fr_rF: ls.Fr_rF,
-        SumV: ls.SumV_self,
-        FD: ls.FD,
-        An_Xy: ls.An_Xy,
-        MOR: ls.MOR_self,
-        H_ratio: ls.H_ratio,
-      },
-      "Special Indices": result.data.special_indices
-    };
+    const bootstrapPrompt = buildInterpretationBootstrapPrompt();
+    if (!bootstrapPrompt) return;
 
-    const message = `Please provide a psychological interpretation based on the following Rorschach structural summary data:\n\n\`\`\`json\n${JSON.stringify(summaryData, null, 2)}\n\`\`\``;
-    
-    setInitialChatMessage(message);
+    setInitialChatMessage(bootstrapPrompt);
     setShowChatWidget(true);
   };
 
@@ -339,15 +305,13 @@ export default function HomePage() {
                   {t('buttons.print')}
                 </Button>
                 <Button 
-                  variant="ghost" 
+                  variant="secondary" 
                   onClick={handleRequestInterpretation}
-                  disabled={!session || !session.user || !session.user.hasSavedApiKeys}
+                  disabled={status !== 'authenticated'}
                   title={
-                    !session || !session.user 
-                      ? t('nav.loginRequired') 
-                      : !session.user.hasSavedApiKeys 
-                        ? t('account.apiKeys.setupRequired') 
-                        : t('buttons.aiInterpret')
+                    status !== 'authenticated'
+                      ? t('nav.loginRequired')
+                      : t('buttons.aiInterpret')
                   }
                 >
                   <SparklesIcon className="w-4 h-4 mr-2" />
@@ -504,6 +468,8 @@ export default function HomePage() {
     </div>
   );
 }
+
+
 
 
 

@@ -6,7 +6,7 @@
   },
   "nav": {
     "scoring": "Codificação e Sumário Estrutural",
-    "more": "Dicionario",
+    "more": "Referência",
     "login": "Entrar / Registrar",
     "logout": "Sair",
     "account": "Minha Conta",
@@ -280,6 +280,14 @@
     "apiKeyError": {
       "title": "Erro",
       "message": "Falha ao salvar a chave de API. Por favor, tente novamente."
+    },
+    "aiInterpretLogin": {
+      "title": "Login necess?rio",
+      "message": "Fa?a login com Google para usar a interpreta??o por IA."
+    },
+    "aiInterpretApiKey": {
+      "title": "Configura??o da chave API necess?ria",
+      "message": "Cadastre sua chave API em Configura??es da conta para usar a interpreta??o por IA."
     }
   },
   "loader": {
@@ -365,7 +373,37 @@
     "loading": "Carregando...",
     "emptyStateTitle": "Selecione um chat para ver",
     "emptyStateDescription": "Escolha uma conversa na barra lateral, ou digite uma mensagem abaixo para iniciar uma nova.",
-    "newChat": "Nova conversa"
+    "newChat": "Nova conversa",
+    "readingResults": "Lendo os resultados da avalia??o. Aguarde um momento...",
+    "resultsReady": "Terminei de ler todos os resultados. Pode enviar suas perguntas.",
+    "apiKeyMissing": "Nenhuma chave API foi cadastrada ainda. Adicione em Configura??es da conta.",
+    "billingOrQuota": "Verifique o status de cobran?a ou cota da sua API. Depois, tente novamente.",
+    "invalidApiKey": "Verifique a chave API informada. Ela pode estar inv?lida ou expirada."
+  },
+  "skillBook": {
+    "store": {
+      "title": "Loja de Skill Books",
+      "subtitle": "Explore e aplique Skill Books de interpretação criados por outros profissionais.",
+      "comingSoon": "Em Breve",
+      "comingSoonDesc": "Um marketplace onde você pode comprar Skill Books de interpretação Rorschach com créditos e vender os seus será aberto em breve."
+    },
+    "builder": {
+      "title": "Modo de Criação de Skill Book",
+      "subtitle": "Crie seu próprio Skill Book de interpretação.",
+      "comingSoon": "Em Breve",
+      "comingSoonDesc": "Envie seus livros, anotações e experiência clínica, e a IA os converterá em seu próprio Skill Book de interpretação Rorschach.",
+      "toggle": "Modo de Criação de Skill Book"
+    },
+    "myBooks": {
+      "title": "Meus Skill Books",
+      "subtitle": "Gerencie os Skill Books que você criou ou comprou.",
+      "created": "Criados por mim",
+      "purchased": "Comprados",
+      "export": "Exportar",
+      "comingSoon": "Em Breve",
+      "comingSoonDesc": "Crie, gerencie e exporte (.md) seus Skill Books. Este recurso estará disponível em breve.",
+      "empty": "Nenhum Skill Book ainda."
+    }
   },
   "auth": {
     "googleContinue": "Continuar com Google"

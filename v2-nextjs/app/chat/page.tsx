@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Bars3Icon, XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import ChatHistorySidebar from '@/components/chat/ChatHistorySidebar';
 import ChatMessageView from '@/components/chat/ChatMessageView';
@@ -303,6 +303,17 @@ export default function ChatPage() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Skill Book Builder Mode — Coming Soon */}
+              <div className="border-t border-dashed border-slate-200 bg-gradient-to-r from-amber-50/50 to-white px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                  <SparklesIcon className="h-4 w-4 shrink-0 text-amber-500" />
+                  <span className="text-xs font-medium text-slate-600">{t('skillBook.builder.toggle')}</span>
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                    {t('skillBook.builder.comingSoon')}
+                  </span>
+                </div>
               </div>
 
               {/* Input form */}

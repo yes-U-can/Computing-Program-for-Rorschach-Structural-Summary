@@ -1,0 +1,229 @@
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { MagnifyingGlassIcon, SparklesIcon, BookOpenIcon } from '@heroicons/react/24/outline';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { getAllDocRoutes, resolveDocContent } from '@/lib/docsCatalog';
+import { buildLanguageAlternates } from '@/lib/seo';
+import type { Language } from '@/types';
+
+type RefPageProps = {
+  searchParams: Promise<{ q?: string; lang?: string; view?: string }>;
+};
+
+function normalizeLang(lang?: string): Language {
+  return lang === 'ko' || lang === 'ja' || lang === 'es' || lang === 'pt' ? lang : 'en';
+}
+
+export const metadata: Metadata = {
+  title: 'Reference',
+  description: 'Searchable documentation for Rorschach scoring items and structural summary variables.',
+  alternates: {
+    canonical: '/ref',
+    languages: buildLanguageAlternates('/ref'),
+  },
+};
+
+function includesQuery(value: string, q: string): boolean {
+  return value.toLowerCase().includes(q.toLowerCase());
+}
+
+export default async function RefIndexPage({ searchParams }: RefPageProps) {
+  const { q, lang, view } = await searchParams;
+  const query = (q ?? '').trim();
+  const hasQuery = query.length > 0;
+  const activeLang = normalizeLang(lang);
+  const activeView = view === 'store' ? 'store' : 'docs';
+
+  const routes = getAllDocRoutes().filter((route) => route.kind === 'entry');
+  const filteredRoutes = routes.filter((route) => {
+    if (!hasQuery) return false;
+    const content = resolveDocContent(route, activeLang);
+    return (
+      includesQuery(content.title, query) ||
+      includesQuery(content.description, query) ||
+      includesQuery(route.slug.join('/'), query)
+    );
+  });
+
+  const labels: Record<Language, { title: string; subtitle: string; search: string; placeholder: string; empty: string; idle: string; results: (count: number, q: string) => string; tabDocs: string; tabStore: string; storeTitle: string; storeComingSoon: string; storeComingSoonDesc: string }> = {
+    en: {
+      title: 'Reference',
+      subtitle: 'Search scoring-item and result-variable reference pages.',
+      search: 'Search',
+      placeholder: 'Search by code, title, keyword...',
+      empty: 'No matching docs found. Try a broader keyword.',
+      idle: 'Enter a keyword to view document results.',
+      results: (count, text) => `${count} result${count === 1 ? '' : 's'}${text ? ` for "${text}"` : ''}`,
+      tabDocs: 'Document Search',
+      tabStore: 'Skill Book Store',
+      storeTitle: 'Skill Book Store',
+      storeComingSoon: 'Coming Soon',
+      storeComingSoonDesc: 'A marketplace where you can purchase Rorschach interpretation Skill Books with credits and sell your own is opening soon.',
+    },
+    ko: {
+      title: '\uCC38\uC870',
+      subtitle: '\uCC44\uC810 \uD56D\uBAA9\uACFC \uACB0\uACFC \uBCC0\uC218 \uC124\uBA85\uC744 \uAC80\uC0C9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.',
+      search: '\uAC80\uC0C9',
+      placeholder: '\uCF54\uB4DC, \uC81C\uBAA9, \uD0A4\uC6CC\uB4DC\uB85C \uAC80\uC0C9...',
+      empty: '\uC77C\uCE58\uD558\uB294 \uBB38\uC11C\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC5B4\uC694. \uAC80\uC0C9\uC5B4\uB97C \uC870\uAE08 \uB354 \uB113\uAC8C \uC785\uB825\uD574 \uBCF4\uC138\uC694.',
+      idle: '\uAC80\uC0C9\uC5B4\uB97C \uC785\uB825\uD558\uBA74 \uACB0\uACFC\uAC00 \uD45C\uC2DC\uB429\uB2C8\uB2E4.',
+      results: (count, text) => `\uAC80\uC0C9 \uACB0\uACFC ${count}\uAC74${text ? `: \"${text}\"` : ''}`,
+      tabDocs: '\uBB38\uC11C \uAC80\uC0C9',
+      tabStore: '\uC2A4\uD0AC\uBD81 \uC2A4\uD1A0\uC5B4',
+      storeTitle: '\uC2A4\uD0AC\uBD81 \uC2A4\uD1A0\uC5B4',
+      storeComingSoon: '\uC900\uBE44 \uC911',
+      storeComingSoonDesc: '\uC804\uBB38\uAC00\uB4E4\uC774 \uB9CC\uB4E0 \uB85C\uC0E4 \uD574\uC11D \uC2A4\uD0AC\uBD81\uC744 \uD06C\uB808\uB527\uC73C\uB85C \uAD6C\uB9E4\uD558\uACE0, \uB098\uB9CC\uC758 \uC2A4\uD0AC\uBD81\uC744 \uD310\uB9E4\uD560 \uC218 \uC788\uB294 \uB9C8\uCF13\uD50C\uB808\uC774\uC2A4\uAC00 \uACE7 \uC5F4\uB9BD\uB2C8\uB2E4.',
+    },
+    ja: {
+      title: '\u53C2\u7167',
+      subtitle: '\u63A1\u70B9\u9805\u76EE\u3068\u7D50\u679C\u5909\u6570\u306E\u53C2\u7167\u30DA\u30FC\u30B8\u3092\u691C\u7D22\u3067\u304D\u307E\u3059\u3002',
+      search: '\u691C\u7D22',
+      placeholder: '\u30B3\u30FC\u30C9\u3001\u30BF\u30A4\u30C8\u30EB\u3001\u30AD\u30FC\u30EF\u30FC\u30C9\u3067\u691C\u7D22...',
+      empty: '\u8A72\u5F53\u3059\u308B\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3002\u3088\u308A\u5E45\u5E83\u3044\u30AD\u30FC\u30EF\u30FC\u30C9\u3092\u304A\u8A66\u3057\u304F\u3060\u3055\u3044\u3002',
+      idle: '\u691C\u7D22\u8A9E\u3092\u5165\u529B\u3059\u308B\u3068\u7D50\u679C\u304C\u8868\u793A\u3055\u308C\u307E\u3059\u3002',
+      results: (count, text) => `\u691C\u7D22\u7D50\u679C ${count}\u4EF6${text ? `: \"${text}\"` : ''}`,
+      tabDocs: '\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u691C\u7D22',
+      tabStore: '\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u30B9\u30C8\u30A2',
+      storeTitle: '\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u30B9\u30C8\u30A2',
+      storeComingSoon: '\u8FD1\u65E5\u516C\u958B',
+      storeComingSoonDesc: '\u30AF\u30EC\u30B8\u30C3\u30C8\u3067\u30ED\u30FC\u30EB\u30B7\u30E3\u30C3\u30CF\u89E3\u91C8\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u3092\u8CFC\u5165\u3057\u3001\u81EA\u5206\u306E\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u3092\u8CA9\u58F2\u3067\u304D\u308B\u30DE\u30FC\u30B1\u30C3\u30C8\u30D7\u30EC\u30A4\u30B9\u304C\u9593\u3082\u306A\u304F\u30AA\u30FC\u30D7\u30F3\u3057\u307E\u3059\u3002',
+    },
+    es: {
+      title: 'Referencia',
+      subtitle: 'Busque paginas de referencia de codigos y variables de resultados.',
+      search: 'Buscar',
+      placeholder: 'Buscar por codigo, titulo o palabra clave...',
+      empty: 'No se encontraron documentos coincidentes. Pruebe una palabra clave mas amplia.',
+      idle: 'Escriba una palabra clave para ver resultados.',
+      results: (count, text) => `${count} resultado${count === 1 ? '' : 's'}${text ? ` para \"${text}\"` : ''}`,
+      tabDocs: 'Buscar documentos',
+      tabStore: 'Tienda de Skill Books',
+      storeTitle: 'Tienda de Skill Books',
+      storeComingSoon: 'Pr\u00F3ximamente',
+      storeComingSoonDesc: 'Un mercado donde podr\u00E1s comprar Skill Books de interpretaci\u00F3n Rorschach con cr\u00E9ditos y vender los tuyos se abrir\u00E1 pronto.',
+    },
+    pt: {
+      title: 'Refer\u00EAncia',
+      subtitle: 'Pesquise paginas de referencia de codigos e variaveis de resultado.',
+      search: 'Buscar',
+      placeholder: 'Buscar por codigo, titulo ou palavra-chave...',
+      empty: 'Nenhum documento correspondente foi encontrado. Tente uma palavra-chave mais ampla.',
+      idle: 'Digite uma palavra-chave para ver resultados.',
+      results: (count, text) => `${count} resultado${count === 1 ? '' : 's'}${text ? ` para \"${text}\"` : ''}`,
+      tabDocs: 'Buscar documentos',
+      tabStore: 'Loja de Skill Books',
+      storeTitle: 'Loja de Skill Books',
+      storeComingSoon: 'Em Breve',
+      storeComingSoonDesc: 'Um marketplace onde voc\u00EA pode comprar Skill Books de interpreta\u00E7\u00E3o Rorschach com cr\u00E9ditos e vender os seus ser\u00E1 aberto em breve.',
+    },
+  };
+
+  const text = labels[activeLang];
+
+  return (
+    <div className="min-h-screen bg-[#F7F9FB]">
+      <Header />
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
+        <h1 className="text-3xl font-bold text-slate-800">{text.title}</h1>
+        <p className="mt-2 text-slate-600">{text.subtitle}</p>
+
+        {/* Sub-tabs */}
+        <div className="mt-6 flex gap-1 rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
+          <Link
+            href={`/ref?lang=${activeLang}`}
+            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
+              activeView === 'docs'
+                ? 'bg-[var(--brand-700)] text-white shadow-sm'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
+            }`}
+          >
+            <BookOpenIcon className="h-4 w-4" />
+            {text.tabDocs}
+          </Link>
+          <Link
+            href={`/ref?view=store&lang=${activeLang}`}
+            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
+              activeView === 'store'
+                ? 'bg-[var(--brand-700)] text-white shadow-sm'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
+            }`}
+          >
+            <SparklesIcon className="h-4 w-4" />
+            {text.tabStore}
+          </Link>
+        </div>
+
+        {activeView === 'docs' ? (
+          <>
+            <form action="/ref" method="get" className="mt-6">
+              <input type="hidden" name="lang" value={activeLang} />
+              <label htmlFor="docs-query" className="sr-only">
+                Search documentation
+              </label>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  id="docs-query"
+                  name="q"
+                  defaultValue={query}
+                  placeholder={text.placeholder}
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/20"
+                />
+                <button
+                  type="submit"
+                  aria-label={text.search}
+                  title={text.search}
+                  className="inline-flex items-center justify-center rounded-md bg-[var(--brand-700)] px-3 py-2 text-white hover:bg-[var(--brand-700-hover)]"
+                >
+                  <MagnifyingGlassIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </form>
+
+            {!hasQuery ? (
+              <div className="mt-8 rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">{text.idle}</div>
+            ) : filteredRoutes.length === 0 ? (
+              <>
+                <p className="mt-3 text-sm text-slate-500">{text.results(filteredRoutes.length, query)}</p>
+                <div className="mt-8 rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">{text.empty}</div>
+              </>
+            ) : (
+              <>
+                <p className="mt-3 text-sm text-slate-500">{text.results(filteredRoutes.length, query)}</p>
+                <ul className="mt-6 space-y-3">
+                  {filteredRoutes.map((route) => {
+                    const content = resolveDocContent(route, activeLang);
+                    return (
+                      <li
+                        key={route.slug.join('/')}
+                        className="group rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand-200)] hover:shadow"
+                      >
+                        <Link href={`/ref/${route.slug.join('/')}?lang=${activeLang}`} className="block">
+                          <span className="break-words text-base font-semibold text-slate-800 group-hover:text-[var(--brand-700)]">{content.title}</span>
+                          <p className="mt-1 text-xs text-slate-400">/{route.slug.join('/')}</p>
+                          <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{content.description}</p>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
+          </>
+        ) : (
+          <section className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
+            <SparklesIcon className="mx-auto h-10 w-10 text-slate-300" />
+            <h2 className="mt-4 text-xl font-bold text-slate-700">{text.storeTitle}</h2>
+            <span className="mt-2 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+              {text.storeComingSoon}
+            </span>
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">
+              {text.storeComingSoonDesc}
+            </p>
+          </section>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
+}

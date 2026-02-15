@@ -29,8 +29,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     return {
       title: 'Documentation',
       alternates: {
-        canonical: '/docs',
-        languages: buildLanguageAlternates('/docs'),
+        canonical: '/ref',
+        languages: buildLanguageAlternates('/ref'),
       },
     };
   }
@@ -39,8 +39,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     return {
       title: 'Documentation',
       alternates: {
-        canonical: '/docs',
-        languages: buildLanguageAlternates('/docs'),
+        canonical: '/ref',
+        languages: buildLanguageAlternates('/ref'),
       },
     };
   }
@@ -49,8 +49,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     title: `${content.title} | Docs`,
     description: content.description,
     alternates: {
-      canonical: `/docs/${slug.join('/')}`,
-      languages: buildLanguageAlternates(`/docs/${slug.join('/')}`),
+      canonical: `/ref/${slug.join('/')}`,
+      languages: buildLanguageAlternates(`/ref/${slug.join('/')}`),
     },
   };
 }
@@ -75,11 +75,11 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
   const level3Items = level3Prefix.length ? getDocChildren(level3Prefix) : [];
 
   const docsLabel: Record<Language, string> = {
-    en: 'Dictionary',
-    ko: '사전',
-    ja: '辞典',
-    es: 'Diccionario',
-    pt: 'Dicionario',
+    en: 'Reference',
+    ko: '참조',
+    ja: '参照',
+    es: 'Referencia',
+    pt: 'Referência',
   };
 
   return (
@@ -90,7 +90,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
           <div>
             <div className="flex flex-wrap gap-2 pb-3">
               <Link
-                href={`/docs?lang=${activeLang}`}
+                href={`/ref?lang=${activeLang}`}
                 className="rounded-md border border-[var(--brand-200)] bg-[var(--brand-200)]/25 px-2.5 py-1 text-xs font-semibold text-[var(--brand-700)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[var(--brand-200)]/40 hover:shadow-sm active:translate-y-0"
               >
                 ← {docsLabel[activeLang]}
@@ -105,7 +105,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
                 return (
                   <Link
                     key={`l1-${itemPath}`}
-                    href={`/docs/${itemPath}?lang=${activeLang}`}
+                    href={`/ref/${itemPath}?lang=${activeLang}`}
                     className={`rounded-md border px-2.5 py-1 text-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 ${
                       isActive
                         ? 'border-[var(--brand-700)] bg-[var(--brand-700)] text-white'
@@ -131,7 +131,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
                 return (
                   <Link
                     key={`l2-${itemPath}`}
-                    href={`/docs/${itemPath}?lang=${activeLang}`}
+                    href={`/ref/${itemPath}?lang=${activeLang}`}
                     className={`rounded-md border px-2.5 py-1 text-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 ${
                       isActive
                         ? 'border-[var(--brand-700)] bg-[var(--brand-700)] text-white'
@@ -157,7 +157,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
                 return (
                   <Link
                     key={`l3-${itemPath}`}
-                    href={`/docs/${itemPath}?lang=${activeLang}`}
+                    href={`/ref/${itemPath}?lang=${activeLang}`}
                     className={`rounded-md border px-2.5 py-1 text-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 ${
                       isActive
                         ? 'border-[var(--brand-700)] bg-[var(--brand-700)] text-white'

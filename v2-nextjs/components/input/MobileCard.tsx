@@ -41,16 +41,76 @@ function calculateZScore(response: RorschachResponse): number | null {
   return typeof score === 'number' ? score : null;
 }
 
+function classifyGPHR(response: RorschachResponse): string {
+  const humanContentCodes = SCORING_CONFIG.CODES.HUMAN_CONTENT_GPHR as readonly string[];
+  const humanMovementCodes = SCORING_CONFIG.CODES.HUMAN_MOVEMENT as readonly string[];
+  const animalMovementCodes = SCORING_CONFIG.CODES.ANIMAL_MOVEMENT as readonly string[];
+  const copOrAgCodes = SCORING_CONFIG.CODES.COP_OR_AG as readonly string[];
+  const fqGoodCodes = SCORING_CONFIG.CODES.FQ_GOOD as readonly string[];
+  const cognitiveSsBadCodes = SCORING_CONFIG.CODES.COGNITIVE_SS_BAD as readonly string[];
+  const agOrMorCodes = SCORING_CONFIG.CODES.AG_OR_MOR as readonly string[];
+  const fqBadCodes = SCORING_CONFIG.CODES.FQ_BAD as readonly string[];
+  const level2SsCodes = SCORING_CONFIG.CODES.LEVEL_2_SS as readonly string[];
+  const gphrPopularCards = SCORING_CONFIG.CODES.GPHR_POPULAR_CARDS as readonly string[];
+
+  const hasHumanContent = response.contents.some(c => humanContentCodes.includes(c));
+  const hasHumanMovement = response.determinants.some(d => humanMovementCodes.includes(d));
+  const hasAnimalMovement = response.determinants.some(d => animalMovementCodes.includes(d));
+  const hasCopOrAg = response.specialScores.some(s => copOrAgCodes.includes(s));
+
+  const isEligible = hasHumanContent || hasHumanMovement || (hasAnimalMovement && hasCopOrAg);
+  if (!isEligible) return '';
+
+  const isPureH = response.contents.includes('H');
+  const isGoodFQ = fqGoodCodes.includes(response.fq);
+  const hasBadCognitiveSS = response.specialScores.some(s => cognitiveSsBadCodes.includes(s));
+  const hasAgOrMor = response.specialScores.some(s => agOrMorCodes.includes(s));
+
+  if (isPureH && isGoodFQ && !hasBadCognitiveSS && !hasAgOrMor) {
+    return 'GHR';
+  }
+
+  const isBadFQ = fqBadCodes.includes(response.fq);
+  const hasLevel2SS = response.specialScores.some(s => level2SsCodes.includes(s));
+
+  if (isBadFQ || hasLevel2SS) return 'PHR';
+  if (response.specialScores.includes('COP') && !response.specialScores.includes('AG')) return 'GHR';
+  if (response.specialScores.includes('FABCOM1') || response.specialScores.includes('MOR') || response.contents.includes('An')) return 'PHR';
+  if (response.popular && gphrPopularCards.includes(response.card)) return 'GHR';
+  if (response.specialScores.includes('AG') || response.specialScores.includes('INCOM1') || response.specialScores.includes('DR1') || response.contents.includes('Hd')) return 'PHR';
+
+  return 'GHR';
+}
+
 export default function MobileCard({ responses, onChange, maxRows = 50 }: MobileCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const currentResponse = responses[currentIndex] || createEmptyResponse();
 
   const zScore = useMemo(() => calculateZScore(currentResponse), [currentResponse]);
+  const gphr = useMemo(() => classifyGPHR(currentResponse), [currentResponse]);
+  const hasReflection = useMemo(
+    () => currentResponse.determinants.some(d => d === 'Fr' || d === 'rF'),
+    [currentResponse.determinants]
+  );
+  const isDqVague = currentResponse.dq === 'v';
 
   const updateField = <K extends keyof RorschachResponse>(field: K, value: RorschachResponse[K]) => {
+    const next = { ...currentResponse, [field]: value };
+
+    // Keep the same domain constraints as desktop row input.
+    if ((field === 'determinants' || field === 'pair') && hasReflection && next.pair === '(2)') {
+      next.pair = 'none';
+    }
+    if ((field === 'dq' || field === 'fq') && next.dq === 'v' && next.fq === '+') {
+      next.fq = '';
+    }
+    if ((field === 'dq' || field === 'z') && next.dq === 'v' && next.z !== '') {
+      next.z = '';
+    }
+
     const newResponses = [...responses];
-    newResponses[currentIndex] = { ...currentResponse, [field]: value };
+    newResponses[currentIndex] = next;
     onChange(newResponses);
   };
 
@@ -66,6 +126,12 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
     }
   };
 
+  const goToIndex = (index: number) => {
+    if (index >= 0 && index < responses.length) {
+      setCurrentIndex(index);
+    }
+  };
+
   const addRow = () => {
     if (responses.length < maxRows) {
       const newResponses = [...responses, createEmptyResponse()];
@@ -74,9 +140,9 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
     }
   };
 
-  const removeCurrentRow = () => {
+  const removeLastRow = () => {
     if (responses.length > 1) {
-      const newResponses = responses.filter((_, i) => i !== currentIndex);
+      const newResponses = responses.slice(0, -1);
       onChange(newResponses);
       if (currentIndex >= newResponses.length) {
         setCurrentIndex(newResponses.length - 1);
@@ -111,9 +177,9 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
             <PlusIcon className="w-5 h-5" />
           </button>
           <button
-            onClick={removeCurrentRow}
+            onClick={removeLastRow}
             disabled={responses.length <= 1}
-            aria-label="Delete current response row"
+            aria-label="Delete last response row"
             className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 disabled:opacity-50 transition-colors"
           >
             <TrashIcon className="w-5 h-5" />
@@ -171,17 +237,22 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               value={currentResponse.fq}
               onChange={(v) => updateField('fq', v)}
               options={OPTIONS.FQ}
+              disabledOptions={isDqVague ? ['+'] : undefined}
               className="w-full"
             />
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Pair</label>
-            <SlotSelect
-              value={currentResponse.pair}
-              onChange={(v) => updateField('pair', v)}
-              options={OPTIONS.PAIR}
-              className="w-full"
-            />
+            <div className="h-10 flex items-center px-3 rounded-lg border border-slate-200 bg-white/50">
+              <input
+                type="checkbox"
+                checked={currentResponse.pair === '(2)'}
+                onChange={(e) => updateField('pair', e.target.checked ? '(2)' : 'none')}
+                disabled={hasReflection}
+                className={`w-5 h-5 rounded border-slate-300 text-[var(--brand-700)] focus:ring-[var(--brand-500)]
+                  ${hasReflection ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
+              />
+            </div>
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Z</label>
@@ -189,6 +260,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               value={currentResponse.z}
               onChange={(v) => updateField('z', v)}
               options={OPTIONS.Z_TYPES}
+              disabled={isDqVague}
               className="w-full"
             />
           </div>
@@ -237,11 +309,23 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
 
         {/* Calculated Score */}
         <div className="flex justify-center">
-          <div className="px-4 py-2 bg-[var(--brand-200)]/20 rounded-lg">
-            <span className="text-sm font-medium text-slate-600">Score: </span>
-            <span className="text-lg font-bold text-[var(--brand-700)]">
-              {zScore !== null ? zScore.toFixed(1) : '-'}
-            </span>
+          <div className="px-4 py-2 bg-[var(--brand-200)]/20 rounded-lg flex items-center gap-4">
+            <div>
+              <span className="text-sm font-medium text-slate-600">Score: </span>
+              <span className="text-lg font-bold text-[var(--brand-700)]">
+                {zScore !== null ? zScore.toFixed(1) : '-'}
+              </span>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-slate-600">G/PHR: </span>
+              <span className={`text-lg font-bold ${
+                gphr === 'GHR' ? 'text-emerald-600'
+                : gphr === 'PHR' ? 'text-rose-500'
+                : 'text-slate-500'
+              }`}>
+                {gphr || '-'}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -264,6 +348,31 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
         >
           <ChevronRightIcon className="w-6 h-6 mx-auto" />
         </button>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-4 pt-4 border-t border-slate-100">
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {responses.map((_, index) => {
+            const isActive = index === currentIndex;
+            return (
+              <button
+                key={index}
+                type="button"
+                onClick={() => goToIndex(index)}
+                aria-label={`Go to response ${index + 1}`}
+                aria-current={isActive ? 'page' : undefined}
+                className={`min-w-9 h-9 px-2 rounded-full text-sm font-semibold border transition-colors ${
+                  isActive
+                    ? 'bg-[var(--brand-700)] text-white border-[var(--brand-700)]'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                {index + 1}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

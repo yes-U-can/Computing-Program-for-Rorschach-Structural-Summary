@@ -548,7 +548,7 @@ function ContentDisplay({ item, lang }: { item: SelectedItem; lang: Language }) 
       <div className="mt-3">
         <div className="flex items-center gap-3">
           <Link
-            href={`/docs/${item.slug.join('/')}`}
+            href={`/ref/${item.slug.join('/')}`}
             className="text-sm font-medium text-[var(--brand-500)] hover:text-[var(--brand-700)]"
           >
             Open As Page

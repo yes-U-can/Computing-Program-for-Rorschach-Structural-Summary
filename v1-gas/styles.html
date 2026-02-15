@@ -1,0 +1,1561 @@
+/* =================================================================
+* 로샤 구조 요약지 - 메인 스타일시트 (styles.html)
+* -----------------------------------------------------------------
+* 이 파일은 웹앱의 모든 시각적 디자인(레이아웃, 색상, 폰트)을
+* 담당합니다.
+*
+* 본 스크립트는 서울임상심리연구소(SICP)에 의해 개발되었습니다.
+* 저작권은 서울임상심리연구소에 귀속되어 있으나, 임상심리학 분야의 발전과
+* 전문가들의 원활한 업무를 돕기 위한 공익적 목적으로 본 코드를 공개합니다.
+*
+* This script was developed by the Seoul Institute of Clinical Psychology (SICP).
+* While the copyright is owned by SICP, this code is released for the public good
+* to contribute to the advancement of clinical psychology and to assist professionals.
+*
+* ---------------------------------------------------------------------------------
+*
+* MIT License
+* Copyright (c) 2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP)
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission
+* notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*
+* ---------------------------------------------------------------------------------
+* @author      서울임상심리연구소 (SICP)
+* @address     서울시 종로구 숭인동 1245번지 3층
+* @created     2025-10
+* @version     v1.4.1
+* @updated     2026-01
+* =================================================================================
+*
+* [목차]
+*
+* 0. CSS 변수 정의 (Color System)
+*
+* 1. 전역 (Global) 스타일
+* 1.1. 기본 (body, h1)
+* 1.2. 컨테이너 (.container)
+*
+* 2. 공용 컴포넌트
+* 2.1. 버튼 및 로더 (button, .row-controls, #loader, .info-icon, #Scoring_Summary > p, .row-controls > div)
+* 2.2. 탭 메뉴 (.tab, .tab button, .tablinks-initial, .tablinks-results)
+* 2.3. 탭 내용 (.tabcontent-initial, .tabcontent-results)
+* 2.4. 페이드인 효과 (@keyframes)
+*
+* 3. [채점 & 구조 요약 탭] 채점 테이블
+* 3.0. 행/열 Show/Hide 제어
+* 3.1. 테이블 기본 (.table-wrapper, table, th, td)
+* 3.2. 자동계산 입력칸 (.auto-calc-input)
+* 3.3. 그룹별 헤더 배경색 (th.group-...)
+* 3.4. 그룹별 입력칸 줄무늬 (#input-body tr:nth-child...)
+*
+* 4. [더보기 탭] 코드 목록 테이블
+* 4.1. 테이블 기본 (#list-table-body를 포함한 .table-wrapper, table)
+* 4.2. 헤더 고정 (첫 번째 행 th)
+* 4.3. 셀 스타일 (.list-category-cell, .list-code-cell, .list-desc-cell, .list-item-row)
+* 4.4. 테이블 너비 및 컬럼 설정 (#list-table-body table, colgroup)
+* 4.5. 구분선 스타일 (#Notice hr)
+*
+* 5. [결과 화면] 그리드 레이아웃
+* 5.1. 그리드 공통 (.results-grid, .grid-card)
+* 5.2. [Upper Section] 레이아웃 (#Upper_Section ...)
+* 5.3. [Lower Section] 레이아웃 (#Lower_Section ...)
+* 5.4. [Special Indices] 레이아웃 (#Special_Indices ...)
+* 5.4-1. 지표 항목 스타일 (.criterion-item, .custom-checkbox, .obs-rules)
+* 5.5. [인쇄용] Response List (#response-list-container)
+*
+* 6. 인쇄 전용 스타일 (@media print)
+* 6.1. 페이지 설정 (@page)
+* 6.2. 인쇄 제외 요소 (.no-print)
+* 6.3. 기본 인쇄 설정 (body, .container)
+* 6.4. 페이지별 레이아웃 (#Upper_Section, #Lower_Section, #Special_Indices)
+* 6.5. 워터마크/로고 (::after)
+* 6.6. Upper Section 인쇄 스타일
+* 6.7. Lower Section 인쇄 스타일
+* 6.7-1. Special Indices 인쇄 스타일
+* 6.8. Response List 인쇄 (#response-list-container)
+* 6.9. 폰트/여백 스타일 (화면과 동일하게 유지)
+*
+* 7. 안내/가이드 컴포넌트
+* 7.1. <details> 아코디언 (.print-guide)
+* 7.2. 안내 탭 가이드 레이아웃 (.guide-layout)
+*
+* 8. 팝업 모달 및 링크 버튼 스타일
+* 8.0. 팝업 모달 스타일 (.modal-overlay, .modal-content, #modal-title, #modal-message, #reset-modal-title, #reset-modal-message, #ai-modal-title, #ai-modal-message)
+* 8.1. 링크 버튼 스타일 (더보기 탭)
+*
+* 9. 언어 전환 버튼 (#language-selector, .lang-btn)
+*
+* 10. 토스트 메시지 (Toast Notification)
+*
+* =================================================================
+*/
+
+
+    /* =================================
+    * 0. CSS 변수 정의 (Color System)
+    * ================================= */
+    :root {
+        /* Primary Colors */
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        
+        /* Background Colors */
+        --bg-light: #f8f9fa;
+        --bg-lighter: #e9ecef;
+        --bg-white: #ffffff;
+        
+        /* Text Colors */
+        --text-dark: #212529;
+        --text-darker: #343a40;
+        --text-muted: #495057;
+        --text-light: #999999;
+        
+        /* Border Colors */
+        --border-color: #dee2e6;
+        --border-light: #ccc;
+        --border-dark: #999;
+        
+        /* Status Colors */
+        --error-color: #dc3545;
+        --disabled-opacity: 0.5;
+        
+        /* Group Header Background Colors */
+        --group-basic-header: #f8f9fa;
+        --group-loc-header: #e7f3fe;
+        --group-dq-header: #e0f7fa;
+        --group-det-header: #e8f5e9;
+        --group-fq-header: #f1f8e9;
+        --group-pair-header: #f9fbe7;
+        --group-con-header: #fff8e1;
+        --group-pop-header: #fff3e0;
+        --group-z-header: #fbe9e7;
+        --group-calc-header: #efebe9;
+        --group-special-header: #f3e5f5;
+        
+        /* Group Row Background Colors - Odd Rows */
+        --group-basic-odd: #ffffff;
+        --group-loc-odd: #f0f7ff;
+        --group-dq-odd: #eefcfd;
+        --group-det-odd: #f1f8f2;
+        --group-fq-odd: #f6faf2;
+        --group-pair-odd: #fbfdec;
+        --group-con-odd: #fffaf0;
+        --group-pop-odd: #fff8f0;
+        --group-z-odd: #fdeee9;
+        --group-calc-odd: #f5f2f0;
+        --group-special-odd: #f8eef9;
+        
+        /* Group Row Background Colors - Even Rows */
+        --group-basic-even: #e9ecef;
+        --group-loc-even: #d6eaff;
+        --group-dq-even: #cdeff5;
+        --group-det-even: #dceadc;
+        --group-fq-even: #e7f0e0;
+        --group-pair-even: #f0f2d9;
+        --group-con-even: #f2eedb;
+        --group-pop-even: #f2e9d9;
+        --group-z-even: #f2e0da;
+        --group-calc-even: #e6e2e0;
+        --group-special-even: #e9ddea;
+    }
+
+    /* =================================
+    * 1. 전역 (Global) 스타일
+    * ================================= */
+
+    /* 1.1. 기본 (body, h1) */
+    body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 20px;
+    }
+    h1, h2, h3 {
+    color: var(--text-darker);
+    }
+    h1 {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    }
+
+    /* 1.2. 컨테이너 (.container) */
+    .container {
+    max-width: 100%;
+    margin: auto;
+    background: var(--bg-white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+
+    /* =================================
+    * 2. 공용 컴포넌트
+    * ================================= */
+
+    /* 2.1. 버튼 및 로더 (button, .row-controls, #loader, .info-icon) */
+    #loader {
+    text-align: center;
+    padding: 20px;
+    }
+    #loader h2 {
+    margin: 0 0 10px 0;
+    color: var(--text-darker);
+    }
+    #loader .loader-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #6c757d;
+    line-height: 1.5;
+    }
+
+    .button-container {
+    text-align: center;
+    margin-top: 30px;
+    }
+    button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    }
+    .row-controls {
+    text-align: right;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    }
+    .info-icon {
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: help;
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+    }
+    .info-icon:hover {
+    color: var(--primary-color);
+    }
+    .info-icon:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    transform: translateX(0);
+    background-color: var(--text-darker);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: normal;
+    white-space: pre-line;
+    line-height: 1.6;
+    width: 250px;
+    text-align: left;
+    z-index: 1000;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    }
+    .info-icon:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    right: 20px;
+    transform: translateX(0);
+    border: 6px solid transparent;
+    border-top-color: var(--text-darker);
+    z-index: 1001;
+    margin-bottom: 2px;
+    pointer-events: none;
+    }
+    .row-controls button {
+    background-color: var(--secondary-color);
+    padding: 6px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 8px;
+    line-height: 1.5;
+    }
+    .row-controls button#add-row-btn {
+    background-color: var(--primary-color);
+    }
+    .row-controls button#del-row-btn {
+    background-color: var(--warning-color);
+    color: var(--text-darker);
+    }
+    .row-controls button:disabled {
+    opacity: var(--disabled-opacity);
+    cursor: not-allowed;
+    }
+    .row-controls button#reset-form-btn {
+    background-color: #6c757d;
+    color: white;
+    margin-left: 0;
+    }
+    .row-controls button#reset-form-btn:hover {
+    background-color: #5a6268;
+    }
+    #Scoring_Summary > p {
+    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+    }
+    .row-controls > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    /* 2.2. 탭 메뉴 (.tab, .tab button) */
+    .tab {
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-lighter);
+    border-radius: 5px 5px 0 0;
+    }
+    .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+    border-radius: 0;
+    color: var(--text-dark);
+    }
+    .tab button:hover {
+    background-color: var(--border-color);
+    }
+    .tab button.active {
+    background-color: var(--bg-white);
+    font-weight: bold;
+    border-bottom: 2px solid var(--primary-color);
+    }
+
+    /* 2.3. 탭 내용 (.tabcontent-initial, .tabcontent-results) */
+    .tabcontent-initial,
+    .tabcontent-results {
+    display: none;
+    padding: 20px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    animation: fadeEffect 0.5s;
+    }
+
+    /* 2.4. 페이드인 효과 (@keyframes) */
+    @keyframes fadeEffect {
+    from {
+    opacity: 0;
+    }
+    to {
+    opacity: 1;
+    }
+    }
+
+
+    /* =================================
+    * 3. [채점 & 구조 요약 탭] 채점 테이블
+    * ================================= */
+
+    /* 3.0. 행/열 Show/Hide 제어 (tr.row-hidden, tr.row-visible, .slot-wrapper.slot-hidden, .slot-wrapper.slot-visible, .cell-input-container, .slot-wrapper, .slot-buttons, .slot-control-btn) */
+    tr.row-hidden {
+        display: none;
+    }
+    tr.row-visible {
+        display: table-row;
+    }
+    .slot-wrapper.slot-hidden {
+        display: none !important;
+    }
+    .slot-wrapper.slot-visible {
+        display: flex;
+    }
+    .cell-input-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        width: 100%;
+    }
+    .cell-input-container select,
+    .cell-input-container input {
+        width: 100%;
+        min-width: 80px;
+        box-sizing: border-box;
+    }
+    .slot-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        width: 100%;
+    }
+    .slot-wrapper select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .slot-buttons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+    }
+    .slot-wrapper .slot-control-btn {
+        align-self: flex-start;
+    }
+    .slot-control-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1.2;
+        min-width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+    .slot-control-btn:hover {
+        background-color: #0056b3;
+    }
+    .slot-control-btn:disabled {
+        background-color: var(--secondary-color);
+        cursor: not-allowed;
+        opacity: var(--disabled-opacity);
+    }
+    .slot-control-btn.del-btn {
+        background-color: var(--warning-color);
+        color: var(--text-darker);
+    }
+    .slot-control-btn.del-btn:hover {
+        background-color: #e0a800;
+    }
+
+    /* 3.1. 테이블 기본 (.table-wrapper, table, th, td) */
+    /* .table-wrapper: 테이블을 감싸서 가로 스크롤을 생성합니다. */
+    /* white-space: nowrap: 입력 셀들의 내용이 줄바꿈되는 것을 방지합니다. */
+    .table-wrapper {
+    overflow-x: auto;
+    overflow-y: visible;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    }
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+    position: relative;
+    }
+    thead {
+    position: relative;
+    }
+    th,
+    td {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+    white-space: nowrap;
+    }
+    th {
+    text-align: center;
+    color: var(--text-muted);
+    font-weight: bold;
+    position: relative;
+    }
+    th.group-fq,
+    td.group-fq {
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+    }
+    th.group-pair,
+    td.group-pair {
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+    }
+    th.group-calc,
+    td.group-calc {
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+    }
+    th.group-con,
+    td.group-con {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    }
+    th.group-basic:nth-child(3),
+    td.group-basic:nth-child(3) {
+    width: auto;
+    min-width: 310px;
+    white-space: normal;
+    }
+    td.group-basic:nth-child(3) textarea {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 40px;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    }
+
+    /* 3.2. 자동계산 입력칸 (.auto-calc-input) */
+    .auto-calc-input {
+    background-color: var(--bg-lighter);
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+    min-width: 0;
+    max-width: 60px;
+    box-sizing: border-box;
+    }
+
+    /* 3.3. 그룹별 헤더 배경색 (th.group-...) */
+    .group-basic-bg, th.group-basic { background-color: var(--group-basic-header); }
+    .group-loc-bg, th.group-loc { background-color: var(--group-loc-header); }
+    .group-dq-bg, th.group-dq { background-color: var(--group-dq-header); }
+    .group-det-bg, th.group-det { background-color: var(--group-det-header); }
+    .group-fq-bg, th.group-fq { background-color: var(--group-fq-header); }
+    .group-pair-bg, th.group-pair { background-color: var(--group-pair-header); }
+    .group-con-bg, th.group-con { background-color: var(--group-con-header); }
+    .group-pop-bg, th.group-pop { background-color: var(--group-pop-header); }
+    .group-z-bg, th.group-z { background-color: var(--group-z-header); }
+    .group-calc-bg, th.group-calc { background-color: var(--group-calc-header); }
+    .group-special-bg, th.group-special { background-color: var(--group-special-header); }
+
+    /* 3.4. 그룹별 입력칸 줄무늬 (#input-body tr:nth-child...) */
+    #input-body tr:nth-child(odd) .group-basic { background-color: var(--group-basic-odd); }
+    #input-body tr:nth-child(odd) .group-loc { background-color: var(--group-loc-odd); }
+    #input-body tr:nth-child(odd) .group-dq { background-color: var(--group-dq-odd); }
+    #input-body tr:nth-child(odd) .group-det { background-color: var(--group-det-odd); }
+    #input-body tr:nth-child(odd) .group-fq { background-color: var(--group-fq-odd); }
+    #input-body tr:nth-child(odd) .group-pair { background-color: var(--group-pair-odd); }
+    #input-body tr:nth-child(odd) .group-con { background-color: var(--group-con-odd); }
+    #input-body tr:nth-child(odd) .group-pop { background-color: var(--group-pop-odd); }
+    #input-body tr:nth-child(odd) .group-z { background-color: var(--group-z-odd); }
+    #input-body tr:nth-child(odd) .group-calc { background-color: var(--group-calc-odd); }
+    #input-body tr:nth-child(odd) .group-special { background-color: var(--group-special-odd); }
+    /* 짝수 행 (even) */
+    #input-body tr:nth-child(even) .group-basic { background-color: var(--group-basic-even); }
+    #input-body tr:nth-child(even) .group-loc { background-color: var(--group-loc-even); }
+    #input-body tr:nth-child(even) .group-dq { background-color: var(--group-dq-even); }
+    #input-body tr:nth-child(even) .group-det { background-color: var(--group-det-even); }
+    #input-body tr:nth-child(even) .group-fq { background-color: var(--group-fq-even); }
+    #input-body tr:nth-child(even) .group-pair { background-color: var(--group-pair-even); }
+    #input-body tr:nth-child(even) .group-con { background-color: var(--group-con-even); }
+    #input-body tr:nth-child(even) .group-pop { background-color: var(--group-pop-even); }
+    #input-body tr:nth-child(even) .group-z { background-color: var(--group-z-even); }
+    #input-body tr:nth-child(even) .group-calc { background-color: var(--group-calc-even); }
+    #input-body tr:nth-child(even) .group-special { background-color: var(--group-special-even); }
+
+
+    /* =================================
+    * 4. [더보기 탭] 코드 목록 테이블
+    * ================================= */
+
+    /* 4.1. 테이블 기본 (#list-table-body를 포함한 .table-wrapper, table) */
+    .table-wrapper:has(#list-table-body) {
+    margin-top: 20px;
+    overflow-x: auto;
+    }
+    .table-wrapper:has(#list-table-body) table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    }
+    .table-wrapper:has(#list-table-body) th,
+    .table-wrapper:has(#list-table-body) td,
+    #list-table-body th,
+    #list-table-body td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+    }
+
+    /* 4.2. 헤더 고정 (첫 번째 행 th) */
+    .table-wrapper:has(#list-table-body) tr:first-child th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f3f5;
+    z-index: 1;
+    }
+
+    /* 4.3. 셀 스타일 (.list-category-cell, .list-code-cell, .list-desc-cell, .list-item-row) */
+    .list-category-cell {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    }
+    .list-item-row {
+    background-color: #ffffff;
+    }
+    .list-item-row.first-item {
+    background-color: #ffffff !important;
+    }
+    .list-item-row.item-even-bg {
+    background-color: #f8f9fa;
+    }
+    .list-code-cell {
+    font-size: 0.95em;
+    white-space: nowrap;
+    }
+    .list-desc-cell {
+    font-size: 0.95em;
+    line-height: 1.5;
+    white-space: normal;
+    }
+    #list-table-body table {
+    width: 100%;
+    }
+    #list-table-body colgroup col:nth-child(1) {
+    width: 15%;
+    }
+    #list-table-body colgroup col:nth-child(2) {
+    width: 15%;
+    }
+    #list-table-body colgroup col:nth-child(3) {
+    width: 70%;
+    }
+    #Notice hr {
+    margin: 25px 0;
+    border: none;
+    border-top: 1px solid #eee;
+    }
+
+
+    /* =================================
+    * 5. [결과 화면] 그리드 레이아웃
+    * ================================= */
+
+    /* 5.1. 그리드 공통 (.results-grid, .grid-card) */
+    /* ID 선택자 대신 클래스 사용으로 선택자 단순화 및 재사용성 향상 */
+    #results-container {
+    display: none; /* 계산 완료 후 JS가 block으로 변경 */
+    margin-top: 30px; /* 채점 화면과 결과 화면 사이 간격 */
+    }
+    .results-grid {
+    display: grid;
+    gap: 10px;
+    }
+    /* .grid-card: 결과 항목을 감싸는 카드 UI */
+    /* flex-direction: column: 카드 내부 요소를 세로로 정렬 (제목, 테이블) */
+    /* flex-shrink: 0: (제목에 적용됨) 카드 크기 조절 시 제목이 찌그러지지 않게 함 */
+    .results-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    }
+    /* 기존 .grid-card와의 호환성 유지 */
+    .results-grid .grid-card,
+    .results-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    }
+    .results-card h3,
+    .results-grid .grid-card h3 {
+    margin-top: 0;
+    font-size: 1em;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+    }
+    .results-card table,
+    .results-grid .grid-card table {
+    width: 100%;
+    border: 1px solid #999;
+    border-collapse: collapse;
+    }
+    .results-card th,
+    .results-card td,
+    .results-grid .grid-card th,
+    .results-grid .grid-card td {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #999;
+    }
+    .results-card th,
+    .results-grid .grid-card th {
+    background-color: #f8f9fa;
+    font-weight: normal;
+    text-align: left;
+    }
+    .results-card td,
+    .results-grid .grid-card td {
+    text-align: center;
+    font-weight: bold;
+    }
+
+    /* 5.2. [Upper Section] 레이아웃 (#Upper_Section ...) */
+    /* 26컬럼 그리드를 사용하여 복잡한 카드 배치를 구현합니다. */
+    #Upper_Section .results-grid {
+    grid-template-columns: repeat(26, 1fr);
+    }
+    /* 카드 내부 테이블 너비 고정 (일관된 디자인) */
+    #Upper_Section .loc-feat table th,
+    #Upper_Section .dq table th,
+    #Upper_Section .single table th,
+    #Upper_Section .pairs table th,
+    #Upper_Section .contents table th {
+    width: 35%;
+    }
+    .approach table { table-layout: fixed; }
+    .approach table th { width: 4%; }
+    .spec-scores-table { table-layout: fixed; }
+    .spec-scores-table th:first-child { width: 28%; }
+    #special-scores-level-table td { width: 18%; }
+    .spec-scores table:last-of-type { table-layout: fixed; }
+    .spec-scores table:last-of-type th { width: 25%; }
+    .dets-toggle table { table-layout: fixed; }
+    .dets-toggle table th { width: 4.5%; }
+    .dets-toggle table td { width: 8%; }
+    .form-qual table { table-layout: fixed; }
+    .form-qual th { text-align: left; }
+
+    /* Upper Section 카드별 위치 (grid-column/row) */
+    .loc-feat { grid-column: 1 / span 4; grid-row: 1 / span 14; }
+    .dq { grid-column: 1 / span 4; grid-row: 15 / span 7; }
+    .blends { grid-column: 5 / span 6; grid-row: 1 / span 21; padding: 0; }
+    .single { grid-column: 11 / span 3; grid-row: 1 / span 25; }
+    .pairs { grid-column: 11 / span 3; grid-row: 26 / span 4; }
+    .contents { grid-column: 14 / span 3; grid-row: 1 / span 29; }
+    .approach { grid-column: 17 / span 10; grid-row: 1 / span 11; }
+    .spec-scores{ grid-column: 17 / span 10; grid-row: 13 / span 17; }
+    .form-qual { grid-column: 1 / span 10; grid-row: 22 / span 8; }
+    .dets-toggle{ grid-column: 1 / span 26; margin-top: 15px; } /* Determinants Summary (토글) */
+
+    /* Blends 카드 내부 스크롤 (overflow-y: auto) */
+    .blends h3 { padding: 10px; }
+    .blends-table-wrapper {
+    overflow-y: auto;
+    flex-grow: 1;
+    }
+    .blends table {
+    border-top: 1px solid #e0e0e0;
+    table-layout: fixed;
+    }
+    /* Determinants Summary <details> 토글 스타일 */
+    .dets-toggle summary {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e9ecef;
+    }
+
+    /* 5.3. [Lower Section] 레이아웃 (#Lower_Section ...) */
+    /* 4칸 그리드를 사용합니다. */
+    #Lower_Section .results-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: min-content;
+    }
+    #Lower_Section .grid-card table {
+    table-layout: fixed;
+    }
+    #Lower_Section .ideation-card-table th,
+    #Lower_Section .ideation-card-table td {
+    width: 25%;
+    }
+    #Lower_Section .special-indices-card-table th:nth-child(3) {
+    background-color: #f8f9fa;
+    }
+
+    /* 5.4. [Special Indices] 레이아웃 (#Special_Indices ...) */
+    /* 3칸 그리드를 사용합니다. */
+    #Special_Indices .results-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    }
+    #Special_Indices .grid-card {
+    padding: 15px;
+    }
+    #Special_Indices h3 {
+    font-size: 1.1em;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    }
+    /* 5.4-1. 지표 항목 스타일 (.criterion-item, .custom-checkbox, .obs-rules) */
+    .criterion-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 12px;
+    }
+    .criterion-item.main-criterion {
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    }
+    .criterion-item .label {
+    white-space: normal;
+    line-height: 1.4;
+    }
+    .criterion-item .label .note {
+    font-weight: normal;
+    font-size: 0.9em;
+    color: var(--secondary-color);
+    }
+    .custom-checkbox {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    margin-right: 10px;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+    .custom-checkbox.checked {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    }
+    .custom-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    }
+    .obs-rules {
+    font-size: 12px;
+    margin-top: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 15px;
+    }
+    .obs-rules .criterion-item {
+    margin-bottom: 12px;
+    }
+
+    /* 5.5. [인쇄용] Response List (#response-list-container) */
+    #response-list-container {
+    display: none;
+    }
+
+
+    /* =================================
+    * 6. 인쇄 전용 스타일 (@media print)
+    * ================================= */
+
+    @media print {
+    /* 6.1. 페이지 설정 (@page) */
+    @page {
+        size: A4 portrait; /* A4 세로 - 높이가 더 길어서 한 페이지에 들어갈 가능성 높음 */
+        margin: 6mm;
+    }
+
+    /* 6.2. 인쇄 제외 요소 (.no-print) */
+    .no-print,
+    #initial-screen-container #initial-tab,
+    #initial-screen-container .tabcontent-initial,
+    #results-tab,
+    .print-guide,
+    .dets-toggle,
+    #language-selector {
+    display: none !important;
+    }
+    #results-container {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-top: 0 !important; /* 상단 여백 제거 */
+    padding-top: 0 !important;
+    visibility: visible !important;
+    }
+    .tabcontent-results {
+    display: block !important;
+    }
+    #Special_Indices {
+    display: block !important;
+    }
+    #Upper_Section {
+    order: 1;
+    }
+    #Lower_Section {
+    order: 2;
+    }
+    #Special_Indices {
+    order: 3;
+    }
+    #response-list-container {
+    order: 4;
+    }
+
+    /* 6.3. 기본 인쇄 설정 (body, .container) */
+    body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    -webkit-print-color-adjust: exact;
+    }
+    .container {
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    width: 100% !important;
+    max-width: 100% !important;
+    }
+
+    /* 6.4. 페이지별 레이아웃 */
+    #Upper_Section {
+    display: block !important;
+    visibility: visible !important;
+    animation: none;
+    border: none;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0 !important; /* 하단 여백 제거 */
+    page-break-after: auto; /* Lower Section과 같은 페이지에 배치 */
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    max-height: 55vh; /* 최대 높이 제한 (Upper Section과 Lower Section 사이에 약간의 간격을 위해 조정) */
+    }
+    #Lower_Section {
+    display: block !important;
+    visibility: visible !important;
+    animation: none;
+    border: none;
+    padding: 0;
+    margin-top: 0 !important; /* 상단 여백 제거 (Upper Section과 바로 붙이기) */
+    margin-bottom: 0 !important;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    max-height: 45vh; /* 최대 높이 제한 (하단 공백 제거를 위해 조정) */
+    }
+    #Special_Indices {
+    display: block !important;
+    visibility: visible !important;
+    animation: none;
+    border: none;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0 !important; /* 하단 여백 제거 */
+    page-break-after: auto; /* Response List와 같은 페이지에 배치 */
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    max-height: 55vh; /* 최대 높이 제한 (Response List와 사이에 간격을 주기 위해 조정) */
+    }
+
+    /* 6.5. 워터마크/로고 (::after) */
+    #response-list-container::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 6mm;
+    right: 6mm;
+    background-image: url('https://raw.githubusercontent.com/yes-U-can/CI/main/SICP-banner-777777.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    width: 180px;
+    height: 45px;
+    opacity: 0.75;
+    }
+
+    /* 6.6. Upper Section 인쇄 */
+    #Upper_Section .results-grid {
+    display: grid !important;
+    grid-template-columns: repeat(26, 1fr) !important;
+    gap: 10px !important;
+    transform: scale(0.6);
+    transform-origin: top left;
+    width: 166%;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    max-height: 55vh !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    }
+    #Upper_Section .grid-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    }
+
+    /* 6.7. Lower Section 인쇄 */
+    #Lower_Section .results-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+    transform: scale(0.6);
+    transform-origin: top left;
+    width: 166%;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    max-height: 45vh !important;
+    }
+    #Lower_Section #response-list-container,
+    #Lower_Section .results-grid #response-list-container {
+    display: none !important;
+    }
+    
+    /* 6.7-1. Special Indices 인쇄 */
+    #Special_Indices .results-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 15px !important;
+    transform: scale(0.6);
+    transform-origin: top left;
+    width: 166%;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    max-height: 55vh !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    }
+    #Special_Indices .grid-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    }
+
+    /* 6.8. Response List 인쇄 (#response-list-container) */
+    #response-list-container,
+    #results-container #response-list-container,
+    .printable-area#response-list-container {
+    display: block !important;
+    visibility: visible !important;
+    page-break-before: auto !important;
+    page-break-after: auto;
+    page-break-inside: avoid;
+    position: relative !important;
+    margin-top: 0 !important;
+    padding: 15px !important;
+    }
+    #response-list-container h3 {
+    display: none !important;
+    }
+    #response-list-table th,
+    #response-list-table td {
+    font-size: 8px !important;
+    padding: 5px !important;
+    white-space: normal !important; /* 긴 반응 내용 줄바꿈 */
+    vertical-align: top;
+    }
+    #response-list-table th {
+    text-align: center;
+    }
+
+    /* 6.9. 폰트/여백 스타일 */
+    #Upper_Section .results-grid .grid-card {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    }
+    #Upper_Section .results-grid .grid-card h3 {
+    font-size: 1em; /* 화면용 폰트 크기 유지 */
+    padding: 8px;
+    margin-bottom: 8px;
+    }
+    #Upper_Section .results-grid .grid-card th,
+    #Upper_Section .results-grid .grid-card td {
+    padding: 6px;
+    font-size: 12px;
+    white-space: normal;
+    }
+    #Lower_Section .results-grid .grid-card {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    }
+    #Lower_Section .results-grid .grid-card h3 {
+    font-size: 1em; /* 화면용 폰트 크기 유지 */
+    padding: 8px;
+    margin-bottom: 8px;
+    }
+    #Lower_Section .results-grid .grid-card th,
+    #Lower_Section .results-grid .grid-card td {
+    padding: 6px;
+    font-size: 12px;
+    white-space: normal;
+    }
+    #Special_Indices .results-grid .grid-card {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    }
+    #Special_Indices .results-grid .grid-card h3 {
+    font-size: 1.1em; /* 화면용 폰트 크기 유지 */
+    padding: 10px;
+    margin-bottom: 10px;
+    }
+    #Special_Indices .results-grid .grid-card th,
+    #Special_Indices .results-grid .grid-card td {
+    padding: 6px;
+    font-size: 12px;
+    white-space: normal;
+    }
+    }
+
+
+    /* =================================
+    * 7. 안내/가이드 컴포넌트
+    * ================================= */
+
+    /* 7.1. <details> 아코디언 (.print-guide) */
+    .print-guide details {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-top: 25px;
+    background-color: var(--bg-lighter);
+    }
+    .print-guide summary {
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 15px 20px;
+    cursor: pointer;
+    outline: none;
+    }
+    .print-guide details[open] summary {
+    border-bottom: 1px solid var(--border-color);
+    }
+    .guide-content {
+    padding: 10px 25px 20px 25px;
+    }
+
+    /* 7.2. 안내 탭 가이드 레이아웃 (.guide-layout, .guide-column, .guide-content) */
+    .guide-layout {
+    display: flex;
+    gap: 30px;
+    }
+    .guide-column.left {
+    flex: 0 0 45%;
+    }
+    .guide-column.right {
+    flex: 1;
+    }
+    .guide-layout h4 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1em;
+    background-color: var(--bg-lighter);
+    padding: 8px 12px;
+    border-radius: 5px;
+    }
+    .guide-layout ul {
+    list-style-type: 'ㆍ';
+    padding-left: 20px;
+    margin: 0;
+    }
+    .guide-layout li {
+    padding: 6px 0;
+    color: var(--text-muted);
+    }
+    .guide-layout li strong {
+    color: var(--text-dark);
+    }
+    .guide-layout code {
+    background-color: #e0e7ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    }
+    .guide-content ul li {
+    margin-bottom: 5px;
+    }
+
+    /* =================================
+    * 8. 팝업 모달 및 링크 버튼 스타일
+    * ================================= */
+    /* 8.0. 팝업 모달 스타일 (.modal-overlay, .modal-content, .modal-body, .modal-close-btn, .modal-buttons, .modal-btn, #modal-title, #modal-message) */
+    .modal-overlay {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 25px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px;
+    border-radius: 8px;
+    position: relative;
+    animation: fadeEffect 0.3s;
+    }
+
+    .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    }
+
+    .modal-close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    }
+    .modal-close-btn:hover,
+    .modal-close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+    
+    .modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    }
+    .modal-btn {
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+    .modal-btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    }
+    .modal-btn-primary:hover {
+    background-color: #0056b3;
+    }
+    .modal-btn-secondary {
+    background-color: #e8e8e8;
+    color: var(--text-darker);
+    }
+    .modal-btn-secondary:hover {
+    background-color: #d0d0d0;
+    }
+    #modal-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+    }
+    #modal-message {
+    margin-bottom: 0;
+    color: var(--text-muted);
+    text-align: center;
+    }
+    #reset-modal-title,
+    #reset-modal-message,
+    #ai-modal-title,
+    #ai-modal-message {
+    text-align: center;
+    }
+
+    /* 8.1. 링크 버튼 스타일 (더보기 탭) */
+    .link-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+    }
+
+    .link-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    min-height: 80px;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    position: relative;
+    }
+    
+    .link-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: contain;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    opacity: 0.12;
+    transition: opacity 0.25s ease, filter 0.25s ease;
+    pointer-events: none;
+    z-index: 0;
+    }
+    
+    .link-button > * {
+    position: relative;
+    z-index: 1;
+    }
+
+    .link-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .link-button:hover::before {
+    opacity: 0.35;
+    filter: saturate(1.25) contrast(1.1);
+    }
+    .link-button:hover > * {
+    filter: blur(0.5px);
+    opacity: 0.75;
+    }
+
+    .link-button.btn-chatbot::before {
+    background-image: url("https://www.gstatic.com/marketing-cms/assets/images/28/e3/960a032240569a2d0fbba6b045d2/youtube-icon.webp=s96-fcrop64=1,00000000ffffffff-rw");
+    background-size: 110px 110px;
+    background-position: 3% bottom;
+    }
+
+    .link-button.btn-naver::before {
+    background-image: url("https://cdn.simpleicons.org/naver/03C75A");
+    background-size: 90px 90px;
+    background-position: 3% 80%;
+    }
+
+    .link-button.btn-notion::before {
+    background-image: url("https://cdn.simpleicons.org/notion/000000");
+    background-size: 100px 100px;
+    background-position: 3% 85%;
+    }
+
+    .link-button.btn-sicp::before {
+    background-image: url("https://raw.githubusercontent.com/yes-U-can/CI/main/SICP-icon-4E73AA.png");
+    background-size: 110px 110px;
+    }
+
+
+    /* =================================
+    * 9. 언어 전환 버튼 (#language-selector, .lang-btn)
+    * ================================= */
+    #language-selector {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10001;
+    }
+    .lang-toggle-btn {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: all 0.2s ease;
+    }
+    .lang-toggle-btn:hover {
+        background: #f8f9fa;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .lang-buttons-container {
+        position: absolute;
+        top: 42px;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: white;
+        padding: 8px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        min-width: 100px;
+    }
+    #language-selector.lang-menu-open .lang-buttons-container {
+        display: flex;
+    }
+    .lang-btn {
+        padding: 6px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #f8f9fa;
+        color: #333;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .lang-btn:hover {
+        background: #e9ecef;
+    }
+    .lang-btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    /* 초기 모달이 열려있을 때는 언어 선택 버튼 숨김 */
+    #language-selector {
+        display: none; /* 기본적으로 숨김, JavaScript로 제어 */
+    }
+    /* 초기 모달이 닫힌 후에만 언어 선택 버튼 표시 */
+    #language-selector.language-selector-collapsed {
+        display: block;
+    }
+
+    /* =================================
+    * 10. 토스트 메시지 (.toast-container, .toast, .toast-icon, .toast-content, .toast-title, .toast-message, .toast-close, @keyframes toastSlideIn/toastSlideOut)
+    * ================================= */
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .toast {
+        background-color: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px 20px;
+        min-width: 300px;
+        max-width: 500px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        animation: toastSlideIn 0.3s ease-out;
+        position: relative;
+    }
+    .toast.warning {
+        border-left: 4px solid var(--warning-color);
+    }
+    .toast.info {
+        border-left: 4px solid var(--primary-color);
+    }
+    .toast-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    .toast-content {
+        flex: 1;
+    }
+    .toast-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: var(--text-darker);
+    }
+    .toast-message {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+    .toast-close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: var(--text-light);
+        cursor: pointer;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .toast-close:hover {
+        color: var(--text-dark);
+    }
+    @keyframes toastSlideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes toastSlideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    .toast.hiding {
+        animation: toastSlideOut 0.3s ease-out forwards;
+    }
