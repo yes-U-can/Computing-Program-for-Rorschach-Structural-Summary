@@ -61,7 +61,7 @@ export default function HomePage() {
 
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'upper' | 'lower' | 'special'>('lower');
+  const [activeTab, setActiveTab] = useState<'upper' | 'lower' | 'special'>('upper');
   const [isMobile, setIsMobile] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState('');
   const [showAdModal, setShowAdModal] = useState(false);
