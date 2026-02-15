@@ -51,6 +51,12 @@
       "open": "Open in New Window",
       "cancel": "Return to Results"
     },
+    "ad": {
+      "title": "Please wait a moment",
+      "message": "Log in to view results without ads.",
+      "countdown": "Results available in {seconds} seconds",
+      "continue": "View Results"
+    },
     "privacy": {
       "title": "Privacy Policy",
       "noticeTitle": "※ Browser Storage (LocalStorage) Usage Notice",

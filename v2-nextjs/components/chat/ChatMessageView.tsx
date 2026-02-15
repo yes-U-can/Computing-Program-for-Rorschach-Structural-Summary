@@ -31,11 +31,11 @@ export default function ChatMessageView({ sessionId }: { sessionId: string | nul
   }, [sessionId]);
 
   if (isLoading) {
-    return <div className="p-4">Loading messages...</div>;
+    return <div className="p-4 text-sm text-slate-500">Loading messages...</div>;
   }
 
   return (
-    <div className="flex-1 p-4 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto p-4">
       <div className="space-y-4">
         {messages.map((message) => (
           <div
@@ -43,13 +43,13 @@ export default function ChatMessageView({ sessionId }: { sessionId: string | nul
             className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
           >
             <div
-              className={`max-w-xs lg:max-w-xl px-4 py-2.5 rounded-2xl ${
+              className={`max-w-[86%] px-4 py-2.5 shadow-sm ring-1 ${
                 message.role === 'ai'
-                  ? 'bg-slate-100 text-slate-800 rounded-bl-none'
-                  : 'bg-[#2A5F7F] text-white rounded-br-none'
+                  ? 'rounded-2xl rounded-bl-md bg-white text-slate-800 ring-slate-200'
+                  : 'rounded-2xl rounded-br-md bg-[var(--brand-700)] text-white ring-[var(--brand-700)]/20'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <p className="whitespace-pre-wrap text-sm leading-6">{message.content}</p>
             </div>
           </div>
         ))}
@@ -57,4 +57,5 @@ export default function ChatMessageView({ sessionId }: { sessionId: string | nul
     </div>
   );
 }
+
 

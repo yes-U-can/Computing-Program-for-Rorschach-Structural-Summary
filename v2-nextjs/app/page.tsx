@@ -20,6 +20,7 @@ import { Card } from '@/components/ui/Card';
 import { exportToCSV, exportSummaryToCSV } from '@/lib/csv';
 
 import DraggableFab from '@/components/ui/DraggableFab';
+import AdModal from '@/components/ads/AdModal';
 
 // Lazy-loaded heavy components (only loaded when actually needed)
 const UpperSection = lazy(() => import('@/components/result/UpperSection'));
@@ -39,7 +40,7 @@ import {
 
 export default function HomePage() {
   const { t } = useTranslation();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [showChatWidget, setShowChatWidget] = useState(false);
   const { showToast } = useToast();
   const {
@@ -63,6 +64,8 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'upper' | 'lower' | 'special'>('lower');
   const [isMobile, setIsMobile] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState('');
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [adModalKey, setAdModalKey] = useState(0);
 
   const handleRequestInterpretation = () => {
     if (!result?.data) return;
@@ -204,13 +207,30 @@ export default function HomePage() {
 
   // Handle calculate
   const handleCalculate = () => {
+    if (isCalculating || status === 'loading') return;
+
     if (validResponseCount < 14) {
       showToast({
         type: 'warning',
         title: t('toast.validity.title'),
         message: t('toast.validity.message')
       });
+      return;
     }
+
+    // Non-logged-in users see ad modal first
+    if (status !== 'authenticated') {
+      setAdModalKey((prev) => prev + 1);
+      setShowAdModal(true);
+      return;
+    }
+
+    calculate();
+  };
+
+  // Called when ad modal countdown completes and user clicks continue
+  const handleAdComplete = () => {
+    setShowAdModal(false);
     calculate();
   };
 
@@ -272,7 +292,7 @@ export default function HomePage() {
                     variant="primary"
                     size="lg"
                     onClick={handleCalculate}
-                    disabled={isCalculating || validResponseCount === 0}
+                    disabled={isCalculating || validResponseCount === 0 || status === 'loading'}
                   >
                     {isCalculating ? (
                       <>
@@ -458,6 +478,9 @@ export default function HomePage() {
         </div>
       </Modal>
 
+      {/* Ad Modal (non-logged-in users) */}
+      <AdModal key={adModalKey} isOpen={showAdModal} onComplete={handleAdComplete} />
+
       {/* Reset Confirmation Modal */}
       <Modal
         isOpen={showResetModal}
@@ -481,8 +504,6 @@ export default function HomePage() {
     </div>
   );
 }
-
-
 
 
 

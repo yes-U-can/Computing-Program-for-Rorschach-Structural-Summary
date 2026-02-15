@@ -127,13 +127,13 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }));
   }, [responses]);
 
-  const handleResponseChange = (index: number, response: RorschachResponse) => {
+  // Handles row updates and applies domain rules before committing changes
+  const handleResponseChange = useCallback((index: number, response: RorschachResponse) => {
     const prev = responses[index];
     const r = { ...response };
     const activeDets = r.determinants.filter(d => d !== '');
 
     // Rule 1: Reflection-Pair Mutual Exclusion
-    // Fr/rF takes priority ??pair must be cleared
     const hasReflection = activeDets.some(d => d === 'Fr' || d === 'rF');
     if (hasReflection && r.pair === '(2)') {
       r.pair = 'none';
@@ -150,7 +150,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
       }
     }
 
-    // Rule 3: DQ 'v' ??Z must be empty (no Z score for vague responses)
+    // Rule 3: DQ 'v' → Z must be empty
     if (r.dq === 'v' && r.z !== '') {
       r.z = '';
       if (prev.dq !== 'v' || prev.z !== '') {
@@ -159,7 +159,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }
 
     // Rule 4: Pure Determinant FQ Handling
-    // If ALL active determinants are formless ??FQ must be 'none'
     if (activeDets.length > 0 && activeDets.every(d => FORMLESS_DETERMINANTS.includes(d))) {
       if (r.fq !== 'none') {
         r.fq = 'none';
@@ -172,7 +171,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }
 
     // Rule 5: Special Score Integrity
-    // DV, DR, INCOM, FABCOM ??only one level per category
     const activeScores = r.specialScores.filter(s => s !== '');
     let levelConflict = false;
     for (const [lv1, lv2] of LEVEL_PAIRS) {
@@ -180,10 +178,8 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
       const hasLv2 = activeScores.includes(lv2);
       if (hasLv1 && hasLv2) {
         levelConflict = true;
-        // Find which one was just added by comparing with previous state
         const prevScores = prev.specialScores.filter(s => s !== '');
         const prevHadLv2 = prevScores.includes(lv2);
-        // Keep the newly added one, remove the old one
         const removeTarget = (!prevHadLv2 && hasLv2) ? lv1 : lv2;
         r.specialScores = r.specialScores.map(s => s === removeTarget ? '' : s);
       }
@@ -195,7 +191,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     const newResponses = [...responses];
     newResponses[index] = r;
     onChange(newResponses);
-  };
+  }, [responses, onChange, showToast, t]);
 
   const addRow = () => {
     if (responses.length < maxRows) {
@@ -219,8 +215,8 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     }
   };
 
-  // Header columns with accent colors ??original labels preserved
-  const headers = [
+  // Header columns — memoized to avoid recreating on every render
+  const headers = useMemo(() => [
     { key: 'no',           label: 'No.',           accent: 'transparent',       className: 'w-10' },
     { key: 'action',       label: <PencilSquareIcon className="w-4 h-4 text-slate-400 mx-auto" />, tooltip: memoTooltipText, accent: 'transparent', className: 'w-10' },
     { key: 'card',         label: 'Card',          accent: 'transparent', className: '' },
@@ -235,7 +231,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     { key: 'score',        label: 'Score',         tooltip: scoreTooltipText, accent: 'transparent', className: 'w-14' },
     { key: 'gphr',         label: 'G/PHR',         tooltip: gphrTooltipText, accent: 'transparent', className: 'w-14' },
     { key: 'special',      label: 'Special Score', accent: 'transparent', className: '' },
-  ];
+  ], [memoTooltipText, scoreTooltipText, gphrTooltipText]);
 
   return (
     <div className="rounded-xl border border-slate-200/80 shadow-sm bg-white overflow-hidden">
@@ -267,7 +263,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
                 key={index}
                 index={index}
                 response={response}
-                onChange={(r) => handleResponseChange(index, r)}
+                onChange={handleResponseChange}
                 zScore={calculatedData[index].zScore}
                 gphr={calculatedData[index].gphr}
                 onResponseClick={openResponsePopup}
@@ -310,7 +306,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
               className="w-full h-32 px-3 py-2.5 text-sm rounded-lg bg-slate-50 border border-slate-200
                 focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/50 focus:border-[var(--brand-500)] transition-colors resize-none"
               placeholder="..."
-              autoFocus
             />
             <div className="flex justify-end mt-4">
               <button
@@ -356,8 +351,4 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     </div>
   );
 }
-
-
-
-
 

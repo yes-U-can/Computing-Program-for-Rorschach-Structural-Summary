@@ -51,6 +51,12 @@
       "open": "새로운 창에서 열기",
       "cancel": "결과 화면으로 돌아가기"
     },
+    "ad": {
+      "title": "잠시만 기다려 주세요",
+      "message": "로그인하면 광고 없이 바로 결과를 확인할 수 있습니다.",
+      "countdown": "{seconds}초 후 결과를 확인할 수 있습니다",
+      "continue": "결과 보기"
+    },
     "privacy": {
       "title": "개인정보처리방침",
       "noticeTitle": "※ 브라우저 저장소(LocalStorage) 사용 고지",

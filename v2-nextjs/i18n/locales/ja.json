@@ -51,6 +51,12 @@
       "open": "新しいウィンドウで開く",
       "cancel": "結果画面に戻る"
     },
+    "ad": {
+      "title": "しばらくお待ちください",
+      "message": "ログインすると広告なしで結果を確認できます。",
+      "countdown": "{seconds}秒後に結果を確認できます",
+      "continue": "結果を見る"
+    },
     "privacy": {
       "title": "個人情報処理方針",
       "noticeTitle": "※ ブラウザ保存域(LocalStorage)使用告知",

@@ -43,7 +43,7 @@ export default function Modal({
           <div className="fixed inset-0 bg-black/30" />
         </TransitionChild>
 
-        <div className="fixed inset-0 overflow-y-auto">
+        <div className="fixed inset-0 overflow-y-auto overscroll-contain">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <TransitionChild
               as={Fragment}

@@ -473,7 +473,7 @@ function Sidebar({ query, onQueryChange, selected, onSelect }: SidebarProps) {
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search docs..."
-            className="w-full rounded-md border border-slate-200 bg-white py-2 pl-8 pr-3 text-sm text-slate-700 focus:border-[#4E73AA] focus:outline-none focus:ring-2 focus:ring-[#4E73AA]/20"
+            className="w-full rounded-md border border-slate-200 bg-white py-2 pl-8 pr-3 text-sm text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/20"
           />
         </div>
       </div>
@@ -549,7 +549,7 @@ function ContentDisplay({ item, lang }: { item: SelectedItem; lang: Language }) 
         <div className="flex items-center gap-3">
           <Link
             href={`/docs/${item.slug.join('/')}`}
-            className="text-sm font-medium text-[#4E73AA] hover:text-[#2A5F7F]"
+            className="text-sm font-medium text-[var(--brand-500)] hover:text-[var(--brand-700)]"
           >
             Open As Page
           </Link>
@@ -593,6 +593,7 @@ const InfoTab = () => {
 };
 
 export default InfoTab;
+
 
 
 

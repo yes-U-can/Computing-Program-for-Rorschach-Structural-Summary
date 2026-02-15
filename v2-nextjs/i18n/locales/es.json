@@ -51,6 +51,12 @@
       "open": "Abrir en Nueva Ventana",
       "cancel": "Volver a Resultados"
     },
+    "ad": {
+      "title": "Por favor, espere un momento",
+      "message": "Inicie sesión para ver los resultados sin anuncios.",
+      "countdown": "Resultados disponibles en {seconds} segundos",
+      "continue": "Ver Resultados"
+    },
     "privacy": {
       "title": "Política de Privacidad",
       "noticeTitle": "※ Aviso de Uso de Almacenamiento del Navegador (LocalStorage)",

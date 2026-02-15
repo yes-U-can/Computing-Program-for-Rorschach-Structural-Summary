@@ -31,6 +31,7 @@ export default function ChatPage() {
   const [streamingMessages, setStreamingMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [sidebarRefresh, setSidebarRefresh] = useState(0);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -46,17 +47,50 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [streamingMessages]);
 
-  // Clear streaming state when switching sessions
+  // When switching sessions: load previous messages so we can continue the conversation
   useEffect(() => {
-    setStreamingMessages([]);
     setIsStreaming(false);
     setChatSessionId(selectedSessionId);
+
+    if (!selectedSessionId) {
+      setStreamingMessages([]);
+      return;
+    }
+
+    // Fetch previous messages so sendMessage can include them for AI context
+    async function loadPreviousMessages() {
+      try {
+        const res = await fetch(`/api/chat/sessions/${selectedSessionId}`);
+        if (res.ok) {
+          const data = await res.json();
+          const msgs: Message[] = (data.messages ?? []).map((m: { id: string; role: string; content: string }, i: number) => ({
+            id: i,
+            role: m.role as 'ai' | 'user',
+            content: m.content,
+          }));
+          setStreamingMessages(msgs);
+        }
+      } catch {
+        setStreamingMessages([]);
+      }
+    }
+    loadPreviousMessages();
   }, [selectedSessionId]);
 
   // Close sidebar on mobile when a session is selected
   const handleSessionSelect = useCallback((sessionId: string) => {
     setSelectedSessionId(sessionId);
     setSidebarOpen(false);
+  }, []);
+
+  // New chat — reset everything
+  const handleNewChat = useCallback(() => {
+    setSelectedSessionId(null);
+    setChatSessionId(null);
+    setStreamingMessages([]);
+    setIsStreaming(false);
+    setSidebarOpen(false);
+    inputRef.current?.focus();
   }, []);
 
   const sendMessage = useCallback(async (messageText: string) => {
@@ -91,7 +125,6 @@ export default function ChatPage() {
       const newSessionId = response.headers.get('X-Chat-Session-Id');
       if (newSessionId) {
         setChatSessionId(newSessionId);
-        // If this was a new conversation, select the session so the sidebar reflects it
         if (!selectedSessionId) {
           setSelectedSessionId(newSessionId);
         }
@@ -129,8 +162,9 @@ export default function ChatPage() {
         }
       }
 
-      // After streaming is done, refresh ChatMessageView so it picks up the saved messages
+      // After streaming is done, refresh views
       setRefreshKey(prev => prev + 1);
+      setSidebarRefresh(prev => prev + 1);
     } catch (error) {
       console.error(error);
       setStreamingMessages(prev => [
@@ -156,10 +190,15 @@ export default function ChatPage() {
     );
   }
 
+  // Determine what to show in the message area
+  const showPersistedView = selectedSessionId && !isStreaming;
+  const showStreamingView = isStreaming;
+  const showEmptyState = !selectedSessionId && !isStreaming;
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-[radial-gradient(circle_at_top_left,#eef5fa_0%,#f8fafc_45%,#f8fafc_100%)]">
       <Header />
-      <div className="flex h-[calc(100vh-110px)]">
+      <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 items-stretch px-0 py-3 sm:px-4 md:py-6 lg:px-6">
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div
@@ -171,8 +210,9 @@ export default function ChatPage() {
         {/* Sidebar */}
         <div
           className={`
-            fixed inset-y-0 left-0 z-40 w-72 transform border-r bg-white transition-transform duration-200 ease-in-out
-            md:relative md:z-0 md:w-1/4 md:max-w-xs md:translate-x-0
+            fixed inset-y-0 left-0 z-40 w-72 transform border-r border-slate-200 bg-white transition-transform duration-200 ease-in-out
+            md:relative md:inset-auto md:z-0 md:flex md:min-h-0 md:w-[280px] md:translate-x-0 md:flex-col md:self-stretch md:rounded-2xl md:shadow-sm
+            lg:w-[300px] xl:w-[320px]
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           `}
         >
@@ -188,73 +228,70 @@ export default function ChatPage() {
           <ChatHistorySidebar
             selectedSessionId={selectedSessionId}
             onSessionSelect={handleSessionSelect}
+            onNewChat={handleNewChat}
+            refreshTrigger={sidebarRefresh}
           />
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col">
           {/* Top bar with mobile toggle */}
-          <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 md:hidden">
+          <div className="pt-safe flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 md:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+              className="rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
             >
               <Bars3Icon className="h-6 w-6" />
             </button>
             <h1 className="text-sm font-semibold text-slate-700">{t('nav.aiAssistant')}</h1>
           </div>
 
-          <main className="flex flex-1 flex-col p-3 md:p-6">
-            <div className="flex h-full flex-col rounded-lg border border-slate-200 bg-white">
+          <main className="flex min-h-0 flex-1 flex-col p-2.5 md:py-0 md:pl-4 md:pr-0">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur">
               {/* Messages area */}
-              <div className="flex-1 overflow-y-auto">
-                {selectedSessionId ? (
-                  <>
-                    {/* Show persisted messages from ChatMessageView when not actively streaming */}
-                    {!isStreaming && (
-                      <ChatMessageView
-                        key={`${selectedSessionId}-${refreshKey}`}
-                        sessionId={selectedSessionId}
-                      />
-                    )}
-                    {/* Show streaming messages when actively streaming */}
-                    {isStreaming && (
-                      <div className="flex-1 p-4 overflow-y-auto">
-                        <div className="space-y-4">
-                          {streamingMessages.map((message) => (
-                            <div
-                              key={message.id}
-                              className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
-                            >
-                              <div
-                                className={`max-w-xs lg:max-w-xl px-4 py-2.5 rounded-2xl ${
-                                  message.role === 'ai'
-                                    ? 'bg-slate-100 text-slate-800 rounded-bl-none'
-                                    : 'bg-[var(--brand-700)] text-white rounded-br-none'
-                                }`}
-                              >
-                                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                              </div>
-                            </div>
-                          ))}
-                          {isLoading && streamingMessages[streamingMessages.length - 1]?.role !== 'ai' && (
-                            <div className="flex justify-start">
-                              <div className="max-w-xs lg:max-w-xl px-4 py-2.5 rounded-2xl bg-slate-100 text-slate-800 rounded-bl-none">
-                                <div className="flex items-center space-x-2">
-                                  <div className="h-2 w-2 bg-slate-400 rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-                                  <div className="h-2 w-2 bg-slate-400 rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-                                  <div className="h-2 w-2 bg-slate-400 rounded-full animate-pulse"></div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                          <div ref={messagesEndRef} />
+              <div className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-50/60 to-white">
+                {showPersistedView && (
+                  <ChatMessageView
+                    key={`${selectedSessionId}-${refreshKey}`}
+                    sessionId={selectedSessionId}
+                  />
+                )}
+                {showStreamingView && (
+                  <div className="flex-1 overflow-y-auto p-4">
+                    <div className="space-y-4">
+                      {streamingMessages.map((message) => (
+                        <div
+                          key={message.id}
+                          className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
+                        >
+                          <div
+                            className={`max-w-[86%] px-4 py-2.5 shadow-sm ring-1 ${
+                              message.role === 'ai'
+                                ? 'rounded-2xl rounded-bl-md bg-white text-slate-800 ring-slate-200'
+                                : 'rounded-2xl rounded-br-md bg-[var(--brand-700)] text-white ring-[var(--brand-700)]/20'
+                            }`}
+                          >
+                            <p className="whitespace-pre-wrap text-sm leading-6">{message.content}</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex flex-1 h-full items-center justify-center p-8">
+                      ))}
+                      {isLoading && streamingMessages[streamingMessages.length - 1]?.role !== 'ai' && (
+                        <div className="flex justify-start">
+                          <div className="rounded-2xl rounded-bl-md bg-white px-4 py-2.5 text-slate-800 shadow-sm ring-1 ring-slate-200">
+                            <div className="flex items-center space-x-2">
+                              <div className="h-2 w-2 animate-pulse rounded-full bg-slate-400 [animation-delay:-0.3s]" />
+                              <div className="h-2 w-2 animate-pulse rounded-full bg-slate-400 [animation-delay:-0.15s]" />
+                              <div className="h-2 w-2 animate-pulse rounded-full bg-slate-400" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  </div>
+                )}
+                {showEmptyState && (
+                  <div className="flex h-full flex-1 items-center justify-center p-8">
                     <div className="text-center">
                       <ChatBubbleLeftRightIcon className="mx-auto h-12 w-12 text-slate-300" />
                       <h2 className="mt-4 text-xl font-semibold text-slate-700">
@@ -269,12 +306,12 @@ export default function ChatPage() {
               </div>
 
               {/* Input form */}
-              <div className="border-t border-slate-200 bg-white p-3 md:p-4 rounded-b-lg">
+              <div className="pb-safe rounded-b-2xl border-t border-slate-200 bg-white/95 p-3 md:p-4">
                 <form onSubmit={handleSubmit} className="flex items-center gap-2">
                   <select
                     value={provider}
                     onChange={(e) => setProvider(e.target.value)}
-                    className="hidden sm:block shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs text-slate-600 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)]"
+                    className="hidden shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs text-slate-600 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] sm:block"
                   >
                     <option value="openai">OpenAI</option>
                     <option value="google">Google</option>
@@ -284,7 +321,7 @@ export default function ChatPage() {
                   <select
                     value={provider}
                     onChange={(e) => setProvider(e.target.value)}
-                    className="block sm:hidden shrink-0 w-16 rounded-lg border border-slate-200 bg-slate-50 px-1 py-2.5 text-[10px] text-slate-600 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)]"
+                    className="block h-11 w-16 shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-1 py-2.5 text-[10px] text-slate-600 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] sm:hidden"
                   >
                     <option value="openai">GPT</option>
                     <option value="google">Gem</option>
@@ -296,14 +333,14 @@ export default function ChatPage() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder={t('chat.placeholder')}
-                    className="flex-1 rounded-xl border-transparent bg-slate-100 px-4 py-2.5 text-sm transition-colors focus:border-[var(--brand-500)] focus:bg-white focus:ring-1 focus:ring-[var(--brand-500)]"
+                    className="h-11 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm transition-colors focus:border-[var(--brand-500)] focus:bg-white focus:ring-1 focus:ring-[var(--brand-500)]"
                   />
                   <button
                     type="submit"
-                    className="shrink-0 rounded-xl bg-[var(--brand-700)] p-3 text-white shadow-sm hover:bg-[var(--brand-700-hover)] disabled:opacity-50"
+                    className="h-11 w-11 shrink-0 rounded-xl bg-[var(--brand-700)] p-0 text-white shadow-sm transition-colors hover:bg-[var(--brand-700-hover)] disabled:opacity-50"
                     disabled={inputText.trim() === '' || isLoading}
                   >
-                    <PaperAirplaneIcon className="h-5 w-5" />
+                    <PaperAirplaneIcon className="mx-auto h-5 w-5" />
                   </button>
                 </form>
               </div>
@@ -314,8 +351,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
-
-
-
-

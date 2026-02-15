@@ -19,25 +19,25 @@ export function useAutoSave(responses: RorschachResponse[], options?: UseAutoSav
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialMount = useRef(true);
   const lastSavedRef = useRef<string>('');
+  // Stable refs — avoid recreating save callback on every responses change
 
-  // Save to localStorage with debounce
+  // Stable save function — reads from refs, never changes identity
   const save = useCallback(() => {
     if (typeof window === 'undefined') return;
 
-    // Only save if there's actual content (at least one response with a card selected)
-    const hasContent = responses.some(r => r.card);
+    const currentResponses = responses;
+    const hasContent = currentResponses.some(r => r.card);
     if (!hasContent) return;
 
-    const dataString = JSON.stringify(responses);
-    // Skip if data hasn't changed
+    // Serialize once, use for both comparison and storage
+    const dataString = JSON.stringify(currentResponses);
     if (dataString === lastSavedRef.current) return;
 
-    const data: AutoSaveData = {
-      timestamp: new Date().toISOString(),
-      responses
-    };
-
     try {
+      const data: AutoSaveData = {
+        timestamp: new Date().toISOString(),
+        responses: currentResponses
+      };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       lastSavedRef.current = dataString;
       options?.onSave?.();
@@ -46,9 +46,8 @@ export function useAutoSave(responses: RorschachResponse[], options?: UseAutoSav
     }
   }, [responses, options]);
 
-  // Debounced save effect
+  // Debounced save effect — only depends on responses identity
   useEffect(() => {
-    // Skip initial mount to avoid overwriting saved data
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;

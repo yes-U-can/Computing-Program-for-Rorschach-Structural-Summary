@@ -84,10 +84,10 @@ export default function Header() {
             {status === 'loading' ? (
               <div className="h-10 w-44 bg-slate-200 rounded-md animate-pulse" />
             ) : session ? (
-              <div className="flex items-center gap-3">
+              <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
                 <button
                   onClick={() => signOut({ callbackUrl: `/?lang=${language}` })}
-                  className="inline-flex items-center gap-2 rounded-md border border-[var(--brand-200)] bg-white px-3 py-2 text-xs font-medium text-slate-700 hover:bg-[#EEF3F7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)]"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-[var(--brand-200)] bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-[#EEF3F7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)] sm:min-h-0 sm:w-auto sm:justify-start sm:text-xs"
                 >
                   {hasUserImage ? (
                     <Image
@@ -103,19 +103,20 @@ export default function Header() {
                   <ArrowRightOnRectangleIcon className="h-4 w-4" />
                   <span>{t('nav.logout')}</span>
                 </button>
-                <div className="w-px h-6 bg-slate-200" />
+                <div className="hidden h-6 w-px bg-slate-200 sm:block" />
                 <LanguageSelector />
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
                 <button
                   onClick={() => signIn('google', { callbackUrl: '/' })}
-                  className="inline-flex items-center gap-2 rounded-md border border-[var(--brand-200)] bg-white px-4 py-2 text-sm font-medium text-[var(--brand-500)] hover:bg-[#EEF3F7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)]"
+                  aria-label={t('auth.googleContinue')}
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-[var(--brand-200)] bg-white px-4 py-2 text-sm font-medium text-[var(--brand-500)] hover:bg-[#EEF3F7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-500)] sm:min-h-0 sm:w-auto"
                 >
                   <GoogleIcon />
                   <span>{t('auth.googleContinue')}</span>
                 </button>
-                <div className="w-px h-6 bg-slate-200" />
+                <div className="hidden h-6 w-px bg-slate-200 sm:block" />
                 <LanguageSelector />
               </div>
             )}

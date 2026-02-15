@@ -84,7 +84,7 @@ export default function KnowledgeSourceManager() {
           <button
             type="button"
             onClick={handleAdd}
-            className="rounded-md bg-[#2A5F7F] px-3 py-2 text-sm font-medium text-white hover:bg-[#1E4D6A]"
+            className="rounded-md bg-[var(--brand-700)] px-3 py-2 text-sm font-medium text-white hover:bg-[var(--brand-700-hover)]"
           >
             {t('account.knowledgeSources.addButton')}
           </button>
@@ -126,5 +126,6 @@ export default function KnowledgeSourceManager() {
     </div>
   );
 }
+
 
 

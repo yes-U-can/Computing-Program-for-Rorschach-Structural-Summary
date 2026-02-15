@@ -179,7 +179,7 @@ export default function DraggableFab({ onClick, label, children, className = '' 
     applyPos(next);
   }, [clamp, applyPos]);
 
-  const onUp = useCallback((e: PointerEvent<HTMLButtonElement>) => {
+  const onUp = useCallback(() => {
     if (!dragActive.current) return;
     dragActive.current = false;
 

@@ -98,7 +98,7 @@ const ApiKeyInput = ({
             type={showKey ? 'text' : 'password'}
             name={`${provider.id}-api-key`}
             id={`${provider.id}-api-key`}
-            className="block w-full rounded-none rounded-l-md border border-slate-300 pl-10 focus:border-[#4E73AA] focus:ring-[#4E73AA] sm:text-sm"
+            className="block w-full rounded-none rounded-l-md border border-slate-300 pl-10 focus:border-[var(--brand-500)] focus:ring-[var(--brand-500)] sm:text-sm"
             placeholder={t('account.apiKeys.placeholder', { provider: provider.name })}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
@@ -118,7 +118,7 @@ const ApiKeyInput = ({
         <button
           type="submit"
           disabled={isSaving || !apiKey.trim()}
-          className="relative -ml-px inline-flex items-center space-x-2 border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 focus:border-[#4E73AA] focus:outline-none focus:ring-1 focus:ring-[#4E73AA] disabled:opacity-50"
+          className="relative -ml-px inline-flex items-center space-x-2 border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:opacity-50"
         >
           {isSaving ? '...' : t('account.apiKeys.saveButton')}
         </button>
@@ -183,5 +183,6 @@ export default function ApiKeyManager() {
     </div>
   );
 }
+
 
 

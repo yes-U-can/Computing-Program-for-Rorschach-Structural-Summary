@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import type { RorschachResponse } from '@/types';
 import { OPTIONS } from '@/lib/options';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -12,21 +13,21 @@ import { DocumentIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 interface InputRowProps {
   index: number;
   response: RorschachResponse;
-  onChange: (response: RorschachResponse) => void;
+  onChange: (index: number, response: RorschachResponse) => void;
   zScore: number | null;
   gphr: string;
   onResponseClick: (index: number) => void;
   rowBg: string;
 }
 
-export default function InputRow({ index, response, onChange, zScore, gphr, onResponseClick, rowBg }: InputRowProps) {
+const InputRow = memo(function InputRow({ index, response, onChange, zScore, gphr, onResponseClick, rowBg }: InputRowProps) {
   const { t } = useTranslation();
 
   const updateField = <K extends keyof RorschachResponse>(
     field: K,
     value: RorschachResponse[K]
   ) => {
-    onChange({ ...response, [field]: value });
+    onChange(index, { ...response, [field]: value });
   };
 
   // Rule 1: Disable pair checkbox when reflection determinant is present
@@ -184,7 +185,9 @@ export default function InputRow({ index, response, onChange, zScore, gphr, onRe
       </td>
     </tr>
   );
-}
+});
+
+export default InputRow;
 
 
 

@@ -4,6 +4,7 @@ import Script from 'next/script';
 import Providers from '@/components/layout/Providers';
 import { TranslationProvider } from '@/hooks/useTranslation';
 import { ToastProvider } from '@/components/ui/Toast';
+import { buildLanguageAlternates } from '@/lib/seo';
 import './globals.css';
 
 const inter = Inter({
@@ -36,6 +37,7 @@ export const metadata: Metadata = {
   publisher: 'SICP',
   alternates: {
     canonical: '/',
+    languages: buildLanguageAlternates('/'),
   },
   robots: {
     index: true,

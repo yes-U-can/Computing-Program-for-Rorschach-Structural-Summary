@@ -50,10 +50,10 @@ export default function AccountPage() {
             <div className="md:col-span-1">
               {/* Navigation can go here */}
               <ul className="space-y-2">
-                <li><a href="#api-keys" className="font-semibold text-[#4E73AA]">{t('account.apiKeys.title')}</a></li>
-                <li><a href="#knowledge-sources" className="text-slate-600 hover:text-[#4E73AA]">{t('account.knowledgeSources.title')}</a></li>
-                <li><a href="#ai-assistant" className="text-slate-600 hover:text-[#4E73AA]">{t('nav.aiAssistant')}</a></li>
-                <li><a href="#account-settings" className="text-slate-600 hover:text-[#4E73AA]">{t('nav.account')}</a></li>
+                <li><a href="#api-keys" className="font-semibold text-[var(--brand-500)]">{t('account.apiKeys.title')}</a></li>
+                <li><a href="#knowledge-sources" className="text-slate-600 hover:text-[var(--brand-500)]">{t('account.knowledgeSources.title')}</a></li>
+                <li><a href="#ai-assistant" className="text-slate-600 hover:text-[var(--brand-500)]">{t('nav.aiAssistant')}</a></li>
+                <li><a href="#account-settings" className="text-slate-600 hover:text-[var(--brand-500)]">{t('nav.account')}</a></li>
               </ul>
             </div>
             <div className="md:col-span-2 space-y-10">
@@ -112,6 +112,7 @@ export default function AccountPage() {
     </div>
   );
 }
+
 
 
 

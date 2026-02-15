@@ -33,7 +33,7 @@ export default function SlotSelect({
           className={`w-full h-8 px-1.5 text-xs rounded-md
             bg-slate-50 border border-slate-200 text-center
             hover:border-slate-300
-            focus:outline-none focus:ring-2 focus:ring-[#4E73AA]/40 focus:border-[#4E73AA]
+            focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/40 focus:border-[var(--brand-500)]
             disabled:opacity-40 disabled:cursor-not-allowed transition-colors
             ${!value ? 'text-slate-400' : 'text-slate-700 font-medium'}`}
         >
@@ -81,7 +81,7 @@ export default function SlotSelect({
                         ? 'select-none py-1.5 px-1 text-center rounded-lg text-slate-300 cursor-not-allowed line-through'
                         : `cursor-pointer select-none py-1.5 px-1 text-center rounded-lg transition-colors ${
                         selected
-                          ? 'bg-[#2A5F7F] text-white font-semibold shadow-sm'
+                          ? 'bg-[var(--brand-700)] text-white font-semibold shadow-sm'
                           : active
                             ? 'bg-slate-100 text-slate-800'
                             : 'text-slate-600 hover:bg-slate-50'
@@ -118,7 +118,7 @@ export default function SlotSelect({
                       ? 'select-none py-1.5 px-3 text-slate-300 cursor-not-allowed line-through'
                       : `cursor-pointer select-none py-1.5 px-3 transition-colors ${
                       selected
-                        ? 'bg-[#C1D2DC]/20 text-[#2A5F7F] font-medium'
+                        ? 'bg-[var(--brand-200)]/20 text-[var(--brand-700)] font-medium'
                         : active
                           ? 'bg-slate-50 text-slate-800'
                           : 'text-slate-600'
@@ -136,6 +136,7 @@ export default function SlotSelect({
     </Listbox>
   );
 }
+
 
 
 
