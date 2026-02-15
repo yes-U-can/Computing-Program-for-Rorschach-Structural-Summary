@@ -7,7 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 declare global {
   interface Window {
-    adsbygoogle?: Array<{ push: (args: Record<string, unknown>) => void }>;
+    adsbygoogle?: Record<string, unknown>[];
   }
 }
 
