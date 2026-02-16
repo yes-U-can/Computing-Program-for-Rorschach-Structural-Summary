@@ -154,12 +154,22 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const body = (await req.json()) as {
+    let body: {
       provider?: Provider;
       name?: string;
       description?: string;
       sourceDocs?: SourceDoc[];
     };
+    try {
+      body = (await req.json()) as {
+        provider?: Provider;
+        name?: string;
+        description?: string;
+        sourceDocs?: SourceDoc[];
+      };
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
     const provider = body.provider ?? 'openai';
     if (!PROVIDERS.includes(provider)) {
       return NextResponse.json({ error: 'Unsupported provider' }, { status: 400 });
@@ -201,7 +211,13 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('SkillBook builder error:', error);
     if (error instanceof Error) {
-      const status = error.message.includes('Invalid builder response') ? 422 : 500;
+      const message = error.message;
+      const status =
+        message.includes('Invalid builder response') ||
+        message.includes('documents') ||
+        message.includes('instruction')
+          ? 422
+          : 500;
       return NextResponse.json({ error: error.message }, { status });
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

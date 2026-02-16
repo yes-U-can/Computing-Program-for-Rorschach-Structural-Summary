@@ -1,15 +1,17 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect, Fragment } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import type { RorschachResponse } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { SCORING_CONFIG } from '@/lib/constants';
+import { OPTIONS } from '@/lib/options';
 import InputRow from './InputRow';
 import Button from '@/components/ui/Button';
 import Tooltip from '@/components/ui/Tooltip';
-import { InformationCircleIcon, XMarkIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon, XMarkIcon, PencilSquareIcon, BarsArrowUpIcon } from '@heroicons/react/24/outline';
 
 // Determinants with NO form component (Pure C, T, V, Y, Cn)
 const FORMLESS_DETERMINANTS = ['C', 'T', 'V', 'Y', 'Cn'];
@@ -104,10 +106,39 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
   const rowTooltipText = t('input.tooltipInfo').replace(/,\s*/g, ',\n');
   const scoreTooltipText = t('input.scoreTooltip');
   const gphrTooltipText = t('input.gphrTooltip');
+  const noTooltipText = t('input.noReorderTooltip');
+  const cardSortLabel = 'Card 오름차순 정렬';
 
   const { showToast } = useToast();
   const [editingResponseIndex, setEditingResponseIndex] = useState<number | null>(null);
+  const [dragSourceIndex, setDragSourceIndex] = useState<number | null>(null);
+  const [dragInsertIndex, setDragInsertIndex] = useState<number | null>(null);
+  const [dragGapHeight, setDragGapHeight] = useState(48);
   const portalRoot = typeof document !== 'undefined' ? document.body : null;
+  const responsesRef = useRef(responses);
+  const tbodyRef = useRef<HTMLTableSectionElement | null>(null);
+  const ghostRef = useRef<HTMLElement | null>(null);
+  const dragSourceRef = useRef<number | null>(null);
+  const dragInsertRef = useRef<number | null>(null);
+  const dragPointerOffsetYRef = useRef(0);
+  const pointerYRef = useRef(0);
+  const rafIdRef = useRef<number | null>(null);
+  const cardOrderMap = useMemo(
+    () => new Map(OPTIONS.CARDS.map((card, idx) => [card, idx])),
+    []
+  );
+
+  useEffect(() => {
+    responsesRef.current = responses;
+  }, [responses]);
+
+  useEffect(() => {
+    dragSourceRef.current = dragSourceIndex;
+  }, [dragSourceIndex]);
+
+  useEffect(() => {
+    dragInsertRef.current = dragInsertIndex;
+  }, [dragInsertIndex]);
 
   const openResponsePopup = useCallback((index: number) => {
     setEditingResponseIndex(index);
@@ -127,7 +158,8 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
 
   // Handles row updates and applies domain rules before committing changes
   const handleResponseChange = useCallback((index: number, response: RorschachResponse) => {
-    const prev = responses[index];
+    const currentResponses = responsesRef.current;
+    const prev = currentResponses[index];
     const r = { ...response };
     const activeDets = r.determinants.filter(d => d !== '');
 
@@ -186,15 +218,19 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
       showToast({ type: 'info', title: t('toast.specialScoreLevel.title'), message: t('toast.specialScoreLevel.message') });
     }
 
-    const newResponses = [...responses];
+    const newResponses = [...currentResponses];
     newResponses[index] = r;
+    responsesRef.current = newResponses;
     onChange(newResponses);
-  }, [responses, onChange, showToast, t]);
+  }, [onChange, showToast, t]);
 
-  const addRow = () => {
-    if (responses.length < maxRows) {
-      const newLength = responses.length + 1;
-      onChange([...responses, createEmptyResponse()]);
+  const addRow = useCallback(() => {
+    const currentResponses = responsesRef.current;
+    if (currentResponses.length < maxRows) {
+      const newLength = currentResponses.length + 1;
+      const newResponses = [...currentResponses, createEmptyResponse()];
+      responsesRef.current = newResponses;
+      onChange(newResponses);
 
       // Show warning when reaching 45 responses
       if (newLength === 45) {
@@ -205,17 +241,169 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
         });
       }
     }
-  };
+  }, [maxRows, onChange, showToast, t]);
 
-  const removeLastRow = () => {
-    if (responses.length > 1) {
-      onChange(responses.slice(0, -1));
+  const removeLastRow = useCallback(() => {
+    const currentResponses = responsesRef.current;
+    if (currentResponses.length > 1) {
+      const newResponses = currentResponses.slice(0, -1);
+      responsesRef.current = newResponses;
+      onChange(newResponses);
     }
-  };
+  }, [onChange]);
+
+  const sortByCardAscending = useCallback(() => {
+    const currentResponses = responsesRef.current;
+    const sorted = currentResponses
+      .map((response, originalIndex) => ({ response, originalIndex }))
+      .sort((a, b) => {
+        const aRank = cardOrderMap.get(a.response.card) ?? Number.MAX_SAFE_INTEGER;
+        const bRank = cardOrderMap.get(b.response.card) ?? Number.MAX_SAFE_INTEGER;
+        if (aRank !== bRank) return aRank - bRank;
+        return a.originalIndex - b.originalIndex;
+      })
+      .map((entry) => entry.response);
+
+    responsesRef.current = sorted;
+    onChange(sorted);
+  }, [cardOrderMap, onChange]);
+
+  const clearDragState = useCallback(() => {
+    setDragSourceIndex(null);
+    setDragInsertIndex(null);
+    dragSourceRef.current = null;
+    dragInsertRef.current = null;
+    if (ghostRef.current && ghostRef.current.parentNode) {
+      ghostRef.current.parentNode.removeChild(ghostRef.current);
+    }
+    ghostRef.current = null;
+    document.body.style.userSelect = '';
+  }, []);
+
+  const getInsertIndexFromPointer = useCallback((clientY: number): number => {
+    const sourceIndex = dragSourceRef.current;
+    const total = responsesRef.current.length;
+    if (sourceIndex === null || total <= 1) return sourceIndex ?? 0;
+
+    const rows = Array.from(tbodyRef.current?.querySelectorAll('tr[data-row-index]') ?? []);
+    for (let i = 0; i < rows.length; i += 1) {
+      const row = rows[i];
+      const rowIndexAttr = row.getAttribute('data-row-index');
+      if (rowIndexAttr === null) continue;
+      const rowIndex = Number(rowIndexAttr);
+      if (Number.isNaN(rowIndex) || rowIndex === sourceIndex) continue;
+      const rect = row.getBoundingClientRect();
+      if (clientY < rect.top + rect.height / 2) {
+        return rowIndex;
+      }
+    }
+
+    return total;
+  }, []);
+
+  const handlePointerMove = useCallback((event: PointerEvent) => {
+    pointerYRef.current = event.clientY;
+    if (rafIdRef.current !== null) return;
+
+    rafIdRef.current = window.requestAnimationFrame(() => {
+      rafIdRef.current = null;
+
+      const sourceIndex = dragSourceRef.current;
+      if (sourceIndex === null) return;
+
+      const y = pointerYRef.current;
+      if (ghostRef.current) {
+        ghostRef.current.style.top = `${y - dragPointerOffsetYRef.current}px`;
+      }
+
+      const nextInsertIndex = getInsertIndexFromPointer(y);
+      if (dragInsertRef.current !== nextInsertIndex) {
+        dragInsertRef.current = nextInsertIndex;
+        setDragInsertIndex(nextInsertIndex);
+      }
+    });
+  }, [getInsertIndexFromPointer]);
+
+  const handlePointerUp = useCallback(() => {
+    const sourceIndex = dragSourceRef.current;
+    const insertIndex = dragInsertRef.current;
+
+    if (sourceIndex !== null && insertIndex !== null) {
+      let targetIndex = insertIndex;
+      if (targetIndex > sourceIndex) targetIndex -= 1;
+
+      if (targetIndex !== sourceIndex) {
+        const currentResponses = responsesRef.current;
+        const reordered = [...currentResponses];
+        const [moved] = reordered.splice(sourceIndex, 1);
+        reordered.splice(targetIndex, 0, moved);
+        responsesRef.current = reordered;
+        onChange(reordered);
+      }
+    }
+
+    window.removeEventListener('pointermove', handlePointerMove);
+    if (rafIdRef.current !== null) {
+      window.cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+    clearDragState();
+  }, [onChange, clearDragState, handlePointerMove]);
+
+  const handleNoCellPointerDown = useCallback((index: number, event: ReactPointerEvent<HTMLTableCellElement>) => {
+    if (event.button !== 0) return;
+    const rowElement = event.currentTarget.closest('tr') as HTMLTableRowElement | null;
+    if (!rowElement) return;
+
+    event.preventDefault();
+    const rect = rowElement.getBoundingClientRect();
+    setDragGapHeight(Math.max(40, Math.round(rect.height)));
+    const ghost = rowElement.cloneNode(true) as HTMLElement;
+    ghost.style.position = 'fixed';
+    ghost.style.top = `${rect.top}px`;
+    ghost.style.left = `${rect.left}px`;
+    ghost.style.width = `${rect.width}px`;
+    ghost.style.background = '#ffffff';
+    ghost.style.opacity = '1';
+    ghost.style.border = '1px solid rgba(100, 116, 139, 0.85)';
+    ghost.style.boxShadow = '0 22px 40px rgba(15, 23, 42, 0.35)';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.zIndex = '99999';
+    ghost.style.transform = 'scale(1.01)';
+    document.body.appendChild(ghost);
+
+    ghostRef.current = ghost;
+    dragPointerOffsetYRef.current = event.clientY - rect.top;
+    pointerYRef.current = event.clientY;
+    dragSourceRef.current = index;
+    dragInsertRef.current = index;
+    setDragSourceIndex(index);
+    setDragInsertIndex(index);
+    document.body.style.userSelect = 'none';
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp, { once: true });
+  }, [handlePointerMove, handlePointerUp]);
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      if (rafIdRef.current !== null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      if (ghostRef.current && ghostRef.current.parentNode) {
+        ghostRef.current.parentNode.removeChild(ghostRef.current);
+      }
+      ghostRef.current = null;
+      document.body.style.userSelect = '';
+    };
+  }, [handlePointerMove, handlePointerUp]);
 
   // Header columns — memoized to avoid recreating on every render
   const headers = useMemo(() => [
-    { key: 'no',           label: 'No.',           accent: 'transparent',       className: 'w-10' },
+    { key: 'no',           label: 'No.',           tooltip: noTooltipText, accent: 'transparent',       className: 'w-10' },
     { key: 'action',       label: <PencilSquareIcon className="w-4 h-4 text-slate-400 mx-auto" />, tooltip: memoTooltipText, accent: 'transparent', className: 'w-10' },
     { key: 'card',         label: 'Card',          accent: 'transparent', className: '' },
     { key: 'location',     label: 'Location',      accent: 'transparent', className: '' },
@@ -229,25 +417,38 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
     { key: 'score',        label: 'Score',         tooltip: scoreTooltipText, accent: 'transparent', className: 'w-14' },
     { key: 'gphr',         label: 'G/PHR',         tooltip: gphrTooltipText, accent: 'transparent', className: 'w-14' },
     { key: 'special',      label: 'Special Score', accent: 'transparent', className: '' },
-  ], [memoTooltipText, scoreTooltipText, gphrTooltipText]);
+  ], [memoTooltipText, scoreTooltipText, gphrTooltipText, noTooltipText]);
 
   return (
-    <div className="rounded-xl border border-slate-200/80 shadow-sm bg-white overflow-hidden">
+    <div className="rounded-xl border border-slate-200/80 shadow-sm bg-white overflow-visible">
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto md:overflow-visible">
         <table className="w-full">
           <thead>
             <tr style={{ backgroundColor: '#C1D2DC' }}>
               {headers.map((h) => (
                 <th
                   key={h.key}
-                  className={`px-2 py-3 text-center text-[11px] font-semibold uppercase tracking-wider ${h.className}`}
+                  className={`px-2 py-3 text-center text-[11px] font-semibold uppercase tracking-wider border-r border-white/40 last:border-r-0 first:rounded-tl-xl last:rounded-tr-xl ${h.className}`}
                   style={{ borderBottom: '2px solid #A8BCC8', color: '#2A5F7F' }}
                 >
                   {h.tooltip ? (
                     <Tooltip content={h.tooltip}>
                       <span className="flex justify-center items-center h-full w-full">{h.label}</span>
                     </Tooltip>
+                  ) : h.key === 'card' ? (
+                    <span className="flex justify-center items-center gap-1">
+                      <span>{h.label}</span>
+                      <button
+                        type="button"
+                        onClick={sortByCardAscending}
+                        aria-label={cardSortLabel}
+                        title={cardSortLabel}
+                        className="inline-flex items-center justify-center rounded p-0.5 text-[#2A5F7F]/80 hover:bg-white/40 hover:text-[#2A5F7F] transition-colors"
+                      >
+                        <BarsArrowUpIcon className="w-3.5 h-3.5" />
+                      </button>
+                    </span>
                   ) : (
                     h.label
                   )}
@@ -255,18 +456,42 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody ref={tbodyRef}>
             {responses.map((response, index) => (
-              <InputRow
-                key={index}
-                index={index}
-                response={response}
-                onChange={handleResponseChange}
-                zScore={calculatedData[index].zScore}
-                gphr={calculatedData[index].gphr}
-                onResponseClick={openResponsePopup}
-              />
+              <Fragment key={`group-${index}`}>
+                {dragSourceIndex !== null && dragInsertIndex === index && (
+                  <tr aria-hidden="true">
+                    <td colSpan={headers.length} className="p-0 border-0">
+                      <div
+                        className="bg-[#2A5F7F]/10 border-y border-[#2A5F7F]/35 transition-all duration-100"
+                        style={{ height: `${dragGapHeight}px` }}
+                      />
+                    </td>
+                  </tr>
+                )}
+                <InputRow
+                  index={index}
+                  response={response}
+                  onChange={handleResponseChange}
+                  zScore={calculatedData[index].zScore}
+                  gphr={calculatedData[index].gphr}
+                  onResponseClick={openResponsePopup}
+                  isDragging={dragSourceIndex === index}
+                  isDragTarget={false}
+                  onNoCellPointerDown={handleNoCellPointerDown}
+                />
+              </Fragment>
             ))}
+            {dragSourceIndex !== null && dragInsertIndex === responses.length && (
+              <tr aria-hidden="true">
+                <td colSpan={headers.length} className="p-0 border-0">
+                  <div
+                    className="bg-[#2A5F7F]/10 border-y border-[#2A5F7F]/35 transition-all duration-100"
+                    style={{ height: `${dragGapHeight}px` }}
+                  />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

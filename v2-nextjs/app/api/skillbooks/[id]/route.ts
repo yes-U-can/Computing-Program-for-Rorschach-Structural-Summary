@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { normalizeSkillBookDocuments, normalizeSkillBookTextPatch } from '@/lib/skillBookValidation';
 
 type Params = { params: Promise<{ id: string }> };
+const LISTING_FEE_CREDITS = Number(process.env.SKILLBOOK_LISTING_FEE_CREDITS ?? '50');
 
 // GET /api/skillbooks/:id
 export async function GET(_req: Request, { params }: Params) {
@@ -60,16 +61,67 @@ export async function PUT(req: Request, { params }: Params) {
     return NextResponse.json({ error: normalizedDocs.error }, { status: 400 });
   }
 
-  const skillBook = await prisma.skillBook.update({
-    where: { id },
-    data: {
-      ...text.value,
-      ...(normalizedDocs && normalizedDocs.ok && { documents: JSON.stringify(normalizedDocs.value) }),
-      ...(isPublic !== undefined && { isPublic: Boolean(isPublic) }),
-    },
-  });
+  const nextIsPublic = isPublic !== undefined ? Boolean(isPublic) : existing.isPublic;
+  const shouldChargeListingFee = !existing.isPublic && nextIsPublic;
 
-  return NextResponse.json(skillBook);
+  try {
+    const skillBook = shouldChargeListingFee
+      ? await prisma.$transaction(async (tx) => {
+          const user = await tx.user.findUnique({
+            where: { id: session.user.id },
+            select: { creditBalance: true },
+          });
+          if (!user) {
+            throw new Error('User not found');
+          }
+          if (!Number.isFinite(LISTING_FEE_CREDITS) || LISTING_FEE_CREDITS <= 0) {
+            throw new Error('Listing fee configuration is invalid');
+          }
+          if (user.creditBalance < LISTING_FEE_CREDITS) {
+            throw new Error(`Insufficient credits. ${LISTING_FEE_CREDITS} credits are required to publish.`);
+          }
+
+          const nextBalance = user.creditBalance - LISTING_FEE_CREDITS;
+          await tx.user.update({
+            where: { id: session.user.id },
+            data: { creditBalance: nextBalance },
+          });
+          await tx.creditTransaction.create({
+            data: {
+              userId: session.user.id,
+              type: 'listing_fee_burn',
+              amount: -LISTING_FEE_CREDITS,
+              balanceAfter: nextBalance,
+              description: `Listing fee burn for publishing skill book: ${existing.name}`,
+              metadataJson: JSON.stringify({ skillBookId: existing.id, feeCredits: LISTING_FEE_CREDITS }),
+            },
+          });
+
+          return tx.skillBook.update({
+            where: { id },
+            data: {
+              ...text.value,
+              ...(normalizedDocs && normalizedDocs.ok && { documents: JSON.stringify(normalizedDocs.value) }),
+              ...(isPublic !== undefined && { isPublic: Boolean(isPublic) }),
+            },
+          });
+        })
+      : await prisma.skillBook.update({
+          where: { id },
+          data: {
+            ...text.value,
+            ...(normalizedDocs && normalizedDocs.ok && { documents: JSON.stringify(normalizedDocs.value) }),
+            ...(isPublic !== undefined && { isPublic: Boolean(isPublic) }),
+          },
+        });
+
+    return NextResponse.json(skillBook);
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Failed to update skill book' }, { status: 500 });
+  }
 }
 
 // DELETE /api/skillbooks/:id

@@ -84,6 +84,7 @@
     "rowOrderTip": "The order of response rows does not affect the calculation results.\nFor example, it's fine to record content for Card 6 in the 8th row and content for Card 2 in the 14th row.",
     "scoreTooltip": "Automatically calculated from [Card] and [Z] selection.",
     "gphrTooltip": "Automatically classified from [Contents], [Determinants], [FQ], and [Special Score].",
+    "noReorderTooltip": "Click the handle area to lift a row and move it to a new position.",
     "responseNumber": "Response #{index}",
     "responseMemo": "Response memo",
     "pairDisabledTooltip": "Reflection (Fr/rF) already implies symmetry. Pair (2) cannot be recorded concurrently."
@@ -424,7 +425,8 @@
       "generatedMessage": "Instructions and documents were filled automatically.",
       "fileTooLarge": "File is too large. Max size is 500KB.",
       "noApiKey": "This provider has no API key in Account settings.",
-      "goToApiKeys": "Go to API Keys"
+      "goToApiKeys": "Go to API Keys",
+      "usesYourKey": "The builder currently uses your own API key. It will transition to a credit-based system in the future."
     },
     "myBooks": {
       "title": "My Skill Books",
@@ -474,7 +476,15 @@
       "makePublic": "Make Public",
       "makePrivate": "Make Private",
       "visibilityFailed": "Failed to update visibility. Please try again.",
-      "useInChat": "Use in Chat"
+      "useInChat": "Use in Chat",
+      "duplicate": "Duplicate",
+      "forkedFrom": "Forked from: {author}"
+    },
+    "draft": {
+      "restoredTitle": "Draft restored",
+      "restoredMessage": "Recovered your unsaved Skill Book draft.",
+      "unsavedWarning": "You have unsaved changes. Leave this form?",
+      "clear": "Clear Draft"
     }
   },
   "auth": {

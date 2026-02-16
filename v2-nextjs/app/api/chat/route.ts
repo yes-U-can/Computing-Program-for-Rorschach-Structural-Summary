@@ -11,12 +11,20 @@ import { DEFAULT_SKILL_BOOK } from '@/lib/defaultSkillBook';
 import { getRorschachBaseSystemPrompt } from '@/lib/systemPrompts/rorschachBase';
 import type { Language } from '@/types';
 import { prisma } from '@/lib/prisma';
+import { appendCreditEntry } from '@/lib/creditLedger';
+import {
+  estimateTokenCostCredits,
+  estimateTokens,
+  getModelById,
+  getModelCatalog,
+  Provider,
+} from '@/lib/aiModels';
 const scryptAsync = promisify(scrypt);
 
 const algorithm = 'aes-256-cbc';
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY as string;
 
-type Provider = 'openai' | 'google' | 'anthropic';
+type BillingMode = 'byok' | 'platform';
 type IncomingMessage = {
   role: 'ai' | 'user';
   content: string;
@@ -33,11 +41,17 @@ async function decrypt(encryptedText: string, iv: string) {
   return decrypted;
 }
 
-async function callOpenAI(apiKey: string, messages: { role: 'system' | 'user' | 'assistant'; content: string }[]) {
+async function callOpenAI(
+  apiKey: string,
+  model: string,
+  maxOutputTokens: number,
+  messages: { role: 'system' | 'user' | 'assistant'; content: string }[],
+) {
   const openai = new OpenAI({ apiKey });
   const stream = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model,
     messages: messages,
+    max_tokens: maxOutputTokens,
     stream: true,
   });
 
@@ -51,9 +65,17 @@ async function callOpenAI(apiKey: string, messages: { role: 'system' | 'user' | 
   });
 }
 
-async function callGoogle(apiKey: string, messages: { role: string; content: string }[]) {
+async function callGoogle(
+  apiKey: string,
+  modelId: string,
+  maxOutputTokens: number,
+  messages: { role: string; content: string }[],
+) {
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({
+    model: modelId,
+    generationConfig: { maxOutputTokens },
+  });
 
   // Google requires alternating user/model roles.
   // Merge consecutive same-role messages instead of dropping them.
@@ -86,11 +108,17 @@ async function callGoogle(apiKey: string, messages: { role: string; content: str
   });
 }
 
-async function callAnthropic(apiKey: string, messages: { role: string; content: string }[], systemPrompt?: string) {
+async function callAnthropic(
+  apiKey: string,
+  model: string,
+  maxOutputTokens: number,
+  messages: { role: string; content: string }[],
+  systemPrompt?: string,
+) {
   const anthropic = new Anthropic({ apiKey });
   const stream = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 4096,
+    model,
+    max_tokens: maxOutputTokens,
     system: systemPrompt || undefined,
     messages: messages.map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
     stream: true,
@@ -117,13 +145,15 @@ export async function POST(req: Request) {
 
     const body = (await req.json()) as {
       messages: IncomingMessage[];
-      provider: Provider;
+      provider?: Provider;
+      modelId?: string;
+      billingMode?: BillingMode;
       chatSessionId?: string;
       knowledgeItems?: Array<{ title: string; content: string }>;
       skillBookInstructions?: string;
       lang?: Language;
     };
-    const { messages, provider, lang } = body;
+    const { messages, lang } = body;
     let { chatSessionId } = body;
 
     const user = await prisma.user.findUnique({ where: { id: session.user.id } });
@@ -131,17 +161,48 @@ export async function POST(req: Request) {
       return new NextResponse('User not found', { status: 404 });
     }
 
+    const defaultProvider = body.provider ?? 'openai';
+    const selectedModel =
+      (body.modelId ? getModelById(body.modelId) : null) ??
+      getModelCatalog().find((model) => model.provider === defaultProvider && model.recommended) ??
+      getModelCatalog().find((model) => model.provider === defaultProvider) ??
+      null;
+
+    if (!selectedModel) {
+      return NextResponse.json({ error: 'Selected model is not supported.' }, { status: 400 });
+    }
+
+    const provider = selectedModel.provider;
+    const billingMode: BillingMode = body.billingMode === 'platform' ? 'platform' : 'byok';
+
     let apiKey = '';
-    if (provider === 'openai' && user.encryptedOpenAIKey && user.openAIKeyIv) {
-      apiKey = await decrypt(user.encryptedOpenAIKey, user.openAIKeyIv);
-    } else if (provider === 'google' && user.encryptedGoogleKey && user.googleKeyIv) {
-      apiKey = await decrypt(user.encryptedGoogleKey, user.googleKeyIv);
-    } else if (provider === 'anthropic' && user.encryptedAnthropicKey && user.anthropicKeyIv) {
-      apiKey = await decrypt(user.encryptedAnthropicKey, user.anthropicKeyIv);
+    let keySource: BillingMode = billingMode;
+    if (billingMode === 'byok') {
+      if (provider === 'openai' && user.encryptedOpenAIKey && user.openAIKeyIv) {
+        apiKey = await decrypt(user.encryptedOpenAIKey, user.openAIKeyIv);
+      } else if (provider === 'google' && user.encryptedGoogleKey && user.googleKeyIv) {
+        apiKey = await decrypt(user.encryptedGoogleKey, user.googleKeyIv);
+      } else if (provider === 'anthropic' && user.encryptedAnthropicKey && user.anthropicKeyIv) {
+        apiKey = await decrypt(user.encryptedAnthropicKey, user.anthropicKeyIv);
+      }
+    } else {
+      if (provider === 'openai') apiKey = process.env.PLATFORM_OPENAI_API_KEY ?? '';
+      if (provider === 'google') apiKey = process.env.PLATFORM_GOOGLE_API_KEY ?? '';
+      if (provider === 'anthropic') apiKey = process.env.PLATFORM_ANTHROPIC_API_KEY ?? '';
+      keySource = 'platform';
     }
 
     if (!apiKey) {
-      return new NextResponse('API key not found or configured.', { status: 400 });
+      if (keySource === 'platform') {
+        return NextResponse.json(
+          { error: 'Platform AI is currently unavailable for the selected model/provider.' },
+          { status: 503 },
+        );
+      }
+      return NextResponse.json(
+        { error: 'API key not found for selected provider. Add your key or switch to platform mode.' },
+        { status: 400 },
+      );
     }
 
     const userMessage = messages[messages.length - 1];
@@ -230,6 +291,23 @@ export async function POST(req: Request) {
       finalMessages = formattedMessages;
     }
 
+    const inputTokenEstimate = estimateTokens(
+      [fullSystemPrompt ?? '', ...formattedMessages.map((m) => m.content)].join('\n\n'),
+    );
+    const worstCaseCharge = estimateTokenCostCredits({
+      model: selectedModel,
+      inputTokens: inputTokenEstimate,
+      outputTokens: selectedModel.maxOutputTokens,
+    });
+    if (keySource === 'platform' && user.creditBalance < worstCaseCharge.credits) {
+      return NextResponse.json(
+        {
+          error: `Insufficient credits for this model. Minimum required to start: ${worstCaseCharge.credits} credits.`,
+        },
+        { status: 402 },
+      );
+    }
+
     // Set up DB logging stream
     let aiResponseContent = '';
     const loggingStream = new WritableStream({
@@ -248,6 +326,36 @@ export async function POST(req: Request) {
                 where: { id: activeChatSessionId },
                 data: { updatedAt: new Date() }
             });
+
+            if (keySource === 'platform') {
+              const outputTokenEstimate = estimateTokens(aiResponseContent);
+              const billing = estimateTokenCostCredits({
+                model: selectedModel,
+                inputTokens: inputTokenEstimate,
+                outputTokens: outputTokenEstimate,
+              });
+
+              try {
+                await appendCreditEntry(prisma, {
+                  userId: user.id,
+                  amount: -billing.credits,
+                  type: 'platform_ai_usage_burn',
+                  description: `Platform AI usage (${selectedModel.label})`,
+                  metadataJson: JSON.stringify({
+                    feature: 'chat',
+                    modelId: selectedModel.id,
+                    provider: selectedModel.provider,
+                    inputTokens: inputTokenEstimate,
+                    outputTokens: outputTokenEstimate,
+                    billedUsd: Number(billing.billedUsd.toFixed(6)),
+                    rawProviderUsd: Number(billing.rawProviderUsd.toFixed(6)),
+                    markupMultiplier: billing.markupMultiplier,
+                  }),
+                });
+              } catch (billingError) {
+                console.error('Platform billing failed:', billingError);
+              }
+            }
         }
     });
 
@@ -255,12 +363,20 @@ export async function POST(req: Request) {
     if (provider === 'openai') {
       stream = await callOpenAI(
         apiKey,
+        selectedModel.id,
+        selectedModel.maxOutputTokens,
         finalMessages as { role: 'system' | 'user' | 'assistant'; content: string }[]
       );
     } else if (provider === 'google') {
-      stream = await callGoogle(apiKey, finalMessages);
+      stream = await callGoogle(apiKey, selectedModel.id, selectedModel.maxOutputTokens, finalMessages);
     } else if (provider === 'anthropic') {
-      stream = await callAnthropic(apiKey, finalMessages, systemPrompt);
+      stream = await callAnthropic(
+        apiKey,
+        selectedModel.id,
+        selectedModel.maxOutputTokens,
+        finalMessages,
+        systemPrompt,
+      );
     } else {
       return new NextResponse('Provider is not supported.', { status: 400 });
     }
@@ -271,6 +387,8 @@ export async function POST(req: Request) {
 
     const responseHeaders = new Headers();
     responseHeaders.set('X-Chat-Session-Id', activeChatSessionId);
+    responseHeaders.set('X-Chat-Model-Id', selectedModel.id);
+    responseHeaders.set('X-Chat-Billing-Mode', keySource);
 
     return new Response(returnStream, { headers: responseHeaders });
 

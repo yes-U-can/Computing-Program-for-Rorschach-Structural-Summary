@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CopyPageButton from '@/components/common/CopyPageButton';
 import { getPrivacySections } from '@/lib/privacySections';
 import { buildLanguageAlternates } from '@/lib/seo';
 import type { Language } from '@/types';
@@ -38,7 +39,7 @@ const KO_CONTENT: PolicyContent = {
   title: '개인정보처리방침',
   effectiveDate: '시행일: 2026년 2월 15일',
   intro:
-    'MOW(이하 "운영자")는 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고, 이와 관련한 고충을 신속하고 원활하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다. 본 방침은 https://exnersicp.vercel.app 에서 제공하는 로샤 구조요약 계산 도우미(영문: Computing Program for Rorschach Structural Summary, 이하 "서비스")에 적용됩니다.',
+    '서울임상심리연구소(Seoul Institute of Clinical Psychology, SICP)와 모오(MOW)(이하 총칭하여 "운영자")는 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고, 이와 관련한 고충을 신속하고 원활하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다. 본 방침은 https://exnersicp.vercel.app 에서 제공하는 로샤 구조요약 계산 도우미(영문: Computing Program for Rorschach Structural Summary, 이하 "서비스")에 적용됩니다.',
   sections: [
     {
       heading: '제1조(개인정보의 처리 목적)',
@@ -145,8 +146,8 @@ const KO_CONTENT: PolicyContent = {
       heading: '제12조(개인정보 보호책임자 및 문의처)',
       items: [
         '운영자는 개인정보 처리 관련 업무를 총괄하고 정보주체의 불만 처리 및 피해 구제를 위하여 아래와 같이 개인정보 보호책임자(담당)를 지정합니다.',
-        '책임자: MOW',
-        '이메일: mow.coding@gmail.com',
+        '책임자(개인정보 보호 업무): 모오(MOW)',
+        '공동 운영 주체: 서울임상심리연구소(Seoul Institute of Clinical Psychology, SICP), 모오(MOW) / 이메일: mow.coding@gmail.com',
       ],
     },
     {
@@ -177,7 +178,7 @@ const NON_KO_SERVICE_NOTES: Record<'en' | 'ja' | 'es' | 'pt', PolicySection> = {
   en: {
     heading: 'Service-Specific Disclosures',
     items: [
-      'This Service uses Google OAuth login instead of a standalone sign-up flow.',
+      'This Service is jointly operated by Seoul Institute of Clinical Psychology (SICP) and MOW. It uses Google OAuth login instead of a standalone sign-up flow.',
       'Revoking Google account connection and deleting Service-stored data are separate procedures. Users can revoke connection in Google account settings and request data deletion through the contact channel.',
       'Hosting and infrastructure are operated on Vercel.',
       'Payment processing for Credits is handled by Stripe, and payment card details are processed directly by Stripe.',
@@ -188,7 +189,7 @@ const NON_KO_SERVICE_NOTES: Record<'en' | 'ja' | 'es' | 'pt', PolicySection> = {
   ja: {
     heading: 'サービス固有の開示事項',
     items: [
-      '本サービスは独立した会員登録ではなく、Google OAuthログイン方式を利用します。',
+      '本サービスは、ソウル臨床心理研究所（SICP）とMOWが共同で運営し、独立した会員登録ではなくGoogle OAuthログイン方式を利用します。',
       'Google連携解除とサービス内保存データ削除は別手続です。連携解除はGoogleアカウント設定で行い、データ削除は問い合わせ窓口で申請できます。',
       'ホスティングおよびインフラはVercelで運用されます。',
       'クレジット決済はStripeが処理し、カード情報はStripeが直接処理します。',
@@ -199,7 +200,7 @@ const NON_KO_SERVICE_NOTES: Record<'en' | 'ja' | 'es' | 'pt', PolicySection> = {
   es: {
     heading: 'Divulgaciones Especificas del Servicio',
     items: [
-      'Este Servicio utiliza inicio de sesion con Google OAuth y no tiene un registro independiente.',
+      'Este Servicio es operado conjuntamente por Seoul Institute of Clinical Psychology (SICP) y MOW, y utiliza inicio de sesion con Google OAuth en lugar de un registro independiente.',
       'Revocar la conexion de Google y eliminar los datos almacenados en el Servicio son procedimientos distintos. La revocacion se realiza en la cuenta de Google y la eliminacion de datos se solicita por el canal de contacto.',
       'El alojamiento y la infraestructura se operan en Vercel.',
       'El procesamiento de pagos de Creditos se realiza por Stripe, y los datos de tarjeta son procesados directamente por Stripe.',
@@ -210,7 +211,7 @@ const NON_KO_SERVICE_NOTES: Record<'en' | 'ja' | 'es' | 'pt', PolicySection> = {
   pt: {
     heading: 'Divulgacoes Especificas do Servico',
     items: [
-      'Este Servico utiliza login com Google OAuth e nao possui cadastro independente.',
+      'Este Servico e operado conjuntamente pelo Seoul Institute of Clinical Psychology (SICP) e pela MOW, e utiliza login com Google OAuth em vez de cadastro independente.',
       'Revogar a conexao do Google e excluir dados armazenados no Servico sao procedimentos distintos. A revogacao ocorre na conta Google e a exclusao de dados pode ser solicitada pelo canal de contato.',
       'A hospedagem e a infraestrutura sao operadas na Vercel.',
       'O processamento de pagamentos de Creditos e feito pela Stripe, e os dados de cartao sao processados diretamente pela Stripe.',
@@ -268,7 +269,10 @@ export default async function PrivacyPage({ searchParams }: PrivacyPageProps) {
     <div className="min-h-screen bg-[#F7F9FB]">
       <Header />
       <main className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
+        <div className="mx-auto mb-3 flex max-w-4xl justify-end">
+          <CopyPageButton language={activeLang} targetId="privacy-page-content" />
+        </div>
+        <div id="privacy-page-content" className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
           <h1 className="text-2xl font-bold text-slate-900">{content.title}</h1>
           <p className="mt-3 text-sm text-slate-500">{content.effectiveDate}</p>
           <p className="mt-4 text-[15px] leading-7 text-slate-700">{content.intro}</p>

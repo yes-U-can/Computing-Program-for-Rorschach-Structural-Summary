@@ -197,6 +197,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               value={currentResponse.card}
               onChange={(v) => updateField('card', v)}
               options={OPTIONS.CARDS}
+              showClearButton
               className="w-full"
             />
           </div>
@@ -206,6 +207,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               value={currentResponse.location}
               onChange={(v) => updateField('location', v)}
               options={OPTIONS.LOCATIONS}
+              showClearButton
               className="w-full"
             />
           </div>
@@ -215,6 +217,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               value={currentResponse.dq}
               onChange={(v) => updateField('dq', v)}
               options={OPTIONS.DQ}
+              showClearButton
               className="w-full"
             />
           </div>
@@ -238,6 +241,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               onChange={(v) => updateField('fq', v)}
               options={OPTIONS.FQ}
               disabledOptions={isDqVague ? ['+'] : undefined}
+              showClearButton
               className="w-full"
             />
           </div>
@@ -261,6 +265,7 @@ export default function MobileCard({ responses, onChange, maxRows = 50 }: Mobile
               onChange={(v) => updateField('z', v)}
               options={OPTIONS.Z_TYPES}
               disabled={isDqVague}
+              showClearButton
               className="w-full"
             />
           </div>

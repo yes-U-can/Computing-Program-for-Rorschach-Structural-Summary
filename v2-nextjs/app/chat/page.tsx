@@ -23,6 +23,22 @@ type SkillBookSummary = {
   description: string;
 };
 
+type BillingMode = 'byok' | 'platform';
+type Provider = 'openai' | 'google' | 'anthropic';
+type ModelOption = {
+  id: string;
+  provider: Provider;
+  label: string;
+  description: string;
+  qualityLevel: 'basic' | 'standard' | 'advanced';
+  priceLevel: 'low' | 'medium' | 'high';
+  speedLevel: 'fast' | 'balanced' | 'deep';
+  psychologyLabel: string;
+  byokAvailable: boolean;
+  platformAvailable: boolean;
+  recommended: boolean;
+};
+
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -30,7 +46,11 @@ export default function ChatPage() {
 
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [provider, setProvider] = useState('openai');
+  const [provider, setProvider] = useState<Provider>('openai');
+  const [modelId, setModelId] = useState('gpt-4o');
+  const [billingMode, setBillingMode] = useState<BillingMode>('byok');
+  const [models, setModels] = useState<ModelOption[]>([]);
+  const [creditBalance, setCreditBalance] = useState(0);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatSessionId, setChatSessionId] = useState<string | null>(null);
@@ -41,6 +61,7 @@ export default function ChatPage() {
   const [skillBooks, setSkillBooks] = useState<SkillBookSummary[]>([]);
   const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
   const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -75,6 +96,38 @@ export default function ChatPage() {
   useEffect(() => {
     void loadSkillBookState();
   }, [loadSkillBookState]);
+
+  const loadChatModelState = useCallback(async () => {
+    if (status !== 'authenticated') return;
+    setModelLoading(true);
+    try {
+      const res = await fetch('/api/chat/models');
+      if (!res.ok) return;
+      const data = (await res.json()) as {
+        models: ModelOption[];
+        creditBalance: number;
+      };
+      setModels(data.models ?? []);
+      setCreditBalance(data.creditBalance ?? 0);
+
+      const recommended =
+        data.models?.find((m) => m.recommended && m.provider === provider) ??
+        data.models?.[0];
+      if (recommended) {
+        setModelId(recommended.id);
+        setProvider(recommended.provider);
+        setBillingMode(recommended.byokAvailable ? 'byok' : 'platform');
+      }
+    } finally {
+      setModelLoading(false);
+    }
+  }, [provider, status]);
+
+  useEffect(() => {
+    void loadChatModelState();
+  }, [loadChatModelState]);
+
+  const selectedModel = models.find((m) => m.id === modelId) ?? null;
 
   const handleSkillBookChange = useCallback(async (value: string) => {
     if (status !== 'authenticated') return;
@@ -159,6 +212,8 @@ export default function ChatPage() {
         body: JSON.stringify({
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
           provider,
+          modelId,
+          billingMode,
           chatSessionId,
           knowledgeItems: userKnowledge,
           lang: language,
@@ -222,7 +277,7 @@ export default function ChatPage() {
       setIsLoading(false);
       setIsStreaming(false);
     }
-  }, [isLoading, streamingMessages, provider, chatSessionId, selectedSessionId, language, t]);
+  }, [isLoading, streamingMessages, provider, modelId, billingMode, chatSessionId, selectedSessionId, language, t]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -394,26 +449,53 @@ export default function ChatPage() {
 
               {/* Input form */}
               <div className="pb-safe rounded-b-2xl border-t border-slate-200 bg-white/95 p-3 md:p-4">
+                <div className="mb-2 grid gap-2 md:grid-cols-[1fr_auto_auto]">
+                  <select
+                    value={modelId}
+                    onChange={(e) => {
+                      const next = models.find((m) => m.id === e.target.value);
+                      if (!next) return;
+                      setModelId(next.id);
+                      setProvider(next.provider);
+                      if (!next.byokAvailable) setBillingMode('platform');
+                    }}
+                    disabled={modelLoading || models.length === 0}
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] disabled:opacity-60"
+                  >
+                    {models.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.provider.toUpperCase()} · {m.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={billingMode}
+                    onChange={(e) => setBillingMode(e.target.value as BillingMode)}
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)]"
+                  >
+                    <option value="byok">내 API 키 사용</option>
+                    <option value="platform">플랫폼 크레딧 사용</option>
+                  </select>
+                  <div className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-600">
+                    잔액: {creditBalance.toLocaleString()} cr
+                  </div>
+                </div>
+                {selectedModel && (
+                  <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-[11px] text-slate-600">
+                    <p className="font-semibold text-slate-700">{selectedModel.label} · {selectedModel.psychologyLabel}</p>
+                    <p className="mt-0.5">
+                      가격: {selectedModel.priceLevel} · 속도: {selectedModel.speedLevel} · 품질: {selectedModel.qualityLevel}
+                    </p>
+                    <p className="mt-0.5">{selectedModel.description}</p>
+                    {billingMode === 'byok' && !selectedModel.byokAvailable && (
+                      <p className="mt-1 text-rose-600">선택한 제공자의 개인 API 키가 없어 플랫폼 모드를 권장합니다.</p>
+                    )}
+                    {billingMode === 'platform' && !selectedModel.platformAvailable && (
+                      <p className="mt-1 text-rose-600">해당 모델의 플랫폼키가 아직 설정되지 않았습니다.</p>
+                    )}
+                  </div>
+                )}
                 <form onSubmit={handleSubmit} className="flex items-center gap-2">
-                  <select
-                    value={provider}
-                    onChange={(e) => setProvider(e.target.value)}
-                    className="hidden shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs text-slate-600 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] sm:block"
-                  >
-                    <option value="openai">OpenAI</option>
-                    <option value="google">Google</option>
-                    <option value="anthropic">Anthropic</option>
-                  </select>
-                  {/* Mobile-only compact provider select */}
-                  <select
-                    value={provider}
-                    onChange={(e) => setProvider(e.target.value)}
-                    className="block h-11 w-16 shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-1 py-2.5 text-[10px] text-slate-600 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] sm:hidden"
-                  >
-                    <option value="openai">GPT</option>
-                    <option value="google">Gem</option>
-                    <option value="anthropic">Cld</option>
-                  </select>
                   <input
                     ref={inputRef}
                     type="text"

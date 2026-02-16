@@ -84,6 +84,7 @@
     "rowOrderTip": "A ordem das linhas de resposta não afeta os resultados do cálculo.\nPor exemplo, registrar conteúdo para o Cartão 6 na linha 8 e registrar conteúdo para o Cartão 2 na linha 14 está bem.",
     "scoreTooltip": "Calculado automaticamente com base em [Card] e [Z].",
     "gphrTooltip": "Classificado automaticamente com base em [Contents], [Determinants], [FQ] e [Special Score].",
+    "noReorderTooltip": "Clique na area da alca para levantar uma linha e movela de posicao.",
     "responseNumber": "Resposta #{index}",
     "responseMemo": "Memo da resposta",
     "pairDisabledTooltip": "Reflection (Fr/rF) ja implica simetria. Pair (2) nao pode ser registrado ao mesmo tempo."
@@ -424,7 +425,8 @@
       "generatedMessage": "Instructions and documents were filled automatically.",
       "fileTooLarge": "File is too large. Max size is 500KB.",
       "noApiKey": "This provider has no API key in Account settings.",
-      "goToApiKeys": "Go to API Keys"
+      "goToApiKeys": "Go to API Keys",
+      "usesYourKey": "O construtor atualmente usa sua propria chave de API. Sera convertido para um sistema baseado em creditos no futuro."
     },
     "myBooks": {
       "title": "Meus Skill Books",
@@ -474,7 +476,15 @@
       "makePublic": "Make Public",
       "makePrivate": "Make Private",
       "visibilityFailed": "Failed to update visibility. Please try again.",
-      "useInChat": "Use in Chat"
+      "useInChat": "Use in Chat",
+      "duplicate": "Duplicar",
+      "forkedFrom": "Origem: {author}"
+    },
+    "draft": {
+      "restoredTitle": "Rascunho restaurado",
+      "restoredMessage": "Rascunho nao salvo do Skill Book foi recuperado.",
+      "unsavedWarning": "Voce tem alteracoes nao salvas. Deseja sair do formulario?",
+      "clear": "Limpar rascunho"
     }
   },
   "auth": {

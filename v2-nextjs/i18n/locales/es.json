@@ -84,6 +84,7 @@
     "rowOrderTip": "El orden de las filas de respuesta no afecta los resultados del cálculo.\nPor ejemplo, registrar contenido para la Lámina 6 en la fila 8 y registrar contenido para la Lámina 2 en la fila 14 está bien.",
     "scoreTooltip": "Se calcula automaticamente segun [Card] y [Z].",
     "gphrTooltip": "Clasificado automaticamente segun [Contents], [Determinants], [FQ] y [Special Score].",
+    "noReorderTooltip": "Haz clic en el area del controlador para levantar una fila y moverla de posicion.",
     "responseNumber": "Respuesta #{index}",
     "responseMemo": "Memo de respuesta",
     "pairDisabledTooltip": "Reflection (Fr/rF) ya implica simetria. Pair (2) no puede registrarse al mismo tiempo."
@@ -424,7 +425,8 @@
       "generatedMessage": "Instructions and documents were filled automatically.",
       "fileTooLarge": "File is too large. Max size is 500KB.",
       "noApiKey": "This provider has no API key in Account settings.",
-      "goToApiKeys": "Go to API Keys"
+      "goToApiKeys": "Go to API Keys",
+      "usesYourKey": "El constructor actualmente usa tu propia clave API. Se cambiara a un sistema basado en creditos en el futuro."
     },
     "myBooks": {
       "title": "Mis Skill Books",
@@ -474,7 +476,15 @@
       "makePublic": "Make Public",
       "makePrivate": "Make Private",
       "visibilityFailed": "Failed to update visibility. Please try again.",
-      "useInChat": "Use in Chat"
+      "useInChat": "Use in Chat",
+      "duplicate": "Duplicar",
+      "forkedFrom": "Origen: {author}"
+    },
+    "draft": {
+      "restoredTitle": "Borrador restaurado",
+      "restoredMessage": "Se recupero el borrador no guardado del Skill Book.",
+      "unsavedWarning": "Tiene cambios sin guardar. Desea salir del formulario?",
+      "clear": "Borrar borrador"
     }
   },
   "auth": {

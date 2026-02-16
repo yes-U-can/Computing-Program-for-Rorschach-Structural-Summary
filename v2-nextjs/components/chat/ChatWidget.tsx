@@ -28,10 +28,30 @@ type SkillBookSummary = {
   description: string;
 };
 
+type BillingMode = 'byok' | 'platform';
+type Provider = 'openai' | 'google' | 'anthropic';
+type ModelOption = {
+  id: string;
+  provider: Provider;
+  label: string;
+  description: string;
+  qualityLevel: 'basic' | 'standard' | 'advanced';
+  priceLevel: 'low' | 'medium' | 'high';
+  speedLevel: 'fast' | 'balanced' | 'deep';
+  psychologyLabel: string;
+  byokAvailable: boolean;
+  platformAvailable: boolean;
+  recommended: boolean;
+};
+
 export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidgetProps) {
   const { status } = useSession();
   const { t, language } = useTranslation();
-  const [provider, setProvider] = useState('openai');
+  const [provider, setProvider] = useState<Provider>('openai');
+  const [modelId, setModelId] = useState('gpt-4o');
+  const [billingMode, setBillingMode] = useState<BillingMode>('byok');
+  const [models, setModels] = useState<ModelOption[]>([]);
+  const [creditBalance, setCreditBalance] = useState(0);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -40,6 +60,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   const [skillBooks, setSkillBooks] = useState<SkillBookSummary[]>([]);
   const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
   const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
   const handledInitialMessageRef = useRef<string | null>(null);
   const activeSkillBookName =
     activeSkillBookId
@@ -85,10 +106,38 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
     }
   }, [status]);
 
+  const loadChatModelState = useCallback(async () => {
+    if (status !== 'authenticated') return;
+    setModelLoading(true);
+    try {
+      const res = await fetch('/api/chat/models');
+      if (!res.ok) return;
+      const data = (await res.json()) as {
+        models: ModelOption[];
+        creditBalance: number;
+      };
+      setModels(data.models ?? []);
+      setCreditBalance(data.creditBalance ?? 0);
+      const recommended =
+        data.models?.find((m) => m.recommended && m.provider === provider) ??
+        data.models?.[0];
+      if (recommended) {
+        setModelId(recommended.id);
+        setProvider(recommended.provider);
+        setBillingMode(recommended.byokAvailable ? 'byok' : 'platform');
+      }
+    } finally {
+      setModelLoading(false);
+    }
+  }, [provider, status]);
+
   useEffect(() => {
     if (!isOpen) return;
     void loadSkillBookState();
-  }, [isOpen, loadSkillBookState]);
+    void loadChatModelState();
+  }, [isOpen, loadSkillBookState, loadChatModelState]);
+
+  const selectedModel = models.find((m) => m.id === modelId) ?? null;
 
   const handleSkillBookChange = useCallback(async (value: string) => {
     if (status !== 'authenticated') return;
@@ -153,6 +202,8 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
             .filter((m) => !m.uiOnly)
             .map((m) => ({ role: m.role, content: m.content })),
           provider,
+          modelId,
+          billingMode,
           chatSessionId,
           knowledgeItems: userKnowledge,
           lang: language,
@@ -234,7 +285,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
     } finally {
       setIsLoading(false);
     }
-  }, [chatSessionId, getFriendlyErrorMessage, isLoading, language, provider]);
+  }, [chatSessionId, getFriendlyErrorMessage, isLoading, language, provider, modelId, billingMode]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -308,14 +359,32 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
             ))}
           </select>
           <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            aria-label="AI provider"
+            value={modelId}
+            onChange={(e) => {
+              const next = models.find((m) => m.id === e.target.value);
+              if (!next) return;
+              setModelId(next.id);
+              setProvider(next.provider);
+              if (!next.byokAvailable) setBillingMode('platform');
+            }}
+            aria-label="AI model"
+            disabled={modelLoading || models.length === 0}
+            className="max-w-[165px] rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:opacity-60"
+          >
+            {models.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.provider.toUpperCase()} · {m.label}
+              </option>
+            ))}
+          </select>
+          <select
+            value={billingMode}
+            onChange={(e) => setBillingMode(e.target.value as BillingMode)}
+            aria-label="Billing mode"
             className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)]"
           >
-            <option value="openai">OpenAI</option>
-            <option value="google">Google</option>
-            <option value="anthropic">Anthropic</option>
+            <option value="byok">BYOK</option>
+            <option value="platform">Platform</option>
           </select>
           <Link
             href="/chat"
@@ -336,6 +405,16 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
 
       {/* Messages */}
       <div className="h-[calc(100%-130px)] overflow-y-auto px-4 py-4 pb-3 sm:h-[calc(100%-136px)]">
+        {selectedModel && (
+          <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-600">
+            <p className="font-semibold text-slate-700">
+              {selectedModel.label} · {selectedModel.psychologyLabel}
+            </p>
+            <p className="mt-0.5">
+              가격 {selectedModel.priceLevel} · 속도 {selectedModel.speedLevel} · 품질 {selectedModel.qualityLevel} · 잔액 {creditBalance.toLocaleString()} cr
+            </p>
+          </div>
+        )}
         <div className="space-y-4">
           {messages.length === 0 && !isLoading && (
             <div className="flex h-full min-h-[260px] items-center justify-center">

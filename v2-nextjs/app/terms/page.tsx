@@ -1,6 +1,7 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CopyPageButton from '@/components/common/CopyPageButton';
 import { buildLanguageAlternates } from '@/lib/seo';
 import type { Language } from '@/types';
 
@@ -37,7 +38,7 @@ const CONTENT: Record<Language, TermsContent> = {
   ko: {
     title: '이용약관',
     effectiveDate: '시행일: 2026년 2월 15일',
-    intro: '이 약관은 MOW(이하 "운영자")가 제공하는 웹서비스 로샤 구조요약 계산 도우미(영문: Computing Program for Rorschach Structural Summary, 서비스 URL: https://exnersicp.vercel.app, 이하 "서비스")의 이용과 관련하여 운영자와 이용자 간의 권리·의무 및 책임사항, 기타 필요한 사항을 정함을 목적으로 합니다.',
+    intro: '이 약관은 서울임상심리연구소(Seoul Institute of Clinical Psychology, SICP)와 모오(MOW)(이하 총칭하여 "운영자")가 공동 운영하는 웹서비스 로샤 구조요약 계산 도우미(영문: Computing Program for Rorschach Structural Summary, 서비스 URL: https://exnersicp.vercel.app, 이하 "서비스")의 이용과 관련하여 운영자와 이용자 간의 권리·의무 및 책임사항, 기타 필요한 사항을 정함을 목적으로 합니다.',
     sections: [
       {
         heading: '제2조(용어의 정의)',
@@ -143,7 +144,7 @@ const CONTENT: Record<Language, TermsContent> = {
         heading: '제10조(지적재산권)',
         items: [
           '서비스(웹사이트, UI/UX, 소프트웨어, 소스코드, 데이터베이스, 상표, 로고, 문서 등)에 관한 권리는 운영자 또는 정당한 권리자에게 귀속됩니다.',
-          'SICP는 심리학 자문 협력 주체로서, 서비스 내·외부에서 SICP 명칭을 대외 브랜딩에 사용하는 것에 관하여 운영자와 별도 합의가 있을 수 있습니다.',
+          'SICP와 모오(MOW)는 서비스의 공동 운영 주체입니다. SICP는 심리학적 전문성, 임상 관점, 대외 브랜딩에 기여하고, 모오(MOW)는 제품 구현, 기술 운영, 인프라 관리에 기여하며, 주요 운영·업데이트 방향은 양측이 공동으로 결정합니다.',
           '이용자는 서비스를 통해 제공되는 콘텐츠를 운영자의 사전 동의 없이 복제, 배포, 전송, 2차적 저작물 작성, 역설계, 기타 상업적 이용을 할 수 없습니다. 다만, 법령상 허용되는 범위는 예외로 합니다.',
           '이용자가 서비스 이용 과정에서 생성한 개인 데이터(예: CSV 내보내기 결과물, 개인 노트·문서 등)의 권리는 이용자에게 귀속됩니다.',
         ],
@@ -212,7 +213,7 @@ const CONTENT: Record<Language, TermsContent> = {
   en: {
     title: 'Terms of Service',
     effectiveDate: 'Effective Date: February 15, 2026',
-    intro: 'These Terms of Service (the "Terms") govern the rights, obligations, and responsibilities between MOW (the "Operator") and users in connection with the use of the web service Computing Program for Rorschach Structural Summary (the "Service") available at https://exnersicp.vercel.app.',
+    intro: 'These Terms of Service (the "Terms") govern the rights, obligations, and responsibilities between the joint operators, Seoul Institute of Clinical Psychology (SICP) and MOW (collectively, the "Operator"), and users in connection with the use of the web service Computing Program for Rorschach Structural Summary (the "Service") available at https://exnersicp.vercel.app.',
     sections: [
       {
         heading: 'Article 2 (Definitions)',
@@ -313,7 +314,7 @@ const CONTENT: Record<Language, TermsContent> = {
         heading: 'Article 10 (Intellectual Property)',
         items: [
           'All intellectual property rights related to the Service, including software, design, and implementation, belong to the Operator or lawful rights holders.',
-          'SICP serves as a psychological advisory partner, and use of its name in branding may be subject to separate agreement.',
+          'SICP and MOW are joint operators of the Service. SICP contributes psychological expertise, clinical perspective, and external branding, while MOW contributes product implementation, technical operations, and infrastructure management, and major operational and update directions are decided jointly.',
           'Users may not reproduce, distribute, reverse engineer, or commercially exploit the Service without prior authorization.',
           'Users retain ownership of their personal exported data (e.g., CSV outputs and personal notes).',
         ],
@@ -376,7 +377,7 @@ const CONTENT: Record<Language, TermsContent> = {
   ja: {
     title: '利用規約',
     effectiveDate: '施行日: 2026年2月15日',
-    intro: '本利用規約（以下「本規約」といいます。）は、MOW（以下「運営者」といいます。）が提供するウェブサービス「ロシャ構造要約計算アシスタント」（Computing Program for Rorschach Structural Summary、URL: https://exnersicp.vercel.app、以下「本サービス」といいます。）の利用に関し、運営者と利用者との間の権利義務および責任事項等を定めることを目的とします。',
+    intro: '本利用規約（以下「本規約」といいます。）は、ソウル臨床心理研究所（Seoul Institute of Clinical Psychology, SICP）およびMOW（以下、総称して「運営者」といいます。）が共同で運営するウェブサービス「ロシャ構造要約計算アシスタント」（Computing Program for Rorschach Structural Summary、URL: https://exnersicp.vercel.app、以下「本サービス」といいます。）の利用に関し、運営者と利用者との間の権利義務および責任事項等を定めることを目的とします。',
     sections: [
       {
         heading: '第2条（定義）',
@@ -465,7 +466,7 @@ const CONTENT: Record<Language, TermsContent> = {
         heading: '第10条（知的財産権）',
         items: [
           '本サービスに関するソフトウェア、デザイン等の権利は運営者に帰属します。',
-          'SICPは心理学的助言協力機関です。',
+          'SICPとMOWは本サービスの共同運営主体です。SICPは心理学的専門性・臨床的視点・対外ブランディングに貢献し、MOWはプロダクト実装・技術運用・インフラ管理に貢献し、主要な運営・更新方針は双方が共同で決定します。',
           '利用者は、無断で本サービスを複製、改変、商用利用してはなりません。',
         ],
       },
@@ -510,7 +511,7 @@ const CONTENT: Record<Language, TermsContent> = {
   es: {
     title: 'Términos de Servicio',
     effectiveDate: 'Fecha de entrada en vigor: 15 de febrero de 2026',
-    intro: 'Estos Términos de Servicio (los "Términos") regulan los derechos, obligaciones y responsabilidades entre MOW (el "Operador") y los usuarios en relación con el uso del servicio web Asistente para el Cálculo del Resumen Estructural de Rorschach (Computing Program for Rorschach Structural Summary), disponible en https://exnersicp.vercel.app (el "Servicio").',
+    intro: 'Estos Terminos de Servicio (los "Terminos") regulan los derechos, obligaciones y responsabilidades entre los operadores conjuntos, Seoul Institute of Clinical Psychology (SICP) y MOW (en conjunto, el "Operador"), y los usuarios en relacion con el uso del servicio web Asistente para el Calculo del Resumen Estructural de Rorschach (Computing Program for Rorschach Structural Summary), disponible en https://exnersicp.vercel.app (el "Servicio").',
     sections: [
       {
         heading: 'Artículo 2 (Definiciones)',
@@ -599,7 +600,7 @@ const CONTENT: Record<Language, TermsContent> = {
         heading: 'Artículo 10 (Propiedad Intelectual)',
         items: [
           '1. Los derechos sobre el software, diseño e implementación del Servicio pertenecen al Operador o a los titulares legítimos.',
-          '2. SICP actúa como entidad colaboradora en asesoramiento psicológico.',
+          '2. SICP y MOW son operadores conjuntos del Servicio. SICP aporta experiencia psicologica, perspectiva clinica y branding externo, mientras MOW aporta implementacion del producto, operaciones tecnicas y gestion de infraestructura; las principales decisiones de operacion y actualizacion se toman en conjunto.',
           '3. Los Usuarios no podrán reproducir, distribuir ni explotar comercialmente el Servicio sin autorización previa.',
         ],
       },
@@ -648,7 +649,7 @@ const CONTENT: Record<Language, TermsContent> = {
   pt: {
     title: 'Termos de Serviço',
     effectiveDate: 'Data de entrada em vigor: 15 de fevereiro de 2026',
-    intro: 'Os presentes Termos de Serviço (doravante "Termos") regulam os direitos, obrigações e responsabilidades entre a MOW (doravante "Operadora") e os usuários em relação ao uso do serviço web Assistente para Cálculo do Resumo Estrutural de Rorschach (Computing Program for Rorschach Structural Summary), disponível em https://exnersicp.vercel.app (doravante "Serviço").',
+    intro: 'Os presentes Termos de Servico (doravante "Termos") regulam os direitos, obrigacoes e responsabilidades entre os operadores conjuntos, Seoul Institute of Clinical Psychology (SICP) e MOW (doravante, em conjunto, "Operadora"), e os usuarios em relacao ao uso do servico web Assistente para Calculo do Resumo Estrutural de Rorschach (Computing Program for Rorschach Structural Summary), disponivel em https://exnersicp.vercel.app (doravante "Servico").',
     sections: [
       {
         heading: 'Artigo 2 (Definições)',
@@ -737,7 +738,7 @@ const CONTENT: Record<Language, TermsContent> = {
         heading: 'Artigo 10 (Propriedade Intelectual)',
         items: [
           '1. Os direitos relativos ao software, design e implementação do Serviço pertencem à Operadora ou aos respectivos titulares legítimos.',
-          '2. SICP atua como entidade colaboradora em consultoria psicológica.',
+          '2. SICP e MOW sao operadores conjuntos do Servico. A SICP contribui com expertise psicologica, perspectiva clinica e branding externo, enquanto a MOW contribui com implementacao do produto, operacoes tecnicas e gestao de infraestrutura; as principais decisoes de operacao e atualizacao sao tomadas em conjunto.',
           '3. Os Usuários não poderão reproduzir, distribuir ou explorar comercialmente o Serviço sem autorização prévia.',
         ],
       },
@@ -794,7 +795,10 @@ export default async function TermsPage({ searchParams }: TermsPageProps) {
     <div className="min-h-screen bg-[#F7F9FB]">
       <Header />
       <main className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
+        <div className="mx-auto mb-3 flex max-w-4xl justify-end">
+          <CopyPageButton language={activeLang} targetId="terms-page-content" />
+        </div>
+        <div id="terms-page-content" className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
           <h1 className="text-2xl font-bold text-slate-900">{content.title}</h1>
           <p className="mt-3 text-sm text-slate-500">{content.effectiveDate}</p>
           <p className="mt-4 text-[15px] leading-7 text-slate-700">{content.intro}</p>

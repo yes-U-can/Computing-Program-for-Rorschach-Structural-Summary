@@ -25,6 +25,11 @@ export async function POST(req: Request) {
       description: true,
       instructions: true,
       documents: true,
+      author: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
@@ -68,6 +73,9 @@ export async function POST(req: Request) {
       documents: JSON.stringify(docs.value),
       source: 'user',
       isPublic: false,
+      forkedFromId: source.id,
+      forkedFromName: source.name,
+      originalAuthor: source.author?.name ?? 'Anonymous',
       authorId: session.user.id,
     },
     select: { id: true },

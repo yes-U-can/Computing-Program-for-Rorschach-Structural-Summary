@@ -13,12 +13,16 @@ import Button from '@/components/ui/Button';
 import ApiKeyManager from '@/components/account/ApiKeyManager';
 import KnowledgeSourceManager from '@/components/account/KnowledgeSourceManager';
 import SkillBookManager from '@/components/account/SkillBookManager';
+import CreditBalancePanel from '@/components/account/CreditBalancePanel';
 
 export default function AccountPage() {
   const { data: session, status } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
-  const [autoCreateSkillBook, setAutoCreateSkillBook] = useState(false);
+  const [autoCreateSkillBook] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return new URL(window.location.href).searchParams.get('create') === '1';
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -30,7 +34,6 @@ export default function AccountPage() {
     if (typeof window === 'undefined') return;
     const url = new URL(window.location.href);
     const create = url.searchParams.get('create') === '1';
-    setAutoCreateSkillBook(create);
     if (create) {
       url.searchParams.delete('create');
       window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash || ''}`);
@@ -65,6 +68,7 @@ export default function AccountPage() {
               <ul className="space-y-2">
                 <li><a href="#api-keys" className="font-semibold text-[var(--brand-500)]">{t('account.apiKeys.title')}</a></li>
                 <li><a href="#my-skillbooks" className="text-slate-600 hover:text-[var(--brand-500)]">{t('skillBook.myBooks.title')}</a></li>
+                <li><a href="#credits" className="text-slate-600 hover:text-[var(--brand-500)]">Credits</a></li>
                 <li><a href="#knowledge-sources" className="text-slate-600 hover:text-[var(--brand-500)]">{t('account.knowledgeSources.title')}</a></li>
                 <li><a href="#ai-assistant" className="text-slate-600 hover:text-[var(--brand-500)]">{t('nav.aiAssistant')}</a></li>
                 <li><a href="#account-settings" className="text-slate-600 hover:text-[var(--brand-500)]">{t('nav.account')}</a></li>
@@ -82,6 +86,13 @@ export default function AccountPage() {
                 <p className="mt-1 text-sm text-slate-500">{t('skillBook.myBooks.subtitle')}</p>
                 <div className="mt-4 p-8 bg-white rounded-lg shadow-sm border border-slate-200">
                   <SkillBookManager autoCreate={autoCreateSkillBook} />
+                </div>
+              </section>
+              <section id="credits">
+                <h2 className="text-xl font-semibold text-slate-700">Credits</h2>
+                <p className="mt-1 text-sm text-slate-500">Balance and transaction history for store and builder usage.</p>
+                <div className="mt-4 p-8 bg-white rounded-lg shadow-sm border border-slate-200">
+                  <CreditBalancePanel />
                 </div>
               </section>
               <section id="ai-assistant">

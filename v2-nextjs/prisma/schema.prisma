@@ -53,6 +53,8 @@ model User {
   chatSessions          ChatSession[]
   skillBooks            SkillBook[]
   activeSkillBookId     String?
+  creditBalance         Int                 @default(0)
+  creditTransactions    CreditTransaction[]
 }
 
 model VerificationToken {
@@ -71,6 +73,9 @@ model SkillBook {
   documents    String   @default("[]") @db.Text
   source       String   @default("user")
   isPublic     Boolean  @default(false)
+  forkedFromId   String?
+  forkedFromName String?
+  originalAuthor String?
   authorId     String
   author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
@@ -97,4 +102,31 @@ model ChatMessage {
   createdAt     DateTime    @default(now())
   chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
   chatSessionId String
+}
+
+enum CreditTransactionType {
+  purchase
+  sale
+  listing_fee
+  sale_commission
+  builder_usage
+  admin_adjustment
+  listing_fee_burn
+  sale_commission_burn
+  platform_ai_usage_burn
+  sale_settlement_credit
+}
+
+model CreditTransaction {
+  id           String                @id @default(cuid())
+  userId       String
+  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         CreditTransactionType
+  amount       Int
+  balanceAfter Int
+  description  String                @default("")
+  metadataJson String                @default("{}") @db.Text
+  createdAt    DateTime              @default(now())
+
+  @@index([userId, createdAt])
 }

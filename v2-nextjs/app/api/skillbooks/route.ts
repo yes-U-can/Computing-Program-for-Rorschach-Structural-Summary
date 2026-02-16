@@ -80,6 +80,8 @@ export async function GET(req: Request) {
       isPublic: true,
       createdAt: true,
       updatedAt: true,
+      originalAuthor: true,
+      forkedFromName: true,
     },
   });
 
@@ -94,12 +96,13 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { name, description, instructions, documents, isPublic } = body as {
+  const { name, description, instructions, documents, isPublic, forkedFromId } = body as {
     name?: string;
     description?: string;
     instructions?: string;
     documents?: Array<{ title: string; content: string }>;
     isPublic?: boolean;
+    forkedFromId?: string;
   };
 
   const text = normalizeSkillBookText(name, description, instructions);
@@ -111,6 +114,39 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: docs.error }, { status: 400 });
   }
 
+  let attribution:
+    | {
+        forkedFromId: string;
+        forkedFromName: string;
+        originalAuthor: string;
+      }
+    | undefined;
+  if (typeof forkedFromId === 'string' && forkedFromId.trim()) {
+    const source = await prisma.skillBook.findFirst({
+      where: {
+        id: forkedFromId.trim(),
+        OR: [{ isPublic: true }, { authorId: session.user.id }],
+      },
+      select: {
+        id: true,
+        name: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    if (!source) {
+      return NextResponse.json({ error: 'Invalid forkedFromId' }, { status: 400 });
+    }
+    attribution = {
+      forkedFromId: source.id,
+      forkedFromName: source.name,
+      originalAuthor: source.author?.name ?? 'Anonymous',
+    };
+  }
+
   const skillBook = await prisma.skillBook.create({
     data: {
       name: text.value.name,
@@ -119,6 +155,7 @@ export async function POST(req: Request) {
       documents: JSON.stringify(docs.value),
       isPublic: Boolean(isPublic),
       authorId: session.user.id,
+      ...(attribution ?? {}),
     },
   });
 

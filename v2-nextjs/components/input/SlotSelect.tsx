@@ -12,6 +12,7 @@ interface SlotSelectProps {
   disabledOptions?: readonly string[];
   className?: string;
   gridCols?: number;
+  showClearButton?: boolean;
 }
 
 export default function SlotSelect({
@@ -22,7 +23,8 @@ export default function SlotSelect({
   disabled = false,
   disabledOptions,
   className = '',
-  gridCols
+  gridCols,
+  showClearButton = false
 }: SlotSelectProps) {
   const isGrid = gridCols && gridCols > 1;
 
@@ -96,16 +98,29 @@ export default function SlotSelect({
             </>
           ) : (
             <>
-              <ListboxOption
-                value=""
-                className={({ active }) =>
-                  `cursor-pointer select-none py-1.5 px-3 transition-colors ${
-                    active ? 'bg-slate-50 text-slate-600' : 'text-slate-400'
-                  }`
-                }
-              >
-                {placeholder}
-              </ListboxOption>
+              {showClearButton ? (
+                <button
+                  type="button"
+                  onClick={() => onChange('')}
+                  className="w-[calc(100%-0.5rem)] mx-1 mb-1 py-1.5 px-3 text-center text-xs text-slate-400
+                    hover:text-red-500 hover:bg-red-50
+                    border border-dashed border-slate-200 hover:border-red-300
+                    rounded-lg transition-colors"
+                >
+                  Clear
+                </button>
+              ) : (
+                <ListboxOption
+                  value=""
+                  className={({ active }) =>
+                    `cursor-pointer select-none py-1.5 px-3 transition-colors ${
+                      active ? 'bg-slate-50 text-slate-600' : 'text-slate-400'
+                    }`
+                  }
+                >
+                  {placeholder}
+                </ListboxOption>
+              )}
               {options.map((option) => {
                 const isOptionDisabled = disabledOptions?.includes(option) ?? false;
                 return (

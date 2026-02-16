@@ -50,6 +50,7 @@ Microsoft/
 
 # vercel
 .vercel
+.vercel_projects.json
 
 # typescript
 *.tsbuildinfo

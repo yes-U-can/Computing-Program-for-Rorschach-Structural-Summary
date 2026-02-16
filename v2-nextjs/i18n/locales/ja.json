@@ -86,7 +86,8 @@
     "gphrTooltip": "[Contents]、[Determinants]、[FQ]、[Special Score]に基づいて自動分類されます。",
     "responseNumber": "反応 #{index}",
     "responseMemo": "反応メモ",
-    "pairDisabledTooltip": "Reflection (Fr/rF)はすでに対称性を含むため、Pair (2)と同時に記録できません。"
+    "pairDisabledTooltip": "Reflection (Fr/rF)はすでに対称性を含むため、Pair (2)と同時に記録できません。",
+    "noReorderTooltip": "ハンドル部分をクリックすると、行を持ち上げて位置を移動できます。"
   },
   "info": {
     "categories": {

@@ -88,6 +88,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adsenseAccountMeta = adsenseClientId ?? 'ca-pub-4075981627753098';
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const cookieYesScriptUrl = process.env.NEXT_PUBLIC_COOKIEYES_SCRIPT_URL;
 
@@ -116,6 +117,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        <meta name="google-adsense-account" content={adsenseAccountMeta} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

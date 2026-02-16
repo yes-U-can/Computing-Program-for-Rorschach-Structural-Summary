@@ -287,7 +287,7 @@ export default function HomePage() {
             // Result Section
             <div className="space-y-6">
               {/* Action Buttons */}
-              <div className="flex gap-3 print:hidden overflow-x-auto pb-1">
+              <div className="flex gap-3 print:hidden overflow-x-auto p-2">
                 <Button variant="secondary" onClick={backToInput}>
                   <ArrowLeftIcon className="w-4 h-4 mr-2" />
                   {t('buttons.backToInput')}

@@ -1,6 +1,7 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CopyPageButton from '@/components/common/CopyPageButton';
 import { buildLanguageAlternates } from '@/lib/seo';
 import type { Language } from '@/types';
 
@@ -65,7 +66,7 @@ const CONTENT: Record<Language, AboutContent> = {
         heading: '광고 및 운영 주체',
         paragraphs: [
           '비로그인 사용자에게는 Google AdSense 광고가 표시될 수 있으며, 로그인 사용자에게는 광고가 표시되지 않습니다. 로그인은 API 키 관리 및 AI 채팅 히스토리 저장을 위한 기능입니다.',
-          '본 서비스의 운영 주체는 서울임상심리연구소(Seoul Institute of Clinical Psychology, SICP)이며, 기획과 개발은 모오(MOW)가 담당했습니다.',
+          '본 서비스는 서울임상심리연구소와 모오가 공동으로 제공합니다. 서울임상심리연구소는 서비스 기획과 임상심리학적 자문을 담당하고, 모오는 개발과 기술 운영을 담당합니다. 서비스의 운영 및 향후 개선 방향은 양측이 협의하여 결정합니다. 현재 서비스는 서울임상심리연구소를 통해 외부에 안내되고 있습니다.',
         ],
       },
     ],
@@ -101,7 +102,7 @@ const CONTENT: Record<Language, AboutContent> = {
         heading: 'Advertising and Governance',
         paragraphs: [
           'Google AdSense advertisements may be displayed to non-logged-in users. Logged-in users do not see advertisements. User accounts are used for API key management and AI chat history storage.',
-          'The service is operated by the Seoul Institute of Clinical Psychology (SICP). Planning and development were carried out by MOW.',
+          'This Service is jointly provided by the Seoul Institute of Clinical Psychology (SICP) and MOW. SICP is responsible for service planning and clinical-psychological advisory input, while MOW is responsible for development and technical operations. Operational decisions and future improvement directions are determined through consultation between both parties. At present, the Service is publicly introduced through the Seoul Institute of Clinical Psychology (SICP).',
         ],
       },
     ],
@@ -137,7 +138,7 @@ const CONTENT: Record<Language, AboutContent> = {
         heading: '広告および運営主体',
         paragraphs: [
           'ログインしていない利用者にはGoogle AdSense広告が表示される場合があります。ログインユーザーには広告は表示されません。アカウントはAPIキー管理およびAIチャット履歴保存のために使用されます。',
-          '本サービスはソウル臨床心理研究所（Seoul Institute of Clinical Psychology, SICP）が運営し、企画および開発はMOWが担当しています。',
+          '本サービスは、ソウル臨床心理研究所（Seoul Institute of Clinical Psychology, SICP）とMOWが共同で提供しています。SICPはサービス企画と臨床心理学的な助言を担当し、MOWは開発と技術運用を担当します。サービス運営および今後の改善方針は、両者の協議により決定されます。現在、本サービスはソウル臨床心理研究所（SICP）を通じて対外案内されています。',
         ],
       },
     ],
@@ -173,7 +174,7 @@ const CONTENT: Record<Language, AboutContent> = {
         heading: 'Publicidad y entidad operadora',
         paragraphs: [
           'A los usuarios que no han iniciado sesión se les pueden mostrar anuncios de Google AdSense. Los usuarios que han iniciado sesión no visualizan publicidad. Las cuentas se utilizan para la gestión de claves API y el almacenamiento del historial de chat con IA.',
-          'El servicio es operado por el Seoul Institute of Clinical Psychology (SICP). La planificación y el desarrollo fueron realizados por MOW.',
+          'Este Servicio es provisto conjuntamente por el Seoul Institute of Clinical Psychology (SICP) y MOW. SICP se encarga de la planificacion del servicio y del asesoramiento en psicologia clinica, mientras que MOW se encarga del desarrollo y de la operacion tecnica. La operacion del servicio y sus futuras mejoras se determinan mediante consulta entre ambas partes. Actualmente, el Servicio se presenta externamente a traves del Seoul Institute of Clinical Psychology (SICP).',
         ],
       },
     ],
@@ -209,7 +210,7 @@ const CONTENT: Record<Language, AboutContent> = {
         heading: 'Publicidade e entidade operadora',
         paragraphs: [
           'Usuários que não estão autenticados podem visualizar anúncios do Google AdSense. Usuários autenticados não visualizam publicidade. As contas são utilizadas para gerenciamento de chaves de API e armazenamento do histórico de conversas com IA.',
-          'O serviço é operado pelo Seoul Institute of Clinical Psychology (SICP). O planejamento e o desenvolvimento foram realizados por MOW.',
+          'Este Servico e fornecido conjuntamente pelo Seoul Institute of Clinical Psychology (SICP) e pela MOW. A SICP e responsavel pelo planejamento do servico e pela consultoria em psicologia clinica, enquanto a MOW e responsavel pelo desenvolvimento e pela operacao tecnica. A operacao do servico e as direcoes de melhoria futura sao definidas por consulta entre as duas partes. Atualmente, o Servico e apresentado externamente por meio do Seoul Institute of Clinical Psychology (SICP).',
         ],
       },
     ],
@@ -226,7 +227,10 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
     <div className="min-h-screen bg-[#F7F9FB]">
       <Header />
       <main className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
+        <div className="mx-auto mb-3 flex max-w-4xl justify-end">
+          <CopyPageButton language={activeLang} targetId="about-page-content" />
+        </div>
+        <div id="about-page-content" className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
           <h1 className="text-2xl font-bold text-slate-900">{content.title}</h1>
           <p className="mt-4 text-[15px] leading-7 text-slate-700">{content.subtitle}</p>
 
