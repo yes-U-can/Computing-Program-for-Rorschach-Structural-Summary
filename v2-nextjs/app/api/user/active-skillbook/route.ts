@@ -24,6 +24,15 @@ export async function GET() {
     select: { id: true, name: true, description: true },
   });
 
+  if (!skillBook) {
+    // Self-heal stale pointer if referenced skill book no longer exists.
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { activeSkillBookId: null },
+    });
+    return NextResponse.json({ activeSkillBookId: null, skillBook: null });
+  }
+
   return NextResponse.json({
     activeSkillBookId: user.activeSkillBookId,
     skillBook,
