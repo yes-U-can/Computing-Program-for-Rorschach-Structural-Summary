@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 import { getAllDocRoutes } from '@/lib/docsCatalog';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
+const siteUrl = rawSiteUrl.trim().replace(/\/+$/, '');
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
