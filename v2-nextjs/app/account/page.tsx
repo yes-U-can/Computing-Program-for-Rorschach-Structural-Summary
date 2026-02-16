@@ -5,7 +5,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
@@ -18,12 +18,19 @@ export default function AccountPage() {
   const { data: session, status } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
+  const [autoCreateSkillBook, setAutoCreateSkillBook] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const create = new URLSearchParams(window.location.search).get('create') === '1';
+    setAutoCreateSkillBook(create);
+  }, []);
 
   if (status === 'loading' || !session) {
     return (
@@ -69,7 +76,7 @@ export default function AccountPage() {
                 <h2 className="text-xl font-semibold text-slate-700">{t('skillBook.myBooks.title')}</h2>
                 <p className="mt-1 text-sm text-slate-500">{t('skillBook.myBooks.subtitle')}</p>
                 <div className="mt-4 p-8 bg-white rounded-lg shadow-sm border border-slate-200">
-                  <SkillBookManager />
+                  <SkillBookManager autoCreate={autoCreateSkillBook} />
                 </div>
               </section>
               <section id="ai-assistant">

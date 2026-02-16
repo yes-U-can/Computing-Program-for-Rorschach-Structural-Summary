@@ -10,6 +10,7 @@ type SkillBookSummary = {
   name: string;
   description: string;
   source: string;
+  isPublic: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -24,7 +25,11 @@ type SkillBookDocument = {
   content: string;
 };
 
-export default function SkillBookManager() {
+type SkillBookManagerProps = {
+  autoCreate?: boolean;
+};
+
+export default function SkillBookManager({ autoCreate = false }: SkillBookManagerProps) {
   const { t, language } = useTranslation();
   const { showToast } = useToast();
 
@@ -39,6 +44,7 @@ export default function SkillBookManager() {
   const [formDesc, setFormDesc] = useState('');
   const [formInstructions, setFormInstructions] = useState('');
   const [formDocuments, setFormDocuments] = useState('[]');
+  const [formIsPublic, setFormIsPublic] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const fetchBooks = useCallback(async () => {
@@ -67,6 +73,17 @@ export default function SkillBookManager() {
   useEffect(() => {
     fetchBooks();
   }, [fetchBooks]);
+
+  useEffect(() => {
+    if (!autoCreate || loading) return;
+    setEditing(null);
+    setIsNew(true);
+    setFormName('');
+    setFormDesc('');
+    setFormInstructions('');
+    setFormDocuments('[]');
+    setFormIsPublic(false);
+  }, [autoCreate, loading]);
 
   const handleActivate = async (id: string | null) => {
     const res = await fetch('/api/user/active-skillbook', {
@@ -118,6 +135,7 @@ export default function SkillBookManager() {
       setFormName(data.name);
       setFormDesc(data.description);
       setFormInstructions(data.instructions);
+      setFormIsPublic(data.isPublic);
       try {
         const parsed = JSON.parse(data.documents || '[]');
         setFormDocuments(JSON.stringify(parsed, null, 2));
@@ -140,6 +158,7 @@ export default function SkillBookManager() {
     setFormDesc('');
     setFormInstructions('');
     setFormDocuments('[]');
+    setFormIsPublic(false);
   };
 
   const parseDocuments = useCallback((): SkillBookDocument[] | null => {
@@ -188,6 +207,7 @@ export default function SkillBookManager() {
             description: formDesc,
             instructions: formInstructions,
             documents: parsedDocuments,
+            isPublic: formIsPublic,
           }),
         });
         if (res.ok) {
@@ -207,6 +227,7 @@ export default function SkillBookManager() {
             description: formDesc,
             instructions: formInstructions,
             documents: parsedDocuments,
+            isPublic: formIsPublic,
           }),
         });
         if (res.ok) {
@@ -226,6 +247,7 @@ export default function SkillBookManager() {
     setEditing(null);
     setIsNew(false);
     setFormDocuments('[]');
+    setFormIsPublic(false);
   };
 
   if (loading) {
@@ -285,6 +307,15 @@ export default function SkillBookManager() {
             {t('skillBook.myBooks.documentsHelp')}
           </p>
         </div>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={formIsPublic}
+            onChange={(e) => setFormIsPublic(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 text-[var(--brand-700)] focus:ring-[var(--brand-500)]"
+          />
+          {t('skillBook.myBooks.publishToStore')}
+        </label>
         <div className="flex gap-2">
           <button
             type="button"
@@ -351,7 +382,14 @@ export default function SkillBookManager() {
           }`}
         >
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-slate-800">{book.name}</p>
+            <div className="flex items-center gap-2">
+              <p className="truncate text-sm font-semibold text-slate-800">{book.name}</p>
+              {book.isPublic && (
+                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                  {t('skillBook.myBooks.public')}
+                </span>
+              )}
+            </div>
             {book.description && (
               <p className="mt-0.5 truncate text-xs text-slate-500">{book.description}</p>
             )}

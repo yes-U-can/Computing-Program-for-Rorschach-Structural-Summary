@@ -385,14 +385,26 @@
       "title": "スキルブックストア",
       "subtitle": "他の専門家が作成した解釈スキルブックを探索して適用しましょう。",
       "comingSoon": "近日公開",
-      "comingSoonDesc": "クレジットでロールシャッハ解釈スキルブックを購入し、自分のスキルブックを販売できるマーケットプレイスが間もなくオープンします。"
+      "comingSoonDesc": "クレジットでロールシャッハ解釈スキルブックを購入し、自分のスキルブックを販売できるマーケットプレイスが間もなくオープンします。",
+      "searchPlaceholder": "Search public Skill Books...",
+      "empty": "No public Skill Books found.",
+      "author": "Author",
+      "updatedAt": "Updated",
+      "import": "Copy to My Skill Books",
+      "importedTitle": "Skill Book Store",
+      "importedMessage": "Skill Book was copied to your account.",
+      "alreadyImported": "This Skill Book is already in your account.",
+      "importFailed": "Could not copy this Skill Book. Please try again.",
+      "loadFailed": "Could not load Skill Book Store. Please try again.",
+      "loginToImport": "Login to Copy"
     },
     "builder": {
       "title": "スキルブック作成モード",
       "subtitle": "オリジナルの解釈スキルブックを作成しましょう。",
       "comingSoon": "近日公開",
       "comingSoonDesc": "教科書、ノート、臨床経験をアップロードすると、AIがオリジナルのロールシャッハ解釈スキルブックに変換します。",
-      "toggle": "スキルブック作成モード"
+      "toggle": "スキルブック作成モード",
+      "open": "Open Builder"
     },
     "myBooks": {
       "title": "マイスキルブック",
@@ -426,7 +438,9 @@
       "loadFailed": "Failed to load Skill Books. Please try again.",
       "saveFailed": "Failed to save Skill Book. Please try again.",
       "deleteFailed": "Failed to delete Skill Book. Please try again.",
-      "activateFailed": "Failed to switch active Skill Book. Please try again."
+      "activateFailed": "Failed to switch active Skill Book. Please try again.",
+      "publishToStore": "Publish to Skill Book Store",
+      "public": "Public"
     }
   },
   "auth": {

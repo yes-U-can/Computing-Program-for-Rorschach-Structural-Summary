@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { MagnifyingGlassIcon, SparklesIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import SkillBookStorePanel from '@/components/ref/SkillBookStorePanel';
 import { getAllDocRoutes, resolveDocContent } from '@/lib/docsCatalog';
 import { buildLanguageAlternates } from '@/lib/seo';
 import type { Language } from '@/types';
@@ -46,7 +47,7 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
     );
   });
 
-  const labels: Record<Language, { title: string; subtitle: string; search: string; placeholder: string; empty: string; idle: string; results: (count: number, q: string) => string; tabDocs: string; tabStore: string; storeTitle: string; storeComingSoon: string; storeComingSoonDesc: string }> = {
+  const labels: Record<Language, { title: string; subtitle: string; search: string; placeholder: string; empty: string; idle: string; results: (count: number, q: string) => string; tabDocs: string; tabStore: string }> = {
     en: {
       title: 'Reference',
       subtitle: 'Search scoring-item and result-variable reference pages.',
@@ -57,9 +58,6 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
       results: (count, text) => `${count} result${count === 1 ? '' : 's'}${text ? ` for "${text}"` : ''}`,
       tabDocs: 'Document Search',
       tabStore: 'Skill Book Store',
-      storeTitle: 'Skill Book Store',
-      storeComingSoon: 'Coming Soon',
-      storeComingSoonDesc: 'A marketplace where you can purchase Rorschach interpretation Skill Books with credits and sell your own is opening soon.',
     },
     ko: {
       title: '\uCC38\uC870',
@@ -71,9 +69,6 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
       results: (count, text) => `\uAC80\uC0C9 \uACB0\uACFC ${count}\uAC74${text ? `: \"${text}\"` : ''}`,
       tabDocs: '\uBB38\uC11C \uAC80\uC0C9',
       tabStore: '\uC2A4\uD0AC\uBD81 \uC2A4\uD1A0\uC5B4',
-      storeTitle: '\uC2A4\uD0AC\uBD81 \uC2A4\uD1A0\uC5B4',
-      storeComingSoon: '\uC900\uBE44 \uC911',
-      storeComingSoonDesc: '\uC804\uBB38\uAC00\uB4E4\uC774 \uB9CC\uB4E0 \uB85C\uC0E4 \uD574\uC11D \uC2A4\uD0AC\uBD81\uC744 \uD06C\uB808\uB527\uC73C\uB85C \uAD6C\uB9E4\uD558\uACE0, \uB098\uB9CC\uC758 \uC2A4\uD0AC\uBD81\uC744 \uD310\uB9E4\uD560 \uC218 \uC788\uB294 \uB9C8\uCF13\uD50C\uB808\uC774\uC2A4\uAC00 \uACE7 \uC5F4\uB9BD\uB2C8\uB2E4.',
     },
     ja: {
       title: '\u53C2\u7167',
@@ -85,9 +80,6 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
       results: (count, text) => `\u691C\u7D22\u7D50\u679C ${count}\u4EF6${text ? `: \"${text}\"` : ''}`,
       tabDocs: '\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u691C\u7D22',
       tabStore: '\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u30B9\u30C8\u30A2',
-      storeTitle: '\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u30B9\u30C8\u30A2',
-      storeComingSoon: '\u8FD1\u65E5\u516C\u958B',
-      storeComingSoonDesc: '\u30AF\u30EC\u30B8\u30C3\u30C8\u3067\u30ED\u30FC\u30EB\u30B7\u30E3\u30C3\u30CF\u89E3\u91C8\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u3092\u8CFC\u5165\u3057\u3001\u81EA\u5206\u306E\u30B9\u30AD\u30EB\u30D6\u30C3\u30AF\u3092\u8CA9\u58F2\u3067\u304D\u308B\u30DE\u30FC\u30B1\u30C3\u30C8\u30D7\u30EC\u30A4\u30B9\u304C\u9593\u3082\u306A\u304F\u30AA\u30FC\u30D7\u30F3\u3057\u307E\u3059\u3002',
     },
     es: {
       title: 'Referencia',
@@ -99,9 +91,6 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
       results: (count, text) => `${count} resultado${count === 1 ? '' : 's'}${text ? ` para \"${text}\"` : ''}`,
       tabDocs: 'Buscar documentos',
       tabStore: 'Tienda de Skill Books',
-      storeTitle: 'Tienda de Skill Books',
-      storeComingSoon: 'Pr\u00F3ximamente',
-      storeComingSoonDesc: 'Un mercado donde podr\u00E1s comprar Skill Books de interpretaci\u00F3n Rorschach con cr\u00E9ditos y vender los tuyos se abrir\u00E1 pronto.',
     },
     pt: {
       title: 'Refer\u00EAncia',
@@ -113,9 +102,6 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
       results: (count, text) => `${count} resultado${count === 1 ? '' : 's'}${text ? ` para \"${text}\"` : ''}`,
       tabDocs: 'Buscar documentos',
       tabStore: 'Loja de Skill Books',
-      storeTitle: 'Loja de Skill Books',
-      storeComingSoon: 'Em Breve',
-      storeComingSoonDesc: 'Um marketplace onde voc\u00EA pode comprar Skill Books de interpreta\u00E7\u00E3o Rorschach com cr\u00E9ditos e vender os seus ser\u00E1 aberto em breve.',
     },
   };
 
@@ -211,16 +197,7 @@ export default async function RefIndexPage({ searchParams }: RefPageProps) {
             )}
           </>
         ) : (
-          <section className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
-            <SparklesIcon className="mx-auto h-10 w-10 text-slate-300" />
-            <h2 className="mt-4 text-xl font-bold text-slate-700">{text.storeTitle}</h2>
-            <span className="mt-2 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-              {text.storeComingSoon}
-            </span>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">
-              {text.storeComingSoonDesc}
-            </p>
-          </section>
+          <SkillBookStorePanel />
         )}
       </main>
       <Footer />

@@ -41,11 +41,12 @@ export async function PUT(req: Request, { params }: Params) {
   }
 
   const body = await req.json();
-  const { name, description, instructions, documents } = body as {
+  const { name, description, instructions, documents, isPublic } = body as {
     name?: string;
     description?: string;
     instructions?: string;
     documents?: Array<{ title: string; content: string }>;
+    isPublic?: boolean;
   };
 
   const skillBook = await prisma.skillBook.update({
@@ -55,6 +56,7 @@ export async function PUT(req: Request, { params }: Params) {
       ...(description !== undefined && { description: description.trim() }),
       ...(instructions !== undefined && { instructions: instructions.trim() }),
       ...(documents !== undefined && { documents: JSON.stringify(documents) }),
+      ...(isPublic !== undefined && { isPublic: Boolean(isPublic) }),
     },
   });
 
