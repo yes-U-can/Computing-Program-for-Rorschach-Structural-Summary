@@ -62,7 +62,7 @@ export default function SkillBookStorePanel() {
     return new Intl.DateTimeFormat(language, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
   }, [language]);
 
-  const handleImport = useCallback(async (skillBookId: string) => {
+  const handleImport = useCallback(async (skillBookId: string, activate: boolean) => {
     setImportingId(skillBookId);
     try {
       const res = await fetch('/api/skillbooks/import', {
@@ -73,7 +73,9 @@ export default function SkillBookStorePanel() {
       if (!res.ok) {
         throw new Error('Import failed');
       }
-      const data = await res.json() as { imported?: boolean; reason?: string };
+      const data = await res.json() as { imported?: boolean; reason?: string; id?: string };
+      const importedId = data.id ?? null;
+
       if (data.imported === false && data.reason === 'already_exists') {
         showToast({
           type: 'info',
@@ -86,6 +88,21 @@ export default function SkillBookStorePanel() {
           title: t('skillBook.store.importedTitle'),
           message: t('skillBook.store.importedMessage'),
         });
+      }
+
+      if (activate && importedId) {
+        const activeRes = await fetch('/api/user/active-skillbook', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ skillBookId: importedId }),
+        });
+        if (activeRes.ok) {
+          showToast({
+            type: 'success',
+            title: t('skillBook.store.activatedTitle'),
+            message: t('skillBook.store.activatedMessage'),
+          });
+        }
       }
     } catch {
       showToast({
@@ -132,14 +149,24 @@ export default function SkillBookStorePanel() {
               </p>
               <div className="mt-3 flex items-center gap-2">
                 {status === 'authenticated' ? (
-                  <button
-                    type="button"
-                    onClick={() => void handleImport(book.id)}
-                    disabled={importingId === book.id}
-                    className="rounded-md bg-[var(--brand-700)] px-3 py-1.5 text-xs font-medium text-white hover:bg-[var(--brand-700-hover)] disabled:opacity-60"
-                  >
-                    {importingId === book.id ? '...' : t('skillBook.store.import')}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => void handleImport(book.id, false)}
+                      disabled={importingId === book.id}
+                      className="rounded-md bg-[var(--brand-700)] px-3 py-1.5 text-xs font-medium text-white hover:bg-[var(--brand-700-hover)] disabled:opacity-60"
+                    >
+                      {importingId === book.id ? '...' : t('skillBook.store.import')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleImport(book.id, true)}
+                      disabled={importingId === book.id}
+                      className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                    >
+                      {t('skillBook.store.importAndActivate')}
+                    </button>
+                  </>
                 ) : (
                   <Link
                     href="/"

@@ -396,7 +396,10 @@
       "alreadyImported": "This Skill Book is already in your account.",
       "importFailed": "Could not copy this Skill Book. Please try again.",
       "loadFailed": "Could not load Skill Book Store. Please try again.",
-      "loginToImport": "Login to Copy"
+      "loginToImport": "Login to Copy",
+      "importAndActivate": "Copy & Activate",
+      "activatedTitle": "Skill Book Activated",
+      "activatedMessage": "The copied Skill Book is now active for chat."
     },
     "builder": {
       "title": "Modo de Creación de Skill Book",
