@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { normalizeSkillBookDocuments, SKILLBOOK_LIMITS } from '@/lib/skillBookValidation';
+import { normalizeSkillBookDocuments, normalizeSkillBookTextPatch } from '@/lib/skillBookValidation';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -50,14 +50,9 @@ export async function PUT(req: Request, { params }: Params) {
     isPublic?: boolean;
   };
 
-  if (name !== undefined && typeof name !== 'string') {
-    return NextResponse.json({ error: 'name must be a string' }, { status: 400 });
-  }
-  if (description !== undefined && typeof description !== 'string') {
-    return NextResponse.json({ error: 'description must be a string' }, { status: 400 });
-  }
-  if (instructions !== undefined && typeof instructions !== 'string') {
-    return NextResponse.json({ error: 'instructions must be a string' }, { status: 400 });
+  const text = normalizeSkillBookTextPatch({ name, description, instructions });
+  if (!text.ok) {
+    return NextResponse.json({ error: text.error }, { status: 400 });
   }
 
   const normalizedDocs = documents !== undefined ? normalizeSkillBookDocuments(documents) : null;
@@ -68,9 +63,7 @@ export async function PUT(req: Request, { params }: Params) {
   const skillBook = await prisma.skillBook.update({
     where: { id },
     data: {
-      ...(name !== undefined && { name: name.trim().slice(0, SKILLBOOK_LIMITS.nameMax) }),
-      ...(description !== undefined && { description: description.trim().slice(0, SKILLBOOK_LIMITS.descriptionMax) }),
-      ...(instructions !== undefined && { instructions: instructions.trim().slice(0, SKILLBOOK_LIMITS.instructionsMax) }),
+      ...text.value,
       ...(normalizedDocs && normalizedDocs.ok && { documents: JSON.stringify(normalizedDocs.value) }),
       ...(isPublic !== undefined && { isPublic: Boolean(isPublic) }),
     },

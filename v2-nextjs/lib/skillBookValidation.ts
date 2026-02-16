@@ -60,3 +60,35 @@ export function normalizeSkillBookText(
     },
   };
 }
+
+export function normalizeSkillBookTextPatch(input: {
+  name?: unknown;
+  description?: unknown;
+  instructions?: unknown;
+}): {
+  ok: true;
+  value: Partial<{ name: string; description: string; instructions: string }>;
+} | { ok: false; error: string } {
+  const output: Partial<{ name: string; description: string; instructions: string }> = {};
+
+  if (input.name !== undefined) {
+    if (typeof input.name !== 'string') return { ok: false, error: 'name must be a string' };
+    const normalizedName = input.name.trim();
+    if (!normalizedName) return { ok: false, error: 'name cannot be empty' };
+    output.name = normalizedName.slice(0, SKILLBOOK_LIMITS.nameMax);
+  }
+
+  if (input.description !== undefined) {
+    if (typeof input.description !== 'string') return { ok: false, error: 'description must be a string' };
+    output.description = input.description.trim().slice(0, SKILLBOOK_LIMITS.descriptionMax);
+  }
+
+  if (input.instructions !== undefined) {
+    if (typeof input.instructions !== 'string') return { ok: false, error: 'instructions must be a string' };
+    const normalizedInstructions = input.instructions.trim();
+    if (!normalizedInstructions) return { ok: false, error: 'instructions cannot be empty' };
+    output.instructions = normalizedInstructions.slice(0, SKILLBOOK_LIMITS.instructionsMax);
+  }
+
+  return { ok: true, value: output };
+}
