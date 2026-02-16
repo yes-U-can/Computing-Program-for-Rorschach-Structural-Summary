@@ -6,7 +6,6 @@ import type { RorschachResponse } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { SCORING_CONFIG } from '@/lib/constants';
-import { ROW_COLORS } from '@/lib/colors';
 import InputRow from './InputRow';
 import Button from '@/components/ui/Button';
 import Tooltip from '@/components/ui/Tooltip';
@@ -107,7 +106,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
   const gphrTooltipText = t('input.gphrTooltip');
 
   const { showToast } = useToast();
-  const rows = ROW_COLORS.light;
   const [editingResponseIndex, setEditingResponseIndex] = useState<number | null>(null);
   const portalRoot = typeof document !== 'undefined' ? document.body : null;
 
@@ -239,12 +237,12 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr style={{ backgroundColor: rows.header }}>
+            <tr style={{ backgroundColor: '#C1D2DC' }}>
               {headers.map((h) => (
                 <th
                   key={h.key}
-                  className={`px-2 py-3 text-center text-[11px] font-semibold text-slate-500 uppercase tracking-wider ${h.className}`}
-                  style={{ borderBottom: '1px solid #e2e8f0' }}
+                  className={`px-2 py-3 text-center text-[11px] font-semibold uppercase tracking-wider ${h.className}`}
+                  style={{ borderBottom: '2px solid #A8BCC8', color: '#2A5F7F' }}
                 >
                   {h.tooltip ? (
                     <Tooltip content={h.tooltip}>
@@ -267,7 +265,6 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
                 zScore={calculatedData[index].zScore}
                 gphr={calculatedData[index].gphr}
                 onResponseClick={openResponsePopup}
-                rowBg={index % 2 === 0 ? rows.odd : rows.even}
               />
             ))}
           </tbody>
@@ -322,7 +319,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
       )}
 
       {/* Row controls */}
-      <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100" style={{ backgroundColor: rows.header }}>
+      <div className="flex items-center justify-between px-5 py-3 border-t border-slate-200" style={{ backgroundColor: '#F7F9FB' }}>
         <p className="text-xs text-slate-500 pr-4 whitespace-pre-line">{t('input.rowOrderTip')}</p>
         <div className="flex items-center gap-3">
           {/* Tooltip info icon */}

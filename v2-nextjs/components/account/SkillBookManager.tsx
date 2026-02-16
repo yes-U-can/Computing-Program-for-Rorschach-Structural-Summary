@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { CheckCircleIcon, PencilSquareIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
@@ -47,6 +47,8 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   const [books, setBooks] = useState<SkillBookSummary[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [visibilityFilter, setVisibilityFilter] = useState<'all' | 'public' | 'private'>('all');
 
   // Edit/Create state
   const [editing, setEditing] = useState<SkillBookFull | null>(null);
@@ -170,6 +172,23 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
     if (Number.isNaN(date.getTime())) return dateString;
     return new Intl.DateTimeFormat(language, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
   }, [language]);
+
+  const filteredBooks = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return books.filter((book) => {
+      const visibilityMatched =
+        visibilityFilter === 'all' ||
+        (visibilityFilter === 'public' && book.isPublic) ||
+        (visibilityFilter === 'private' && !book.isPublic);
+
+      const queryMatched =
+        !query ||
+        book.name.toLowerCase().includes(query) ||
+        book.description.toLowerCase().includes(query);
+
+      return visibilityMatched && queryMatched;
+    });
+  }, [books, searchQuery, visibilityFilter]);
 
   const handleEdit = async (id: string) => {
     const res = await fetch(`/api/skillbooks/${id}`);
@@ -636,6 +655,25 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
         {t('skillBook.myBooks.subtitle')}
       </p>
 
+      <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t('skillBook.myBooks.searchPlaceholder')}
+          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700"
+        />
+        <select
+          value={visibilityFilter}
+          onChange={(e) => setVisibilityFilter(e.target.value as 'all' | 'public' | 'private')}
+          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+        >
+          <option value="all">{t('skillBook.myBooks.filterAll')}</option>
+          <option value="public">{t('skillBook.myBooks.filterPublic')}</option>
+          <option value="private">{t('skillBook.myBooks.filterPrivate')}</option>
+        </select>
+      </div>
+
       {/* Default Skill Book */}
       <div
         className={`flex items-center justify-between rounded-md border p-3 ${
@@ -667,7 +705,7 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
       </div>
 
       {/* User Skill Books */}
-      {books.map((book) => (
+      {filteredBooks.map((book) => (
         <div
           key={book.id}
           className={`flex items-center justify-between rounded-md border p-3 ${
@@ -730,9 +768,9 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
         </div>
       ))}
 
-      {books.length === 0 && (
+      {filteredBooks.length === 0 && (
         <p className="text-center text-sm text-slate-400 py-4">
-          {t('skillBook.myBooks.empty')}
+          {books.length === 0 ? t('skillBook.myBooks.empty') : t('skillBook.myBooks.noMatches')}
         </p>
       )}
 

@@ -23,6 +23,7 @@ export default function SkillBookStorePanel() {
   const [loading, setLoading] = useState(true);
   const [books, setBooks] = useState<PublicSkillBook[]>([]);
   const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'updated' | 'name'>('updated');
   const [importingId, setImportingId] = useState<string | null>(null);
 
   const loadBooks = useCallback(async () => {
@@ -50,11 +51,19 @@ export default function SkillBookStorePanel() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return books;
-    return books.filter((book) =>
+    const base = !q
+      ? books
+      : books.filter((book) =>
       [book.name, book.description, book.authorName].some((v) => v.toLowerCase().includes(q)),
     );
-  }, [books, query]);
+
+    return [...base].sort((a, b) => {
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      }
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
+  }, [books, query, sortBy]);
 
   const formatDate = useCallback((value: string) => {
     const date = new Date(value);
@@ -123,12 +132,22 @@ export default function SkillBookStorePanel() {
       </div>
       <p className="mt-1 text-sm text-slate-600">{t('skillBook.store.subtitle')}</p>
 
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={t('skillBook.store.searchPlaceholder')}
-        className="mt-4 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/20"
-      />
+      <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('skillBook.store.searchPlaceholder')}
+          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-500)]/20"
+        />
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as 'updated' | 'name')}
+          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+        >
+          <option value="updated">{t('skillBook.store.sortUpdated')}</option>
+          <option value="name">{t('skillBook.store.sortName')}</option>
+        </select>
+      </div>
 
       {loading ? (
         <div className="mt-4 h-24 animate-pulse rounded-md bg-slate-100" />

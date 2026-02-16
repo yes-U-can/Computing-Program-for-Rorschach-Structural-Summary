@@ -399,7 +399,9 @@
       "loginToImport": "Login to Copy",
       "importAndActivate": "Copy & Activate",
       "activatedTitle": "Skill Book Activated",
-      "activatedMessage": "The copied Skill Book is now active for chat."
+      "activatedMessage": "The copied Skill Book is now active for chat.",
+      "sortUpdated": "Sort: Recently Updated",
+      "sortName": "Sort: Name"
     },
     "builder": {
       "title": "Modo de Criação de Skill Book",
@@ -460,7 +462,12 @@
       "import": "Import JSON",
       "importedTitle": "Skill Book Imported",
       "importedMessage": "Skill Book was imported successfully.",
-      "importFailed": "Failed to import Skill Book JSON. Check file format and try again."
+      "importFailed": "Failed to import Skill Book JSON. Check file format and try again.",
+      "searchPlaceholder": "Search my Skill Books...",
+      "filterAll": "All",
+      "filterPublic": "Public",
+      "filterPrivate": "Private",
+      "noMatches": "No Skill Books match your filter."
     }
   },
   "auth": {

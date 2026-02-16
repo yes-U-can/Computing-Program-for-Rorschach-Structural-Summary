@@ -17,10 +17,9 @@ interface InputRowProps {
   zScore: number | null;
   gphr: string;
   onResponseClick: (index: number) => void;
-  rowBg: string;
 }
 
-const InputRow = memo(function InputRow({ index, response, onChange, zScore, gphr, onResponseClick, rowBg }: InputRowProps) {
+const InputRow = memo(function InputRow({ index, response, onChange, zScore, gphr, onResponseClick }: InputRowProps) {
   const { t } = useTranslation();
 
   const updateField = <K extends keyof RorschachResponse>(
@@ -39,19 +38,15 @@ const InputRow = memo(function InputRow({ index, response, onChange, zScore, gph
 
   return (
     <tr
-      className="border-b border-slate-100/50 hover:bg-slate-50 transition-colors"
-      style={{ backgroundColor: rowBg }}
+      className="border-b border-slate-200 bg-white hover:bg-[#C1D2DC]/25 transition-colors"
     >
       {/* Row Number */}
-      <td className="px-2 py-2.5 text-center text-xs font-medium text-slate-400 w-10 tabular-nums">
+      <td className="px-2 py-2.5 text-center text-xs font-semibold w-10 tabular-nums border-r border-slate-100" style={{ color: '#2A5F7F' }}>
         {index + 1}
       </td>
 
       {/* Memo icon */}
-      <td
-        className="px-1 py-1 text-center"
-        style={{ backgroundColor: rowBg }}
-      >
+      <td className="px-1 py-1 text-center">
         <button
           type="button"
           onClick={() => onResponseClick(index)}

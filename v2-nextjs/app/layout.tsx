@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Suspense } from 'react';
 import Script from 'next/script';
 import Providers from '@/components/layout/Providers';
 import { TranslationProvider } from '@/hooks/useTranslation';
@@ -14,7 +15,8 @@ const inter = Inter({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
-const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION;
+const googleSiteVerification =
+  process.env.GOOGLE_SITE_VERIFICATION ?? 'RNxcEfQGpSUiWQhUoTpaiS1UU0UPB9vLwZ1QUurRLMY';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -86,6 +88,7 @@ export default function RootLayout({
 }>) {
   const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const cookieYesScriptUrl = process.env.NEXT_PUBLIC_COOKIEYES_SCRIPT_URL;
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -126,6 +129,23 @@ export default function RootLayout({
         )}
         {gaId && gaId !== 'G-XXXXXXXXXX' && (
           <>
+            {cookieYesScriptUrl ? (
+              <>
+                <Script id="google-consent-default" strategy="beforeInteractive">
+                  {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('consent', 'default', {
+                      ad_storage: 'denied',
+                      ad_user_data: 'denied',
+                      ad_personalization: 'denied',
+                      analytics_storage: 'denied'
+                    });
+                  `}
+                </Script>
+                <Script id="cookieyes" src={cookieYesScriptUrl} strategy="beforeInteractive" />
+              </>
+            ) : null}
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
               strategy="afterInteractive"
@@ -147,7 +167,11 @@ export default function RootLayout({
         <Providers>
           <TranslationProvider>
             <ToastProvider>
-              {gaId && gaId !== 'G-XXXXXXXXXX' ? <GoogleAnalyticsPageView measurementId={gaId} /> : null}
+              {gaId && gaId !== 'G-XXXXXXXXXX' ? (
+                <Suspense fallback={null}>
+                  <GoogleAnalyticsPageView measurementId={gaId} />
+                </Suspense>
+              ) : null}
               {children}
             </ToastProvider>
           </TranslationProvider>

@@ -1,7 +1,7 @@
 import { Category, InfoCategory, InfoNode } from '@/types';
 
 /**
- * Rorschach Structural Summary Calculator v2.0.0
+ * Computing Program for Rorschach Structural Summary v2.0.0
  * Constants and Configuration
  * 
  * Code.gs의 SCORING_CONFIG를 TypeScript로 이전

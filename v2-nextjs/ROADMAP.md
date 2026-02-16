@@ -1,4 +1,4 @@
-# Rorschach Structural Summary Calculator — Roadmap
+# Computing Program for Rorschach Structural Summary — Roadmap
 
 > Last updated: 2026-02-15 (evening)
 

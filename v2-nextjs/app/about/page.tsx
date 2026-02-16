@@ -36,174 +36,184 @@ type AboutContent = {
 const CONTENT: Record<Language, AboutContent> = {
   ko: {
     title: '서비스 소개',
-    subtitle: '로샤(Rorschach) 심리검사의 구조요약 계산과 AI 해석 보조를 지원하는 무료 웹 도구입니다.',
+    subtitle: '로샤 구조요약 계산 도우미(Computing Program for Rorschach Structural Summary)는 로르샤흐 심리검사 Exner 종합체계(Comprehensive System, CS)의 구조요약(Structural Summary)을 자동 계산하고, AI 기반 해석 보조 기능을 제공하는 무료 웹 도구입니다. 본 서비스는 로르샤흐 검사에 기반한 계산 프로그램으로, 임상심리전문가, 상담심리사, 수련생 등 실제 현장에서 로샤 검사를 활용하는 전문가를 주요 대상으로 설계되었습니다.',
     sections: [
       {
-        heading: '이 서비스는 무엇인가요?',
+        heading: '왜 이 서비스가 필요한가요?',
         paragraphs: [
-          '본 서비스는 로샤 심리검사 Exner 종합체계(CS)의 구조요약(Structural Summary)을 자동 계산해주는 온라인 도구입니다. 임상심리전문가, 상담심리사, 수련생 등 로샤 검사를 실무에서 활용하는 전문가들을 위해 만들어졌습니다.',
-          '채점 결과 입력만으로 구조요약의 모든 변수 — 위치, 결정인, 형태질, 특수점수, 6대 특수지표(PTI, DEPI, CDI, S-CON, HVI, OBS) 등 — 를 즉시 산출하며, 계산 결과를 바탕으로 AI에게 해석을 요청할 수 있는 기능도 제공합니다.',
+          '로르샤흐 검사는 개인의 성격 구조와 심리 역동을 깊이 있게 이해할 수 있도록 돕는 중요한 심리평가 도구입니다. 그러나 Exner 종합체계에 따른 구조요약 계산 과정은 복잡하고 반복적인 수작업을 요구하며, 상당한 시간과 집중력을 필요로 합니다. 변수 간 관계를 정확히 산출하고 지표를 종합하는 과정에서 계산 부담과 오류 가능성도 존재합니다.',
+          '로샤 구조요약 계산 도우미는 이러한 계산 부담을 줄이고, 전문가가 해석과 임상적 판단에 더 집중할 수 있도록 돕기 위해 개발되었습니다. 채점 결과를 입력하면 위치, 결정인, 형태질, 특수점수, 6대 특수지표(PTI, DEPI, CDI, S-CON, HVI, OBS)를 포함한 구조요약 핵심 변수를 자동으로 산출합니다.',
         ],
       },
       {
-        heading: '왜 만들었나요?',
+        heading: 'AI 해석 보조는 어디까지인가요?',
         paragraphs: [
-          '로샤 검사는 심리평가에서 매우 중요한 도구이지만, 구조요약 계산 과정이 복잡하고 시간이 많이 소요됩니다. 기존의 채점 보조 도구들은 대부분 유료로 제공되어 왔습니다.',
-          '그러나 로샤 검사 자체는 MMPI와 달리 저작권이 있는 검사가 아닙니다. 계산 수식은 공개된 학술 자료에 기반하며, 이를 소프트웨어로 구현하는 데에 라이선스 제한이 없습니다. 그럼에도 전문가들이 유료 도구에 의존해야 하는 상황이 안타까워, 처음부터 무료 공개를 목표로 이 프로젝트를 시작했습니다.',
-          '나아가, 구조요약 계산을 넘어 AI 기반 해석 보조라는 새로운 가능성을 탐색하고 있습니다. 전문가가 직접 자신의 API 키를 사용하여 GPT-4o, Gemini, Claude 등의 LLM에 채점 결과를 전달하고, 해석에 참고할 수 있는 응답을 받을 수 있습니다.',
+          '본 서비스는 계산된 구조요약 결과를 바탕으로 AI 기반 해석 보조 기능을 제공합니다. 사용자는 본인의 API 키를 등록하여 OpenAI, Google, Anthropic 등의 LLM을 활용할 수 있습니다. API 키는 암호화되어 저장되며, AI 요청이 발생할 때에만 서버를 통해 해당 LLM API를 호출합니다.',
+          'AI 응답은 해석을 돕기 위한 참고 자료일 뿐, 독립적인 임상 판단이나 공식 진단을 대체하지 않습니다. 최종 해석과 책임은 해당 전문가에게 있습니다. 본 서비스는 전문가의 판단을 지원하는 도구이지, 판단을 대신하는 시스템이 아닙니다.',
         ],
       },
       {
-        heading: '누가 만들었나요?',
+        heading: '스킬북과 AI 해석 생태계',
         paragraphs: [
-          '본 프로젝트는 서울임상심리연구소(Seoul Institute of Clinical Psychology, SICP)의 주관으로 개발되었습니다. 임상심리 전문가의 도메인 지식과, 소프트웨어 엔지니어링 및 디자인 역량을 갖춘 개발자의 협업으로 탄생했습니다.',
-          '채점 로직은 Exner 종합체계의 공식 참고 자료에 기반하여 직접 구현되었으며, 레거시 버전(Google Apps Script)에서 현재의 Next.js 웹앱으로 이전하는 과정에서 계산 결과의 1:1 일치를 교차 검증하였습니다.',
+          '로샤 구조요약 계산 도우미는 단순한 계산기를 넘어, 전문가 중심의 AI 해석 플랫폼으로 운영됩니다. 사용자는 자신의 해석 노하우를 체계화한 스킬북(Skill Book)을 직접 생성하고 활용할 수 있습니다.',
+          '스킬북은 AI에게 전달되는 지시문(Instructions)과 참고 문서(Documents)로 구성됩니다. 전문가는 자신의 임상적 관점, 해석 기준, 개념적 틀, 참고 자료 등을 구조화하여 스킬북에 반영할 수 있으며, AI는 해당 스킬북을 기반으로 해석 보조 응답을 생성합니다. 이를 통해 동일한 구조요약이라도 전문가의 이론적 배경과 해석 스타일이 반영된 결과를 얻을 수 있습니다.',
+          '또한 스킬북 스토어를 통해 다른 전문가의 스킬북을 공유하거나 거래할 수 있습니다. 다양한 임상 경험과 문화적 배경을 가진 전문가들의 해석 체계가 축적되면서, 문화권마다 다른 로르샤흐 해석 맥락을 반영한 가이드가 형성됩니다.',
+          '이러한 구조를 통해 본 서비스는 단순 계산 도구를 넘어, 전문가 간 지식이 축적되고 확장되는 AI 해석 생태계를 지향합니다.',
         ],
       },
       {
-        heading: '앞으로의 방향',
+        heading: '광고 및 운영 주체',
         paragraphs: [
-          '본 서비스는 단순한 계산기를 넘어, 로샤 해석을 돕는 AI 플랫폼으로 발전하고자 합니다. 전문가들이 자신만의 해석 노하우를 체계화한 "스킬북(Skill Book)"을 만들고, 이를 공유하거나 거래할 수 있는 마켓플레이스를 준비하고 있습니다.',
-          '문화권마다 다른 로샤 해석의 특성을 반영하여, 다양한 언어와 문화적 맥락에 맞는 해석 가이드가 축적되는 생태계를 지향합니다.',
+          '비로그인 사용자에게는 Google AdSense 광고가 표시될 수 있으며, 로그인 사용자에게는 광고가 표시되지 않습니다. 로그인은 API 키 관리 및 AI 채팅 히스토리 저장을 위한 기능입니다.',
+          '본 서비스의 운영 주체는 서울임상심리연구소(Seoul Institute of Clinical Psychology, SICP)이며, 기획과 개발은 모오(MOW)가 담당했습니다.',
         ],
       },
     ],
-    disclaimer: '본 서비스의 모든 결과는 참고 자료로서 제공되며, 독립적인 임상 판단이나 공식 진단을 대체하지 않습니다.',
+    disclaimer: 'AI 응답은 해석을 돕기 위한 참고 자료일 뿐, 독립적인 임상 판단이나 공식 진단을 대체하지 않습니다. 최종 해석과 책임은 해당 전문가에게 있습니다.',
   },
   en: {
     title: 'About',
-    subtitle: 'A free web tool for Rorschach Structural Summary calculation and AI-assisted interpretation.',
+    subtitle: 'Computing Program for Rorschach Structural Summary is a free web-based tool designed to automate Structural Summary calculations under the Rorschach Comprehensive System (Exner CS) and to provide AI-assisted interpretation support. The platform is primarily intended for licensed clinical psychologists, counseling psychologists, and trainees who use the Rorschach test in professional practice.',
     sections: [
       {
-        heading: 'What is this service?',
+        heading: 'Why is this service needed?',
         paragraphs: [
-          'This service is an online tool that automatically computes the Structural Summary of the Rorschach Inkblot Test based on the Exner Comprehensive System (CS). It is built for clinical psychologists, counseling psychologists, and trainees who use the Rorschach in their professional practice.',
-          'Simply enter your coded responses and the tool instantly calculates all Structural Summary variables — location, determinants, form quality, special scores, and the six special indices (PTI, DEPI, CDI, S-CON, HVI, OBS). You can also ask an AI assistant to help interpret the results.',
+          'The Rorschach test is a powerful psychological assessment tool that allows clinicians to explore personality structure and underlying psychological dynamics. However, calculating the Structural Summary under the Exner Comprehensive System is complex, time-consuming, and detail-intensive. The process requires careful integration of multiple variables and indices, creating both cognitive burden and potential for calculation error.',
+          'Computing Program for Rorschach Structural Summary was developed to reduce this computational workload so that professionals can focus more on interpretation and clinical judgment. By entering scoring data, users can instantly generate key Structural Summary variables, including Location, Determinants, Form Quality, Special Scores, and the six major indices (PTI, DEPI, CDI, S-CON, HVI, OBS).',
         ],
       },
       {
-        heading: 'Why was it created?',
+        heading: 'AI Interpretation Support — What It Is and What It Is Not',
         paragraphs: [
-          'The Rorschach test is one of the most important tools in psychological assessment, but computing the Structural Summary is complex and time-consuming. Most existing scoring tools have been offered as paid software.',
-          'Unlike the MMPI, the Rorschach test itself is not a proprietary instrument. The scoring formulas are based on published academic literature, and there are no licensing restrictions on implementing them in software. Despite this, professionals have had to rely on paid tools — which is why this project was started with the goal of being free and open from day one.',
-          'Beyond calculation, we are exploring AI-assisted interpretation as a new frontier. Professionals can use their own API keys to send scoring results to LLMs like GPT-4o, Gemini, or Claude and receive contextual feedback to inform their clinical work.',
+          'The platform provides AI-assisted interpretation support based on the calculated Structural Summary results. Users may register their own API keys to access large language models such as OpenAI, Google, and Anthropic. API keys are securely encrypted and are only used to process AI requests when initiated by the user.',
+          'AI-generated responses are provided strictly as interpretive references. They do not replace independent clinical judgment or formal diagnosis. Final interpretive decisions and professional responsibility remain with the clinician. The system is designed to support professional reasoning, not to substitute it.',
         ],
       },
       {
-        heading: 'Who built it?',
+        heading: 'Skill Books and the AI Interpretation Ecosystem',
         paragraphs: [
-          'This project was developed under the auspices of the Seoul Institute of Clinical Psychology (SICP). It is a collaboration between a clinical psychology domain expert and a developer with expertise in software engineering and design.',
-          'The scoring logic was implemented directly from official Exner CS reference materials. During the migration from the legacy version (Google Apps Script) to the current Next.js web application, calculation outputs were cross-verified to ensure 1:1 parity.',
+          'Beyond automated calculation, Computing Program for Rorschach Structural Summary operates as a clinician-centered AI interpretation platform. Users can create and apply their own Skill Books — structured representations of their interpretive frameworks and professional expertise.',
+          'A Skill Book consists of Instructions and reference Documents provided to the AI model. Clinicians can encode their theoretical orientation, interpretive principles, preferred conceptual frameworks, and reference materials into a Skill Book. The AI then generates responses aligned with that structured guidance. This allows identical Structural Summary data to yield interpretations that reflect the clinician\'s theoretical perspective and style.',
+          'Through the Skill Book Store, professionals can share or exchange Skill Books with others. As diverse clinical approaches and cultural contexts accumulate, the platform fosters an evolving ecosystem of interpretation guides that reflect different theoretical traditions and cultural frameworks in Rorschach interpretation.',
         ],
       },
       {
-        heading: 'What comes next?',
+        heading: 'Advertising and Governance',
         paragraphs: [
-          'This service aims to grow beyond a simple calculator into an AI platform for Rorschach interpretation. We are preparing a "Skill Book" system where professionals can systematize their interpretation expertise and share or trade it in a marketplace.',
-          'We envision an ecosystem where interpretation guides tailored to different languages and cultural contexts can accumulate, reflecting the cultural diversity inherent in Rorschach interpretation.',
+          'Google AdSense advertisements may be displayed to non-logged-in users. Logged-in users do not see advertisements. User accounts are used for API key management and AI chat history storage.',
+          'The service is operated by the Seoul Institute of Clinical Psychology (SICP). Planning and development were carried out by MOW.',
         ],
       },
     ],
-    disclaimer: 'All outputs provided by this service are for reference only and do not replace independent clinical judgment or formal diagnosis.',
+    disclaimer: 'AI-generated responses are provided strictly as interpretive references. They do not replace independent clinical judgment or formal diagnosis. Final interpretive decisions and professional responsibility remain with the clinician.',
   },
   ja: {
     title: 'サービス紹介',
-    subtitle: 'ロールシャッハ心理検査の構造要約計算とAI解釈支援を提供する無料Webツールです。',
+    subtitle: 'Computing Program for Rorschach Structural Summaryは、ロールシャッハ・テスト Exner包括システム（Comprehensive System, CS）に基づく構造要約（Structural Summary）の自動計算およびAIによる解釈支援機能を提供する無料のウェブツールです。本サービスは、臨床心理士、公認心理師、カウンセラー、研修中の専門家など、実務においてロールシャッハ検査を活用する専門家を主な対象として設計されています。',
     sections: [
       {
-        heading: 'このサービスとは？',
+        heading: 'なぜこのサービスが必要なのでしょうか',
         paragraphs: [
-          '本サービスは、ロールシャッハ・インクブロットテストのExner包括システム(CS)に基づく構造要約(Structural Summary)を自動計算するオンラインツールです。臨床心理士、カウンセラー、研修生など、ロールシャッハを実務で活用する専門家のために作られました。',
-          'コーディングされた反応を入力するだけで、位置、決定因、形態水準、特殊スコア、6つの特殊指標(PTI、DEPI、CDI、S-CON、HVI、OBS)など、構造要約のすべての変数を即座に算出します。また、AIアシスタントに結果の解釈を依頼することもできます。',
+          'ロールシャッハ検査は、人格構造や心理力動を深く理解するための重要な心理アセスメント手法です。しかし、Exner包括システムに基づく構造要約の算出は複雑で、多くの時間と注意を要する作業です。複数の変数や指標を正確に統合する必要があり、計算負担やヒューマンエラーのリスクも伴います。',
+          'Computing Program for Rorschach Structural Summaryは、この計算負担を軽減し、専門家が解釈と臨床判断により集中できるよう支援するために開発されました。採点データを入力することで、位置、決定因、形態水準、特殊得点、6つの主要指標（PTI、DEPI、CDI、S-CON、HVI、OBS）を含む主要な構造要約変数を即座に算出できます。',
         ],
       },
       {
-        heading: 'なぜ作られたのか？',
+        heading: 'AIによる解釈支援について',
         paragraphs: [
-          'ロールシャッハテストは心理評価において非常に重要なツールですが、構造要約の計算は複雑で時間がかかります。既存の採点支援ツールのほとんどは有料で提供されてきました。',
-          'MMPIとは異なり、ロールシャッハテスト自体は著作権のある検査ではありません。採点式は公開された学術文献に基づいており、ソフトウェアへの実装にライセンス制限はありません。それにもかかわらず専門家が有料ツールに頼らざるを得ない状況を変えるため、当初から無料公開を目標にこのプロジェクトを開始しました。',
+          '本サービスは、算出された構造要約結果に基づき、AIによる解釈支援機能を提供します。利用者は自身のAPIキーを登録し、OpenAI、Google、Anthropicなどの大規模言語モデルを活用することができます。APIキーは暗号化して保存され、利用者がリクエストを行った場合にのみ使用されます。',
+          'AIが生成する応答は、あくまで解釈を補助する参考情報として提供されるものであり、独立した臨床判断や正式な診断を代替するものではありません。最終的な判断と責任は専門家に帰属します。本サービスは専門家の思考を支援するツールであり、判断を代行するものではありません。',
         ],
       },
       {
-        heading: '誰が作ったのか？',
+        heading: 'スキルブックとAI解釈エコシステム',
         paragraphs: [
-          '本プロジェクトはソウル臨床心理研究所(SICP)の主管のもと開発されました。臨床心理の専門知識とソフトウェアエンジニアリング・デザインの専門性を持つ開発者の協業により誕生しました。',
+          'Computing Program for Rorschach Structural Summaryは、単なる計算ツールにとどまらず、専門家主導のAI解釈プラットフォームとして運営されています。利用者は、自身の解釈ノウハウを体系化したスキルブック（Skill Book）を作成し、活用することができます。',
+          'スキルブックは、AIに提供される指示文（Instructions）および参照資料（Documents）で構成されます。理論的立場、解釈基準、概念枠組み、参考文献などを構造化して登録することで、AIはその枠組みに沿った解釈支援応答を生成します。同一の構造要約データであっても、専門家の理論背景や解釈スタイルが反映された結果を得ることが可能です。',
+          'さらに、スキルブックストアを通じて他の専門家のスキルブックを共有または取引することができます。異なる理論的立場や文化的背景を反映した解釈ガイドが蓄積されることで、多様なロールシャッハ解釈のエコシステムが形成されます。',
         ],
       },
       {
-        heading: '今後の方向性',
+        heading: '広告および運営主体',
         paragraphs: [
-          '本サービスは単なる計算機を超え、ロールシャッハ解釈を支援するAIプラットフォームへと発展することを目指しています。専門家が自身の解釈ノウハウを体系化した「スキルブック」を作成し、共有・取引できるマーケットプレイスを準備しています。',
+          'ログインしていない利用者にはGoogle AdSense広告が表示される場合があります。ログインユーザーには広告は表示されません。アカウントはAPIキー管理およびAIチャット履歴保存のために使用されます。',
+          '本サービスはソウル臨床心理研究所（Seoul Institute of Clinical Psychology, SICP）が運営し、企画および開発はMOWが担当しています。',
         ],
       },
     ],
-    disclaimer: '本サービスのすべての結果は参考情報として提供されるものであり、独立した臨床判断や公式な診断に代わるものではありません。',
+    disclaimer: 'AIが生成する応答は、あくまで解釈を補助する参考情報として提供されるものであり、独立した臨床判断や正式な診断を代替するものではありません。最終的な判断と責任は専門家に帰属します。',
   },
   es: {
     title: 'Acerca de',
-    subtitle: 'Herramienta web gratuita para el calculo del Sumario Estructural de Rorschach y asistencia de interpretacion con IA.',
+    subtitle: 'Computing Program for Rorschach Structural Summary es una herramienta web gratuita diseñada para automatizar el cálculo del Resumen Estructural conforme al Sistema Comprensivo de Exner (Comprehensive System, CS) del Test de Rorschach, e integrar funciones de apoyo interpretativo mediante inteligencia artificial. La plataforma está orientada principalmente a psicólogos clínicos, psicólogos orientadores y profesionales en formación que utilizan el Rorschach en su práctica profesional.',
     sections: [
       {
-        heading: 'Que es este servicio?',
+        heading: '¿Por qué es necesario este servicio?',
         paragraphs: [
-          'Este servicio es una herramienta en linea que calcula automaticamente el Sumario Estructural del Test de Rorschach basado en el Sistema Comprehensivo de Exner (CS). Esta disenado para psicologos clinicos, psicologos consejeros y estudiantes en formacion que utilizan el Rorschach en su practica profesional.',
-          'Simplemente ingrese sus respuestas codificadas y la herramienta calcula instantaneamente todas las variables del Sumario Estructural, incluyendo los seis indices especiales (PTI, DEPI, CDI, S-CON, HVI, OBS). Tambien puede solicitar a un asistente de IA que ayude a interpretar los resultados.',
+          'El Test de Rorschach es un instrumento fundamental en la evaluación psicológica para comprender la estructura de la personalidad y la dinámica intrapsíquica. Sin embargo, el cálculo del Resumen Estructural bajo el Sistema Comprensivo de Exner es un proceso complejo, minucioso y demandante en tiempo. La integración precisa de múltiples variables e índices implica una carga técnica considerable y la posibilidad de errores de cálculo.',
+          'El Computing Program for Rorschach Structural Summary fue desarrollado para reducir esta carga operativa y permitir que el profesional concentre su atención en la interpretación clínica y el juicio profesional. Al ingresar los datos de puntuación, el sistema genera automáticamente las principales variables del Resumen Estructural, incluyendo Localización, Determinantes, Calidad Formal, Puntuaciones Especiales y los seis índices principales (PTI, DEPI, CDI, S-CON, HVI, OBS).',
         ],
       },
       {
-        heading: 'Por que fue creado?',
+        heading: 'Alcance del apoyo interpretativo con IA',
         paragraphs: [
-          'El test de Rorschach es una de las herramientas mas importantes en la evaluacion psicologica, pero calcular el Sumario Estructural es complejo y consume mucho tiempo. La mayoria de las herramientas de puntuacion existentes han sido software de pago.',
-          'A diferencia del MMPI, el test de Rorschach en si no es un instrumento con derechos de autor. Las formulas de puntuacion se basan en literatura academica publicada. Este proyecto se inicio con el objetivo de ser gratuito y abierto desde el primer dia.',
+          'La plataforma ofrece apoyo interpretativo asistido por inteligencia artificial basado en los resultados calculados del Resumen Estructural. El usuario puede registrar su propia clave API para utilizar modelos de lenguaje de gran escala como OpenAI, Google o Anthropic. Las claves API se almacenan de forma cifrada y solo se utilizan cuando el usuario realiza una solicitud específica.',
+          'Las respuestas generadas por la IA se proporcionan exclusivamente como material de referencia para apoyar el análisis interpretativo. No sustituyen el juicio clínico independiente ni constituyen un diagnóstico formal. La responsabilidad final de la interpretación recae siempre en el profesional. El sistema está diseñado para apoyar el razonamiento clínico, no para reemplazarlo.',
         ],
       },
       {
-        heading: 'Quien lo construyo?',
+        heading: 'Skill Books y el ecosistema de interpretación con IA',
         paragraphs: [
-          'Este proyecto fue desarrollado bajo los auspicios del Seoul Institute of Clinical Psychology (SICP), en colaboracion entre un experto en psicologia clinica y un desarrollador con experiencia en ingenieria de software y diseno.',
+          'Más allá del cálculo automático, el Asistente funciona como una plataforma de interpretación asistida centrada en el profesional. Los usuarios pueden crear y utilizar sus propios Skill Books, que estructuran su marco interpretativo y experiencia clínica.',
+          'Un Skill Book se compone de Instrucciones y Documentos de referencia que se proporcionan al modelo de IA. El profesional puede incorporar su orientación teórica, criterios interpretativos, marcos conceptuales y materiales de apoyo dentro del Skill Book. De este modo, la IA genera respuestas alineadas con dicha estructura. Esto permite que un mismo Resumen Estructural produzca interpretaciones coherentes con la perspectiva teórica y el estilo clínico del profesional.',
+          'A través de la Skill Book Store, los profesionales pueden compartir o intercambiar Skill Books con otros especialistas. La acumulación de enfoques clínicos diversos y contextos culturales distintos favorece la construcción de un ecosistema interpretativo que refleja múltiples tradiciones teóricas y marcos culturales del Rorschach.',
         ],
       },
       {
-        heading: 'Que viene despues?',
+        heading: 'Publicidad y entidad operadora',
         paragraphs: [
-          'Este servicio aspira a crecer mas alla de una simple calculadora hacia una plataforma de IA para la interpretacion de Rorschach. Estamos preparando un sistema de "Skill Books" donde los profesionales pueden sistematizar su experiencia interpretativa y compartirla o comercializarla en un mercado.',
+          'A los usuarios que no han iniciado sesión se les pueden mostrar anuncios de Google AdSense. Los usuarios que han iniciado sesión no visualizan publicidad. Las cuentas se utilizan para la gestión de claves API y el almacenamiento del historial de chat con IA.',
+          'El servicio es operado por el Seoul Institute of Clinical Psychology (SICP). La planificación y el desarrollo fueron realizados por MOW.',
         ],
       },
     ],
-    disclaimer: 'Todos los resultados proporcionados por este servicio son solo de referencia y no reemplazan el juicio clinico independiente ni el diagnostico formal.',
+    disclaimer: 'Las respuestas generadas por la IA se proporcionan exclusivamente como material de referencia. No sustituyen el juicio clínico independiente ni constituyen un diagnóstico formal. La responsabilidad final recae en el profesional.',
   },
   pt: {
     title: 'Sobre',
-    subtitle: 'Ferramenta web gratuita para calculo do Sumario Estrutural de Rorschach e assistencia de interpretacao com IA.',
+    subtitle: 'Computing Program for Rorschach Structural Summary é uma ferramenta web gratuita desenvolvida para automatizar o cálculo do Resumo Estrutural conforme o Sistema Compreensivo de Exner (Comprehensive System, CS) do Teste de Rorschach, além de oferecer suporte interpretativo assistido por inteligência artificial. A plataforma é direcionada principalmente a psicólogos clínicos, psicólogos orientadores e profissionais em formação que utilizam o Rorschach em sua prática profissional.',
     sections: [
       {
-        heading: 'O que e este servico?',
+        heading: 'Por que este serviço é necessário?',
         paragraphs: [
-          'Este servico e uma ferramenta online que calcula automaticamente o Sumario Estrutural do Teste de Rorschach baseado no Sistema Compreensivo de Exner (CS). Foi criado para psicologos clinicos, psicologos conselheiros e estagiarios que utilizam o Rorschach em sua pratica profissional.',
-          'Basta inserir suas respostas codificadas e a ferramenta calcula instantaneamente todas as variaveis do Sumario Estrutural, incluindo os seis indices especiais (PTI, DEPI, CDI, S-CON, HVI, OBS). Voce tambem pode solicitar a um assistente de IA que ajude a interpretar os resultados.',
+          'O Teste de Rorschach é um instrumento fundamental na avaliação psicológica, permitindo a compreensão aprofundada da estrutura da personalidade e da dinâmica psíquica. No entanto, o cálculo do Resumo Estrutural segundo o Sistema Compreensivo de Exner é um processo complexo, detalhado e que exige tempo. A integração precisa de múltiplas variáveis e índices implica uma carga técnica significativa e a possibilidade de erros de cálculo.',
+          'O Computing Program for Rorschach Structural Summary foi desenvolvido para reduzir essa carga operacional, permitindo que o profissional concentre sua atenção na interpretação clínica e no julgamento técnico. Ao inserir os dados de pontuação, o sistema gera automaticamente as principais variáveis do Resumo Estrutural, incluindo Localização, Determinantes, Qualidade Formal, Pontuações Especiais e os seis principais índices (PTI, DEPI, CDI, S-CON, HVI, OBS).',
         ],
       },
       {
-        heading: 'Por que foi criado?',
+        heading: 'Alcance do suporte interpretativo com IA',
         paragraphs: [
-          'O teste de Rorschach e uma das ferramentas mais importantes na avaliacao psicologica, mas calcular o Sumario Estrutural e complexo e demorado. A maioria das ferramentas de pontuacao existentes tem sido software pago.',
-          'Diferente do MMPI, o teste de Rorschach em si nao e um instrumento proprietario. As formulas de pontuacao sao baseadas em literatura academica publicada. Este projeto foi iniciado com o objetivo de ser gratuito e aberto desde o primeiro dia.',
+          'A plataforma oferece suporte interpretativo assistido por inteligência artificial com base nos resultados calculados do Resumo Estrutural. O usuário pode registrar sua própria chave de API para utilizar modelos de linguagem de grande escala, como OpenAI, Google ou Anthropic. As chaves de API são armazenadas de forma criptografada e utilizadas somente quando o usuário realiza uma solicitação específica.',
+          'As respostas geradas pela IA são fornecidas exclusivamente como material de referência para apoiar a análise interpretativa. Elas não substituem o julgamento clínico independente nem constituem diagnóstico formal. A responsabilidade final pela interpretação permanece com o profissional. O sistema foi concebido para apoiar o raciocínio clínico, e não para substituí-lo.',
         ],
       },
       {
-        heading: 'Quem construiu?',
+        heading: 'Skill Books e o ecossistema de interpretação com IA',
         paragraphs: [
-          'Este projeto foi desenvolvido sob os auspicios do Seoul Institute of Clinical Psychology (SICP), em colaboracao entre um especialista em psicologia clinica e um desenvolvedor com experiencia em engenharia de software e design.',
+          'Além do cálculo automatizado, o Assistente opera como uma plataforma de interpretação assistida centrada no profissional. Os usuários podem criar e utilizar seus próprios Skill Books, que estruturam seus referenciais interpretativos e conhecimentos clínicos.',
+          'Um Skill Book é composto por Instruções e Documentos de referência fornecidos ao modelo de IA. O profissional pode incorporar sua orientação teórica, critérios interpretativos, estruturas conceituais e materiais de apoio dentro do Skill Book. Dessa forma, a IA gera respostas alinhadas a essa estrutura. Isso permite que um mesmo Resumo Estrutural produza interpretações coerentes com a perspectiva teórica e o estilo clínico do profissional.',
+          'Por meio da Skill Book Store, profissionais podem compartilhar ou negociar Skill Books com outros especialistas. A incorporação de diferentes abordagens clínicas e contextos culturais contribui para a formação de um ecossistema interpretativo que reflete diversas tradições teóricas e realidades culturais do Rorschach.',
         ],
       },
       {
-        heading: 'O que vem a seguir?',
+        heading: 'Publicidade e entidade operadora',
         paragraphs: [
-          'Este servico aspira crescer alem de uma simples calculadora para uma plataforma de IA para interpretacao de Rorschach. Estamos preparando um sistema de "Skill Books" onde profissionais podem sistematizar sua experiencia interpretativa e compartilha-la ou comercializa-la em um marketplace.',
+          'Usuários que não estão autenticados podem visualizar anúncios do Google AdSense. Usuários autenticados não visualizam publicidade. As contas são utilizadas para gerenciamento de chaves de API e armazenamento do histórico de conversas com IA.',
+          'O serviço é operado pelo Seoul Institute of Clinical Psychology (SICP). O planejamento e o desenvolvimento foram realizados por MOW.',
         ],
       },
     ],
-    disclaimer: 'Todos os resultados fornecidos por este servico sao apenas para referencia e nao substituem julgamento clinico independente nem diagnostico formal.',
+    disclaimer: 'As respostas geradas pela IA são fornecidas exclusivamente como material de referência. Não substituem o julgamento clínico independente nem constituem diagnóstico formal. A responsabilidade final permanece com o profissional.',
   },
 };
 
@@ -217,14 +227,14 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
       <Header />
       <main className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl rounded-lg border border-slate-200 bg-white p-6 sm:p-10">
-          <h1 className="text-3xl font-bold text-slate-900">{content.title}</h1>
-          <p className="mt-3 text-lg text-slate-600">{content.subtitle}</p>
+          <h1 className="text-2xl font-bold text-slate-900">{content.title}</h1>
+          <p className="mt-4 text-[15px] leading-7 text-slate-700">{content.subtitle}</p>
 
-          <div className="mt-8 space-y-10">
+          <div className="mt-8 space-y-8">
             {content.sections.map((section) => (
               <section key={section.heading}>
-                <h2 className="text-xl font-bold text-slate-800">{section.heading}</h2>
-                <div className="mt-3 space-y-3">
+                <h2 className="text-base font-bold text-slate-800">{section.heading}</h2>
+                <div className="mt-2 space-y-3">
                   {section.paragraphs.map((p, i) => (
                     <p key={i} className="text-[15px] leading-7 text-slate-700">{p}</p>
                   ))}
