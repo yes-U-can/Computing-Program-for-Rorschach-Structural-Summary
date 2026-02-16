@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "로샤 구조 요약지 계산기",
+    "title": "로샤 구조요약 계산 도우미",
     "version": "v2.0.0",
     "provider": "서울임상심리연구소 제공"
   },
@@ -34,7 +34,7 @@
   },
   "modal": {
     "welcome": {
-      "title": "로샤 구조 요약지 계산기",
+      "title": "로샤 구조요약 계산 도우미",
       "new": "새로 만들기",
       "loadSample": "샘플 데이터로 시작하기",
       "loadSaved": "자동저장된 내용 불러오기",
@@ -314,7 +314,7 @@
     "summaryTitle": "구조 요약지에 산출된 항목을 모두 csv 형태로 내보냅니다"
   },
   "footer": {
-    "title": "Computing Program for Rorschach Structural Summary",
+    "title": "로샤 구조요약 계산 도우미",
     "copyright": "© 1997–2026 서울임상심리연구소 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
   },
   "codeList": {
@@ -402,7 +402,21 @@
       "export": "내보내기",
       "comingSoon": "준비 중",
       "comingSoonDesc": "스킬북을 만들고, 관리하고, 내보내기(.md)할 수 있는 기능이 곧 추가됩니다.",
-      "empty": "아직 스킬북이 없습니다."
+      "empty": "아직 스킬북이 없습니다.",
+      "name": "Name",
+      "namePlaceholder": "e.g. My Interpretation Guide",
+      "description": "Description",
+      "descriptionOptional": "(optional)",
+      "instructions": "Instructions (System Prompt)",
+      "instructionsPlaceholder": "Write the system prompt that will guide AI behavior...",
+      "create": "Create New Skill Book",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Use",
+      "default": "Default",
+      "useDefault": "Use Default",
+      "defaultOption": "SICP (Default)",
+      "defaultDescription": "Built-in interpretation guidelines by Seoul Institute of Clinical Psychology"
     }
   },
   "auth": {

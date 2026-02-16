@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Calculadora do Sumário Estrutural de Rorschach",
+    "title": "Computing Program for Rorschach Structural Summary",
     "version": "v2.0.0",
     "provider": "Fornecido pelo Instituto de Psicologia Clínica de Seul"
   },
@@ -34,7 +34,7 @@
   },
   "modal": {
     "welcome": {
-      "title": "Calculadora do Sumário Estrutural de Rorschach",
+      "title": "Computing Program for Rorschach Structural Summary",
       "new": "Criar Novo",
       "loadSample": "Iniciar com Dados de Exemplo",
       "loadSaved": "Carregar Conteúdo Salvo Automaticamente",
@@ -314,7 +314,7 @@
     "summaryTitle": "Exportar todos os itens calculados no sumário estrutural em formato CSV"
   },
   "footer": {
-    "title": "Programa de Cálculo do Sumário Estrutural de Rorschach",
+    "title": "Computing Program for Rorschach Structural Summary",
     "copyright": "© 1997–2026 Instituto de Psicologia Clínica de Seul (Seoul Institute of Clinical Psychology, SICP). Todos os direitos reservados."
   },
   "codeList": {
@@ -402,7 +402,21 @@
       "export": "Exportar",
       "comingSoon": "Em Breve",
       "comingSoonDesc": "Crie, gerencie e exporte (.md) seus Skill Books. Este recurso estará disponível em breve.",
-      "empty": "Nenhum Skill Book ainda."
+      "empty": "Nenhum Skill Book ainda.",
+      "name": "Name",
+      "namePlaceholder": "e.g. My Interpretation Guide",
+      "description": "Description",
+      "descriptionOptional": "(optional)",
+      "instructions": "Instructions (System Prompt)",
+      "instructionsPlaceholder": "Write the system prompt that will guide AI behavior...",
+      "create": "Create New Skill Book",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Use",
+      "default": "Default",
+      "useDefault": "Use Default",
+      "defaultOption": "SICP (Default)",
+      "defaultDescription": "Built-in interpretation guidelines by Seoul Institute of Clinical Psychology"
     }
   },
   "auth": {

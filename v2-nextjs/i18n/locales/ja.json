@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "ロールシャッハ構造一覧表計算プログラム",
+    "title": "Computing Program for Rorschach Structural Summary",
     "version": "v2.0.0",
     "provider": "ソウル臨床心理研究所提供"
   },
@@ -34,7 +34,7 @@
   },
   "modal": {
     "welcome": {
-      "title": "ロールシャッハ構造一覧表計算プログラム",
+      "title": "Computing Program for Rorschach Structural Summary",
       "new": "新規作成",
       "loadSample": "サンプルデータで開始",
       "loadSaved": "自動保存された内容を読み込む",
@@ -314,7 +314,7 @@
     "summaryTitle": "構造一覧表に算出されたすべての項目をCSV形式でエクスポートします"
   },
   "footer": {
-    "title": "ロールシャッハ構造一覧表計算プログラム",
+    "title": "Computing Program for Rorschach Structural Summary",
     "copyright": "© 1997–2026 ソウル臨床心理研究所 (Seoul Institute of Clinical Psychology, SICP). All rights reserved."
   },
   "codeList": {
@@ -402,7 +402,21 @@
       "export": "エクスポート",
       "comingSoon": "近日公開",
       "comingSoonDesc": "スキルブックの作成、管理、エクスポート(.md)機能が間もなく追加されます。",
-      "empty": "スキルブックはまだありません。"
+      "empty": "スキルブックはまだありません。",
+      "name": "Name",
+      "namePlaceholder": "e.g. My Interpretation Guide",
+      "description": "Description",
+      "descriptionOptional": "(optional)",
+      "instructions": "Instructions (System Prompt)",
+      "instructionsPlaceholder": "Write the system prompt that will guide AI behavior...",
+      "create": "Create New Skill Book",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Use",
+      "default": "Default",
+      "useDefault": "Use Default",
+      "defaultOption": "SICP (Default)",
+      "defaultDescription": "Built-in interpretation guidelines by Seoul Institute of Clinical Psychology"
     }
   },
   "auth": {

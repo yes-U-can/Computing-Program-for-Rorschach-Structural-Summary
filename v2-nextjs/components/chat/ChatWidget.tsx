@@ -293,10 +293,10 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
             value={activeSkillBookId ?? '__default__'}
             onChange={(e) => void handleSkillBookChange(e.target.value)}
             disabled={status !== 'authenticated' || isSkillBookLoading}
-            aria-label="Skill book"
+            aria-label={t('skillBook.myBooks.title')}
             className="max-w-[140px] rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <option value="__default__">SICP (Default)</option>
+            <option value="__default__">{t('skillBook.myBooks.defaultOption')}</option>
             {skillBooks.map((book) => (
               <option key={book.id} value={book.id}>
                 {book.name}

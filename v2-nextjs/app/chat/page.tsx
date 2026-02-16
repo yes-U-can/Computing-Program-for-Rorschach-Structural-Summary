@@ -302,9 +302,9 @@ export default function ChatPage() {
                   onChange={(e) => void handleSkillBookChange(e.target.value)}
                   disabled={status !== 'authenticated' || isSkillBookLoading}
                   className="max-w-[240px] rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-60"
-                  aria-label="Skill book"
+                  aria-label={t('skillBook.myBooks.title')}
                 >
-                  <option value="__default__">SICP (Default)</option>
+                  <option value="__default__">{t('skillBook.myBooks.defaultOption')}</option>
                   {skillBooks.map((book) => (
                     <option key={book.id} value={book.id}>
                       {book.name}

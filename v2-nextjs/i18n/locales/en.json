@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Rorschach Structural Summary Calculator",
+    "title": "Computing Program for Rorschach Structural Summary",
     "version": "v2.0.0",
     "provider": "Provided by Seoul Institute of Clinical Psychology"
   },
@@ -34,7 +34,7 @@
   },
   "modal": {
     "welcome": {
-      "title": "Rorschach Structural Summary Calculator",
+      "title": "Computing Program for Rorschach Structural Summary",
       "new": "Create New",
       "loadSample": "Start with Sample Data",
       "loadSaved": "Load Auto-saved Content",
@@ -402,7 +402,21 @@
       "export": "Export",
       "comingSoon": "Coming Soon",
       "comingSoonDesc": "Create, manage, and export (.md) your Skill Books. This feature is coming soon.",
-      "empty": "No Skill Books yet."
+      "empty": "No Skill Books yet.",
+      "name": "Name",
+      "namePlaceholder": "e.g. My Interpretation Guide",
+      "description": "Description",
+      "descriptionOptional": "(optional)",
+      "instructions": "Instructions (System Prompt)",
+      "instructionsPlaceholder": "Write the system prompt that will guide AI behavior...",
+      "create": "Create New Skill Book",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Use",
+      "default": "Default",
+      "useDefault": "Use Default",
+      "defaultOption": "SICP (Default)",
+      "defaultDescription": "Built-in interpretation guidelines by Seoul Institute of Clinical Psychology"
     }
   },
   "auth": {
