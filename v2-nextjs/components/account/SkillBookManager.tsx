@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { useRouter } from 'next/navigation';
@@ -40,6 +40,23 @@ type SkillBookManagerProps = {
 };
 
 const MAX_FILE_SIZE = 500 * 1024; // 500KB
+const SKILLBOOK_DRAFT_KEY = 'skillbook:new:draft:v1';
+const SKILLBOOK_DRAFT_SCHEMA_VERSION = 1;
+
+type SkillBookDraft = {
+  name: string;
+  description: string;
+  instructions: string;
+  documents: string;
+  isPublic: boolean;
+  builderProvider: BuilderProvider;
+  builderSources: BuilderSource[];
+};
+
+type SkillBookDraftEnvelope = {
+  v: number;
+  data: SkillBookDraft;
+};
 
 export default function SkillBookManager({ autoCreate = false }: SkillBookManagerProps) {
   const { t, language } = useTranslation();
@@ -67,6 +84,60 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   const [builderTitleInput, setBuilderTitleInput] = useState('');
   const [builderContentInput, setBuilderContentInput] = useState('');
   const [apiKeyStatus, setApiKeyStatus] = useState<ApiKeyStatus>({ openai: false, google: false, anthropic: false });
+  const lastDraftSnapshotRef = useRef<string | null>(null);
+
+  const clearNewForm = useCallback(() => {
+    setEditing(null);
+    setIsNew(true);
+    setFormName('');
+    setFormDesc('');
+    setFormInstructions('');
+    setFormDocuments('[]');
+    setFormIsPublic(false);
+    setBuilderProvider('openai');
+    setBuilderSources([]);
+    setBuilderTitleInput('');
+    setBuilderContentInput('');
+  }, []);
+
+  const clearDraft = useCallback(() => {
+    try {
+      window.localStorage.removeItem(SKILLBOOK_DRAFT_KEY);
+      lastDraftSnapshotRef.current = null;
+    } catch {
+      // no-op
+    }
+  }, []);
+
+  const restoreDraft = useCallback(() => {
+    try {
+      const raw = window.localStorage.getItem(SKILLBOOK_DRAFT_KEY);
+      if (!raw) return false;
+      const envelope = JSON.parse(raw) as Partial<SkillBookDraftEnvelope>;
+      if (envelope.v !== SKILLBOOK_DRAFT_SCHEMA_VERSION || !envelope.data) return false;
+      const draft = envelope.data as Partial<SkillBookDraft>;
+
+      setFormName(typeof draft.name === 'string' ? draft.name : '');
+      setFormDesc(typeof draft.description === 'string' ? draft.description : '');
+      setFormInstructions(typeof draft.instructions === 'string' ? draft.instructions : '');
+      setFormDocuments(typeof draft.documents === 'string' ? draft.documents : '[]');
+      setFormIsPublic(Boolean(draft.isPublic));
+      setBuilderProvider(
+        draft.builderProvider === 'google' || draft.builderProvider === 'anthropic' ? draft.builderProvider : 'openai',
+      );
+      setBuilderSources(
+        Array.isArray(draft.builderSources)
+          ? draft.builderSources.filter((s) => s?.id && s?.title && s?.content)
+          : [],
+      );
+      lastDraftSnapshotRef.current = raw;
+      setBuilderTitleInput('');
+      setBuilderContentInput('');
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
 
   const fetchBooks = useCallback(async () => {
     try {
@@ -97,17 +168,34 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
 
   useEffect(() => {
     if (!autoCreate || loading) return;
-    setEditing(null);
-    setIsNew(true);
-    setFormName('');
-    setFormDesc('');
-    setFormInstructions('');
-    setFormDocuments('[]');
-    setFormIsPublic(false);
-    setBuilderSources([]);
-    setBuilderTitleInput('');
-    setBuilderContentInput('');
-  }, [autoCreate, loading]);
+    clearNewForm();
+    void restoreDraft();
+  }, [autoCreate, loading, clearNewForm, restoreDraft]);
+
+  useEffect(() => {
+    if (!isNew) return;
+    const draft: SkillBookDraft = {
+      name: formName,
+      description: formDesc,
+      instructions: formInstructions,
+      documents: formDocuments,
+      isPublic: formIsPublic,
+      builderProvider,
+      builderSources,
+    };
+    const envelope: SkillBookDraftEnvelope = {
+      v: SKILLBOOK_DRAFT_SCHEMA_VERSION,
+      data: draft,
+    };
+    try {
+      const snapshot = JSON.stringify(envelope);
+      if (snapshot === lastDraftSnapshotRef.current) return;
+      window.localStorage.setItem(SKILLBOOK_DRAFT_KEY, snapshot);
+      lastDraftSnapshotRef.current = snapshot;
+    } catch {
+      // no-op
+    }
+  }, [isNew, formName, formDesc, formInstructions, formDocuments, formIsPublic, builderProvider, builderSources]);
 
   useEffect(() => {
     if (!isNew && !editing) return;
@@ -304,16 +392,8 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   };
 
   const handleNew = () => {
-    setEditing(null);
-    setIsNew(true);
-    setFormName('');
-    setFormDesc('');
-    setFormInstructions('');
-    setFormDocuments('[]');
-    setFormIsPublic(false);
-    setBuilderSources([]);
-    setBuilderTitleInput('');
-    setBuilderContentInput('');
+    clearNewForm();
+    void restoreDraft();
   };
 
   const handleImport = async (file: File) => {
@@ -488,6 +568,7 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
         });
         if (res.ok) {
           showToast({ type: 'success', title: t('buttons.save'), message: t('account.knowledgeSources.saved') });
+          clearDraft();
           setIsNew(false);
           setEditing(null);
           await fetchBooks();
@@ -520,6 +601,9 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   };
 
   const handleCancel = () => {
+    if (isNew) {
+      clearDraft();
+    }
     setEditing(null);
     setIsNew(false);
     setFormDocuments('[]');
