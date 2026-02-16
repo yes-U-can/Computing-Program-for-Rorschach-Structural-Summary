@@ -415,7 +415,8 @@
       "generateFailed": "Could not generate draft. Check API key/provider and try again.",
       "generatedTitle": "Draft generated",
       "generatedMessage": "Instructions and documents were filled automatically.",
-      "fileTooLarge": "File is too large. Max size is 500KB."
+      "fileTooLarge": "File is too large. Max size is 500KB.",
+      "noApiKey": "This provider has no API key in Account settings."
     },
     "myBooks": {
       "title": "내 스킬북",

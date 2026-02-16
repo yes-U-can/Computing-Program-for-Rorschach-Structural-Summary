@@ -32,6 +32,7 @@ type BuilderSource = {
 };
 
 type BuilderProvider = 'openai' | 'google' | 'anthropic';
+type ApiKeyStatus = Record<BuilderProvider, boolean>;
 
 type SkillBookManagerProps = {
   autoCreate?: boolean;
@@ -61,6 +62,7 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   const [builderLoading, setBuilderLoading] = useState(false);
   const [builderTitleInput, setBuilderTitleInput] = useState('');
   const [builderContentInput, setBuilderContentInput] = useState('');
+  const [apiKeyStatus, setApiKeyStatus] = useState<ApiKeyStatus>({ openai: false, google: false, anthropic: false });
 
   const fetchBooks = useCallback(async () => {
     try {
@@ -102,6 +104,31 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
     setBuilderTitleInput('');
     setBuilderContentInput('');
   }, [autoCreate, loading]);
+
+  useEffect(() => {
+    if (!isNew && !editing) return;
+    let cancelled = false;
+    const loadKeyStatus = async () => {
+      try {
+        const res = await fetch('/api/user/keys');
+        if (!res.ok) return;
+        const data = (await res.json()) as ApiKeyStatus;
+        if (!cancelled) {
+          setApiKeyStatus({
+            openai: Boolean(data.openai),
+            google: Boolean(data.google),
+            anthropic: Boolean(data.anthropic),
+          });
+        }
+      } catch {
+        // no-op
+      }
+    };
+    void loadKeyStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [isNew, editing]);
 
   const handleActivate = async (id: string | null) => {
     const res = await fetch('/api/user/active-skillbook', {
@@ -207,6 +234,15 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   }, [addBuilderSource, showToast, t]);
 
   const handleGenerateDraft = useCallback(async () => {
+    if (!apiKeyStatus[builderProvider]) {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.builder.noApiKey'),
+      });
+      return;
+    }
+
     if (!builderSources.length) {
       showToast({ type: 'error', title: t('errors.title'), message: t('skillBook.builder.noSources') });
       return;
@@ -245,7 +281,7 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
     } finally {
       setBuilderLoading(false);
     }
-  }, [builderProvider, builderSources, formDesc, formName, showToast, t]);
+  }, [apiKeyStatus, builderProvider, builderSources, formDesc, formName, showToast, t]);
 
   const parseDocuments = useCallback((): SkillBookDocument[] | null => {
     const trimmed = formDocuments.trim();
@@ -385,6 +421,9 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
             </select>
           </div>
           <p className="mt-1 text-xs text-slate-500">{t('skillBook.builder.subtitle')}</p>
+          {!apiKeyStatus[builderProvider] && (
+            <p className="mt-1 text-xs text-rose-600">{t('skillBook.builder.noApiKey')}</p>
+          )}
 
           <div className="mt-3 grid gap-2">
             <input
@@ -428,7 +467,7 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
               <button
                 type="button"
                 onClick={() => void handleGenerateDraft()}
-                disabled={builderLoading || builderSources.length === 0}
+                disabled={builderLoading || builderSources.length === 0 || !apiKeyStatus[builderProvider]}
                 className="rounded-md bg-[var(--brand-700)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[var(--brand-700-hover)] disabled:opacity-50"
               >
                 {builderLoading ? '...' : t('skillBook.builder.generate')}
