@@ -86,3 +86,16 @@ export function buildKnowledgePrompt(knowledgeItems: KnowledgeItem[]): string {
     serialized,
   ].join('\n');
 }
+
+/**
+ * Combines Skill Book instructions (behavioral guardrails) with
+ * dynamically selected knowledge items (RAG documents) into a
+ * single system prompt string.
+ */
+export function buildSystemPrompt(
+  skillBookInstructions: string,
+  knowledgeItems: KnowledgeItem[],
+): string {
+  const knowledgePart = buildKnowledgePrompt(knowledgeItems);
+  return [skillBookInstructions, knowledgePart].filter(Boolean).join('\n\n---\n\n');
+}

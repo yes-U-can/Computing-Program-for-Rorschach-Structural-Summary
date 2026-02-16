@@ -51,6 +51,8 @@ model User {
   encryptedAnthropicKey String?
   anthropicKeyIv        String?
   chatSessions          ChatSession[]
+  skillBooks            SkillBook[]
+  activeSkillBookId     String?
 }
 
 model VerificationToken {
@@ -59,6 +61,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model SkillBook {
+  id           String   @id @default(cuid())
+  name         String
+  description  String   @default("")
+  instructions String   @db.Text
+  documents    String   @default("[]") @db.Text
+  source       String   @default("user")
+  isPublic     Boolean  @default(false)
+  authorId     String
+  author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([authorId])
 }
 
 model ChatSession {

@@ -6,7 +6,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import Anthropic from '@anthropic-ai/sdk';
 import { createDecipheriv, scrypt } from 'crypto';
 import { promisify } from 'util';
-import { buildKnowledgePrompt, KnowledgeItem, selectRelevantKnowledge } from '@/lib/chatKnowledge';
+import { buildSystemPrompt, KnowledgeItem, selectRelevantKnowledge } from '@/lib/chatKnowledge';
+import { DEFAULT_SKILL_BOOK } from '@/lib/defaultSkillBook';
 import type { Language } from '@/types';
 import { prisma } from '@/lib/prisma';
 const scryptAsync = promisify(scrypt);
@@ -118,6 +119,7 @@ export async function POST(req: Request) {
       provider: Provider;
       chatSessionId?: string;
       knowledgeItems?: Array<{ title: string; content: string }>;
+      skillBookInstructions?: string;
       lang?: Language;
     };
     const { messages, provider, lang } = body;
@@ -181,24 +183,45 @@ export async function POST(req: Request) {
       content: m.content,
     }));
 
-    // Build knowledge context
-    const selectedKnowledge = selectRelevantKnowledge(userMessage.content, userKnowledge, undefined, lang ?? 'en');
-    const knowledgePrompt = buildKnowledgePrompt(selectedKnowledge);
+    // Resolve active Skill Book: DB selection > request body > default
+    let activeInstructions = DEFAULT_SKILL_BOOK.instructions;
+    let skillBookDocuments: KnowledgeItem[] = [];
+
+    if (user.activeSkillBookId) {
+      const activeBook = await prisma.skillBook.findUnique({
+        where: { id: user.activeSkillBookId },
+        select: { instructions: true, documents: true },
+      });
+      if (activeBook) {
+        activeInstructions = activeBook.instructions;
+        try {
+          const docs = JSON.parse(activeBook.documents) as Array<{ title: string; content: string }>;
+          skillBookDocuments = docs.map(d => ({ title: d.title, content: d.content, source: 'user' as const }));
+        } catch { /* ignore parse errors */ }
+      }
+    } else if (body.skillBookInstructions) {
+      activeInstructions = body.skillBookInstructions;
+    }
+
+    // Build system prompt: Skill Book instructions + relevant knowledge (RAG)
+    const allKnowledge = [...userKnowledge, ...skillBookDocuments];
+    const selectedKnowledge = selectRelevantKnowledge(userMessage.content, allKnowledge, undefined, lang ?? 'en');
+    const fullSystemPrompt = buildSystemPrompt(activeInstructions, selectedKnowledge);
 
     // For providers that support system messages (OpenAI, Anthropic), use system role.
     // For Google, prepend as first user message since it doesn't have system role.
     let finalMessages: { role: string; content: string }[];
     let systemPrompt: string | undefined;
 
-    if (knowledgePrompt) {
+    if (fullSystemPrompt) {
       if (provider === 'anthropic') {
-        systemPrompt = knowledgePrompt;
+        systemPrompt = fullSystemPrompt;
         finalMessages = formattedMessages;
       } else if (provider === 'openai') {
-        finalMessages = [{ role: 'system', content: knowledgePrompt }, ...formattedMessages];
+        finalMessages = [{ role: 'system', content: fullSystemPrompt }, ...formattedMessages];
       } else {
         // Google: prepend as user context (will be merged if next is also user)
-        finalMessages = [{ role: 'user', content: knowledgePrompt }, ...formattedMessages];
+        finalMessages = [{ role: 'user', content: fullSystemPrompt }, ...formattedMessages];
       }
     } else {
       finalMessages = formattedMessages;
