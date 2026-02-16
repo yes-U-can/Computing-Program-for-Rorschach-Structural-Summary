@@ -124,7 +124,7 @@ export default function InputTable({ responses, onChange, maxRows = 50 }: InputT
   const pointerYRef = useRef(0);
   const rafIdRef = useRef<number | null>(null);
   const cardOrderMap = useMemo(
-    () => new Map(OPTIONS.CARDS.map((card, idx) => [card, idx])),
+    () => new Map<string, number>(OPTIONS.CARDS.map((card, idx) => [card, idx])),
     []
   );
 
