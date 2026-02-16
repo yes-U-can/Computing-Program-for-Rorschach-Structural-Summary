@@ -19,6 +19,11 @@ type SkillBookFull = SkillBookSummary & {
   documents: string;
 };
 
+type SkillBookDocument = {
+  title: string;
+  content: string;
+};
+
 export default function SkillBookManager() {
   const { t } = useTranslation();
   const { showToast } = useToast();
@@ -33,6 +38,7 @@ export default function SkillBookManager() {
   const [formName, setFormName] = useState('');
   const [formDesc, setFormDesc] = useState('');
   const [formInstructions, setFormInstructions] = useState('');
+  const [formDocuments, setFormDocuments] = useState('[]');
   const [saving, setSaving] = useState(false);
 
   const fetchBooks = useCallback(async () => {
@@ -85,6 +91,12 @@ export default function SkillBookManager() {
       setFormName(data.name);
       setFormDesc(data.description);
       setFormInstructions(data.instructions);
+      try {
+        const parsed = JSON.parse(data.documents || '[]');
+        setFormDocuments(JSON.stringify(parsed, null, 2));
+      } catch {
+        setFormDocuments('[]');
+      }
     }
   };
 
@@ -94,10 +106,44 @@ export default function SkillBookManager() {
     setFormName('');
     setFormDesc('');
     setFormInstructions('');
+    setFormDocuments('[]');
   };
+
+  const parseDocuments = useCallback((): SkillBookDocument[] | null => {
+    const trimmed = formDocuments.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed) as unknown;
+      if (!Array.isArray(parsed)) return null;
+
+      const normalized: SkillBookDocument[] = [];
+      for (const item of parsed) {
+        if (!item || typeof item !== 'object') return null;
+        const title = (item as Record<string, unknown>).title;
+        const content = (item as Record<string, unknown>).content;
+        if (typeof title !== 'string' || typeof content !== 'string') return null;
+        if (!title.trim() || !content.trim()) return null;
+        normalized.push({ title: title.trim(), content: content.trim() });
+      }
+      return normalized;
+    } catch {
+      return null;
+    }
+  }, [formDocuments]);
 
   const handleSave = async () => {
     if (!formName.trim() || !formInstructions.trim()) return;
+    const parsedDocuments = parseDocuments();
+    if (parsedDocuments === null) {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.documentsInvalid'),
+      });
+      return;
+    }
+
     setSaving(true);
     try {
       if (isNew) {
@@ -108,6 +154,7 @@ export default function SkillBookManager() {
             name: formName,
             description: formDesc,
             instructions: formInstructions,
+            documents: parsedDocuments,
           }),
         });
         if (res.ok) {
@@ -124,6 +171,7 @@ export default function SkillBookManager() {
             name: formName,
             description: formDesc,
             instructions: formInstructions,
+            documents: parsedDocuments,
           }),
         });
         if (res.ok) {
@@ -140,6 +188,7 @@ export default function SkillBookManager() {
   const handleCancel = () => {
     setEditing(null);
     setIsNew(false);
+    setFormDocuments('[]');
   };
 
   if (loading) {
@@ -184,6 +233,20 @@ export default function SkillBookManager() {
             placeholder={t('skillBook.myBooks.instructionsPlaceholder')}
             className="h-48 w-full rounded-md border border-slate-300 px-3 py-2 text-sm font-mono"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            {t('skillBook.myBooks.documents')}
+          </label>
+          <textarea
+            value={formDocuments}
+            onChange={(e) => setFormDocuments(e.target.value)}
+            placeholder={t('skillBook.myBooks.documentsPlaceholder')}
+            className="h-36 w-full rounded-md border border-slate-300 px-3 py-2 text-xs font-mono"
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            {t('skillBook.myBooks.documentsHelp')}
+          </p>
         </div>
         <div className="flex gap-2">
           <button

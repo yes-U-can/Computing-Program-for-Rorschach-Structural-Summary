@@ -416,7 +416,11 @@
       "default": "Default",
       "useDefault": "Use Default",
       "defaultOption": "SICP (Default)",
-      "defaultDescription": "Built-in interpretation guidelines by Seoul Institute of Clinical Psychology"
+      "defaultDescription": "Built-in interpretation guidelines by Seoul Institute of Clinical Psychology",
+      "documents": "Reference Documents (JSON)",
+      "documentsPlaceholder": "[{\"title\":\"Topic\",\"content\":\"Details...\"}]",
+      "documentsHelp": "Use JSON array format: [{\"title\":\"...\",\"content\":\"...\"}]",
+      "documentsInvalid": "Documents must be a JSON array of {title, content} with non-empty strings."
     }
   },
   "auth": {
