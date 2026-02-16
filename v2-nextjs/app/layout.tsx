@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
-const siteUrl = rawSiteUrl.trim().replace(/\/+$/, '');
+const siteUrl = rawSiteUrl.replace(/\s+/g, '').replace(/\/+$/, '');
 const googleSiteVerification =
   process.env.GOOGLE_SITE_VERIFICATION ?? 'RNxcEfQGpSUiWQhUoTpaiS1UU0UPB9vLwZ1QUurRLMY';
 

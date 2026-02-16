@@ -2,55 +2,60 @@ import { MetadataRoute } from 'next';
 import { getAllDocRoutes } from '@/lib/docsCatalog';
 
 const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
-const siteUrl = rawSiteUrl.trim().replace(/\/+$/, '');
+const siteUrl = rawSiteUrl.replace(/\s+/g, '').replace(/\/+$/, '');
+
+function absolute(pathname: string) {
+  const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  return new URL(normalized, `${siteUrl}/`).toString();
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: `${siteUrl}/`,
+      url: absolute('/'),
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: `${siteUrl}/ref`,
+      url: absolute('/ref'),
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/about`,
+      url: absolute('/about'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: `${siteUrl}/contact`,
+      url: absolute('/contact'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: `${siteUrl}/terms`,
+      url: absolute('/terms'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: `${siteUrl}/privacy`,
+      url: absolute('/privacy'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: `${siteUrl}/chat`,
+      url: absolute('/chat'),
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
-      url: `${siteUrl}/account`,
+      url: absolute('/account'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.5,
@@ -60,7 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const docRoutes = getAllDocRoutes()
     .filter((item) => item.kind === 'entry')
     .map((item) => ({
-      url: `${siteUrl}/ref/${item.slug.join('/')}`,
+      url: absolute(`/ref/${item.slug.join('/')}`),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.65,
