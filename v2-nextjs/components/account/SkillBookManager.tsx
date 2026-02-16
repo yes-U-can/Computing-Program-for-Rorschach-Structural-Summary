@@ -25,7 +25,7 @@ type SkillBookDocument = {
 };
 
 export default function SkillBookManager() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { showToast } = useToast();
 
   const [books, setBooks] = useState<SkillBookSummary[]>([]);
@@ -75,12 +75,22 @@ export default function SkillBookManager() {
   };
 
   const handleDelete = async (id: string) => {
+    if (!window.confirm(t('skillBook.myBooks.deleteConfirm'))) {
+      return;
+    }
+
     const res = await fetch(`/api/skillbooks/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setBooks((prev) => prev.filter((b) => b.id !== id));
       if (activeId === id) setActiveId(null);
     }
   };
+
+  const formatUpdatedAt = useCallback((dateString: string) => {
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return dateString;
+    return new Intl.DateTimeFormat(language, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
+  }, [language]);
 
   const handleEdit = async (id: string) => {
     const res = await fetch(`/api/skillbooks/${id}`);
@@ -318,6 +328,9 @@ export default function SkillBookManager() {
             {book.description && (
               <p className="mt-0.5 truncate text-xs text-slate-500">{book.description}</p>
             )}
+            <p className="mt-0.5 text-[11px] text-slate-400">
+              {t('skillBook.myBooks.updatedAt')}: {formatUpdatedAt(book.updatedAt)}
+            </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             {activeId === book.id ? (

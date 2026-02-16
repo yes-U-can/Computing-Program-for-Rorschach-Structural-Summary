@@ -420,7 +420,9 @@
       "documents": "Reference Documents (JSON)",
       "documentsPlaceholder": "[{\"title\":\"Topic\",\"content\":\"Details...\"}]",
       "documentsHelp": "Use JSON array format: [{\"title\":\"...\",\"content\":\"...\"}]",
-      "documentsInvalid": "Documents must be a JSON array of {title, content} with non-empty strings."
+      "documentsInvalid": "Documents must be a JSON array of {title, content} with non-empty strings.",
+      "updatedAt": "Updated",
+      "deleteConfirm": "Delete this Skill Book? This action cannot be undone."
     }
   },
   "auth": {
