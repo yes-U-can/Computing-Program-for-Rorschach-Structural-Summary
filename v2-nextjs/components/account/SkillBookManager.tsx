@@ -187,14 +187,17 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
       v: SKILLBOOK_DRAFT_SCHEMA_VERSION,
       data: draft,
     };
-    try {
-      const snapshot = JSON.stringify(envelope);
-      if (snapshot === lastDraftSnapshotRef.current) return;
-      window.localStorage.setItem(SKILLBOOK_DRAFT_KEY, snapshot);
-      lastDraftSnapshotRef.current = snapshot;
-    } catch {
-      // no-op
-    }
+    const timer = window.setTimeout(() => {
+      try {
+        const snapshot = JSON.stringify(envelope);
+        if (snapshot === lastDraftSnapshotRef.current) return;
+        window.localStorage.setItem(SKILLBOOK_DRAFT_KEY, snapshot);
+        lastDraftSnapshotRef.current = snapshot;
+      } catch {
+        // no-op
+      }
+    }, 250);
+    return () => window.clearTimeout(timer);
   }, [isNew, formName, formDesc, formInstructions, formDocuments, formIsPublic, builderProvider, builderSources]);
 
   useEffect(() => {
