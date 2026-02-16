@@ -404,7 +404,18 @@
       "comingSoon": "近日公開",
       "comingSoonDesc": "教科書、ノート、臨床経験をアップロードすると、AIがオリジナルのロールシャッハ解釈スキルブックに変換します。",
       "toggle": "スキルブック作成モード",
-      "open": "Open Builder"
+      "open": "Open Builder",
+      "sourceTitle": "Source title",
+      "sourceContent": "Paste source text...",
+      "addSource": "Add source",
+      "uploadSource": "Upload file",
+      "removeSource": "Remove",
+      "generate": "Generate Draft",
+      "noSources": "Add at least one source before generating.",
+      "generateFailed": "Could not generate draft. Check API key/provider and try again.",
+      "generatedTitle": "Draft generated",
+      "generatedMessage": "Instructions and documents were filled automatically.",
+      "fileTooLarge": "File is too large. Max size is 500KB."
     },
     "myBooks": {
       "title": "マイスキルブック",

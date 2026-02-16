@@ -404,7 +404,18 @@
       "comingSoon": "Coming Soon",
       "comingSoonDesc": "Upload your textbooks, notes, and clinical experience, and AI will convert them into your own Rorschach interpretation Skill Book.",
       "toggle": "Skill Book Builder Mode",
-      "open": "Open Builder"
+      "open": "Open Builder",
+      "sourceTitle": "Source title",
+      "sourceContent": "Paste source text...",
+      "addSource": "Add source",
+      "uploadSource": "Upload file",
+      "removeSource": "Remove",
+      "generate": "Generate Draft",
+      "noSources": "Add at least one source before generating.",
+      "generateFailed": "Could not generate draft. Check API key/provider and try again.",
+      "generatedTitle": "Draft generated",
+      "generatedMessage": "Instructions and documents were filled automatically.",
+      "fileTooLarge": "File is too large. Max size is 500KB."
     },
     "myBooks": {
       "title": "My Skill Books",
