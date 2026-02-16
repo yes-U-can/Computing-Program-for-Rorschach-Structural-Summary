@@ -48,6 +48,9 @@ export async function PUT(req: Request) {
 
   const body = await req.json();
   const { skillBookId } = body as { skillBookId: string | null };
+  if (skillBookId !== null && typeof skillBookId !== 'string') {
+    return NextResponse.json({ error: 'skillBookId must be string or null' }, { status: 400 });
+  }
 
   // Validate skill book belongs to user (if not null)
   if (skillBookId) {
