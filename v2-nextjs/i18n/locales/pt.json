@@ -455,7 +455,8 @@
       "deleteFailed": "Failed to delete Skill Book. Please try again.",
       "activateFailed": "Failed to switch active Skill Book. Please try again.",
       "publishToStore": "Publish to Skill Book Store",
-      "public": "Public"
+      "public": "Public",
+      "exportFailed": "Failed to export Skill Book. Please try again."
     }
   },
   "auth": {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
-import { CheckCircleIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, PencilSquareIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 type SkillBookSummary = {
   id: string;
@@ -197,6 +197,39 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
         message: t('skillBook.myBooks.loadFailed'),
       });
     }
+  };
+
+  const handleExport = async (id: string) => {
+    const res = await fetch(`/api/skillbooks/${id}`);
+    if (!res.ok) {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.exportFailed'),
+      });
+      return;
+    }
+
+    const data = await res.json() as SkillBookFull;
+    const payload = {
+      name: data.name,
+      description: data.description,
+      instructions: data.instructions,
+      documents: JSON.parse(data.documents || '[]'),
+      exportedAt: new Date().toISOString(),
+      version: 1,
+    };
+    const content = JSON.stringify(payload, null, 2);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const safeName = data.name.replace(/[^a-zA-Z0-9-_]+/g, '_').slice(0, 60) || 'skillbook';
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeName}.skillbook.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   };
 
   const handleNew = () => {
@@ -619,6 +652,14 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
                 {t('skillBook.myBooks.activate')}
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => void handleExport(book.id)}
+              className="rounded p-1 text-slate-400 hover:text-slate-600"
+              title={t('skillBook.myBooks.export')}
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+            </button>
             <button
               type="button"
               onClick={() => handleEdit(book.id)}
