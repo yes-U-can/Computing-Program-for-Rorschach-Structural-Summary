@@ -17,6 +17,12 @@ type Message = {
   content: string;
 };
 
+type SkillBookSummary = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -32,6 +38,9 @@ export default function ChatPage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [sidebarRefresh, setSidebarRefresh] = useState(0);
+  const [skillBooks, setSkillBooks] = useState<SkillBookSummary[]>([]);
+  const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
+  const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -41,6 +50,44 @@ export default function ChatPage() {
       router.push('/');
     }
   }, [status, router]);
+
+  const loadSkillBookState = useCallback(async () => {
+    if (status !== 'authenticated') return;
+    setIsSkillBookLoading(true);
+    try {
+      const [activeRes, booksRes] = await Promise.all([
+        fetch('/api/user/active-skillbook'),
+        fetch('/api/skillbooks'),
+      ]);
+
+      if (activeRes.ok) {
+        const data = await activeRes.json();
+        setActiveSkillBookId(data.activeSkillBookId ?? null);
+      }
+      if (booksRes.ok) {
+        setSkillBooks(await booksRes.json());
+      }
+    } finally {
+      setIsSkillBookLoading(false);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    void loadSkillBookState();
+  }, [loadSkillBookState]);
+
+  const handleSkillBookChange = useCallback(async (value: string) => {
+    if (status !== 'authenticated') return;
+    const skillBookId = value === '__default__' ? null : value;
+    const res = await fetch('/api/user/active-skillbook', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skillBookId }),
+    });
+    if (res.ok) {
+      setActiveSkillBookId(skillBookId);
+    }
+  }, [status]);
 
   // Scroll to bottom when streaming messages update
   useEffect(() => {
@@ -248,6 +295,23 @@ export default function ChatPage() {
 
           <main className="flex min-h-0 flex-1 flex-col p-2.5 md:py-0 md:pl-4 md:pr-0">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur">
+              <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2.5">
+                <p className="text-xs font-medium text-slate-500">{t('skillBook.myBooks.title')}</p>
+                <select
+                  value={activeSkillBookId ?? '__default__'}
+                  onChange={(e) => void handleSkillBookChange(e.target.value)}
+                  disabled={status !== 'authenticated' || isSkillBookLoading}
+                  className="max-w-[240px] rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-60"
+                  aria-label="Skill book"
+                >
+                  <option value="__default__">SICP (Default)</option>
+                  {skillBooks.map((book) => (
+                    <option key={book.id} value={book.id}>
+                      {book.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               {/* Messages area */}
               <div className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-50/60 to-white">
                 {showPersistedView && (

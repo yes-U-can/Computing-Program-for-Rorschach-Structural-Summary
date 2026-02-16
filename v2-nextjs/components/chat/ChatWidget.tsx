@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { SparklesIcon, XMarkIcon, ArrowsPointingOutIcon } from '@heroicons/react/24/solid';
 import { PaperAirplaneIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { loadUserKnowledgeSources, toChatKnowledgePayload } from '@/lib/userKnowledge';
@@ -21,7 +22,14 @@ type ChatWidgetProps = {
   initialMessage?: string;
 };
 
+type SkillBookSummary = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidgetProps) {
+  const { status } = useSession();
   const { t, language } = useTranslation();
   const [provider, setProvider] = useState('openai');
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -29,6 +37,9 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatSessionId, setChatSessionId] = useState<string | null>(null);
+  const [skillBooks, setSkillBooks] = useState<SkillBookSummary[]>([]);
+  const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
+  const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
   const handledInitialMessageRef = useRef<string | null>(null);
 
   // Load user knowledge once per mount, not per message
@@ -42,6 +53,53 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   };
 
   useEffect(scrollToBottom, [messages]);
+
+  const loadSkillBookState = useCallback(async () => {
+    if (status !== 'authenticated') {
+      setSkillBooks([]);
+      setActiveSkillBookId(null);
+      return;
+    }
+
+    setIsSkillBookLoading(true);
+    try {
+      const [activeRes, booksRes] = await Promise.all([
+        fetch('/api/user/active-skillbook'),
+        fetch('/api/skillbooks'),
+      ]);
+
+      if (activeRes.ok) {
+        const data = await activeRes.json();
+        setActiveSkillBookId(data.activeSkillBookId ?? null);
+      }
+
+      if (booksRes.ok) {
+        setSkillBooks(await booksRes.json());
+      }
+    } finally {
+      setIsSkillBookLoading(false);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    void loadSkillBookState();
+  }, [isOpen, loadSkillBookState]);
+
+  const handleSkillBookChange = useCallback(async (value: string) => {
+    if (status !== 'authenticated') return;
+    const skillBookId = value === '__default__' ? null : value;
+
+    const res = await fetch('/api/user/active-skillbook', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skillBookId }),
+    });
+
+    if (res.ok) {
+      setActiveSkillBookId(skillBookId);
+    }
+  }, [status]);
 
   const getFriendlyErrorMessage = useCallback((rawError: string) => {
     const message = rawError.toLowerCase();
@@ -231,6 +289,20 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
           </div>
         </div>
         <div className="flex items-center gap-1.5">
+          <select
+            value={activeSkillBookId ?? '__default__'}
+            onChange={(e) => void handleSkillBookChange(e.target.value)}
+            disabled={status !== 'authenticated' || isSkillBookLoading}
+            aria-label="Skill book"
+            className="max-w-[140px] rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <option value="__default__">SICP (Default)</option>
+            {skillBooks.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.name}
+              </option>
+            ))}
+          </select>
           <select
             value={provider}
             onChange={(e) => setProvider(e.target.value)}
