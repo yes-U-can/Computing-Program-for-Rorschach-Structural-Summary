@@ -28,12 +28,23 @@ async function decrypt(encryptedText: string, iv: string) {
   return decrypted;
 }
 
-function sanitizeSources(docs: SourceDoc[]): SourceDoc[] {
-  const normalized = docs
-    .filter((d) => d.title?.trim() && d.content?.trim())
+function parseAndSanitizeSources(docs: unknown): { ok: true; value: SourceDoc[] } | { ok: false; error: string } {
+  if (!Array.isArray(docs)) {
+    return { ok: false, error: 'sourceDocs must be an array' };
+  }
+  const sourceDocs = docs.filter((d) => d && typeof d === 'object') as Array<Record<string, unknown>>;
+
+  const normalized = sourceDocs
+    .filter(
+      (d): d is { title: string; content: string } =>
+        typeof d.title === 'string' &&
+        typeof d.content === 'string' &&
+        d.title.trim().length > 0 &&
+        d.content.trim().length > 0,
+    )
     .map((d) => ({
-      title: d.title.trim().slice(0, 120),
-      content: d.content.trim().slice(0, 6000),
+      title: String(d.title).trim().slice(0, 120),
+      content: String(d.content).trim().slice(0, 6000),
     }))
     .slice(0, 12);
 
@@ -46,7 +57,10 @@ function sanitizeSources(docs: SourceDoc[]): SourceDoc[] {
     result.push({ title: item.title, content: truncatedContent });
     totalChars += item.title.length + truncatedContent.length;
   }
-  return result;
+  if (!result.length) {
+    return { ok: false, error: 'sourceDocs is required' };
+  }
+  return { ok: true, value: result };
 }
 
 function buildPrompt(name: string, description: string, docs: SourceDoc[]) {
@@ -150,9 +164,9 @@ export async function POST(req: Request) {
     if (!PROVIDERS.includes(provider)) {
       return NextResponse.json({ error: 'Unsupported provider' }, { status: 400 });
     }
-    const docs = sanitizeSources(body.sourceDocs ?? []);
-    if (!docs.length) {
-      return NextResponse.json({ error: 'sourceDocs is required' }, { status: 400 });
+    const docs = parseAndSanitizeSources(body.sourceDocs);
+    if (!docs.ok) {
+      return NextResponse.json({ error: docs.error }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({ where: { id: session.user.id } });
@@ -172,7 +186,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'API key not found or configured.' }, { status: 400 });
     }
 
-    const prompt = buildPrompt(body.name?.trim() ?? '', body.description?.trim() ?? '', docs);
+    const prompt = buildPrompt(body.name?.trim() ?? '', body.description?.trim() ?? '', docs.value);
     let raw = '';
     if (provider === 'openai') {
       raw = await generateWithOpenAI(apiKey, prompt);
@@ -187,7 +201,8 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('SkillBook builder error:', error);
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      const status = error.message.includes('Invalid builder response') ? 422 : 500;
+      return NextResponse.json({ error: error.message }, { status });
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
