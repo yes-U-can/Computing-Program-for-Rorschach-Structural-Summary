@@ -258,36 +258,49 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
   };
 
   const handleExport = async (id: string) => {
-    const res = await fetch(`/api/skillbooks/${id}`);
-    if (!res.ok) {
+    try {
+      const res = await fetch(`/api/skillbooks/${id}`);
+      if (!res.ok) throw new Error('export fetch failed');
+
+      const data = await res.json() as SkillBookFull;
+      let documents: SkillBookDocument[] = [];
+      try {
+        const parsed = JSON.parse(data.documents || '[]');
+        if (Array.isArray(parsed)) {
+          documents = parsed
+            .filter((d) => d?.title?.trim() && d?.content?.trim())
+            .map((d) => ({ title: d.title.trim(), content: d.content.trim() }));
+        }
+      } catch {
+        documents = [];
+      }
+
+      const payload = {
+        name: data.name,
+        description: data.description,
+        instructions: data.instructions,
+        documents,
+        exportedAt: new Date().toISOString(),
+        version: 1,
+      };
+      const content = JSON.stringify(payload, null, 2);
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const safeName = data.name.replace(/[^a-zA-Z0-9-_]+/g, '_').slice(0, 60) || 'skillbook';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${safeName}.skillbook.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
       showToast({
         type: 'error',
         title: t('errors.title'),
         message: t('skillBook.myBooks.exportFailed'),
       });
-      return;
     }
-
-    const data = await res.json() as SkillBookFull;
-    const payload = {
-      name: data.name,
-      description: data.description,
-      instructions: data.instructions,
-      documents: JSON.parse(data.documents || '[]'),
-      exportedAt: new Date().toISOString(),
-      version: 1,
-    };
-    const content = JSON.stringify(payload, null, 2);
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const safeName = data.name.replace(/[^a-zA-Z0-9-_]+/g, '_').slice(0, 60) || 'skillbook';
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${safeName}.skillbook.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
   };
 
   const handleNew = () => {
