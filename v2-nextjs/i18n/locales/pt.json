@@ -456,7 +456,11 @@
       "activateFailed": "Failed to switch active Skill Book. Please try again.",
       "publishToStore": "Publish to Skill Book Store",
       "public": "Public",
-      "exportFailed": "Failed to export Skill Book. Please try again."
+      "exportFailed": "Failed to export Skill Book. Please try again.",
+      "import": "Import JSON",
+      "importedTitle": "Skill Book Imported",
+      "importedMessage": "Skill Book was imported successfully.",
+      "importFailed": "Failed to import Skill Book JSON. Check file format and try again."
     }
   },
   "auth": {

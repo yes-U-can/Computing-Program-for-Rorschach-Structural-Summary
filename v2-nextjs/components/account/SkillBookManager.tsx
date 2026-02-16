@@ -245,6 +245,56 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
     setBuilderContentInput('');
   };
 
+  const handleImport = async (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      showToast({ type: 'error', title: t('errors.title'), message: t('skillBook.myBooks.importFailed') });
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as {
+        name?: string;
+        description?: string;
+        instructions?: string;
+        documents?: SkillBookDocument[];
+      };
+
+      if (!parsed.name?.trim() || !parsed.instructions?.trim() || !Array.isArray(parsed.documents)) {
+        throw new Error('Invalid import payload');
+      }
+
+      const normalizedDocs = parsed.documents
+        .filter((d) => d?.title?.trim() && d?.content?.trim())
+        .map((d) => ({ title: d.title.trim(), content: d.content.trim() }));
+
+      const res = await fetch('/api/skillbooks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: parsed.name.trim(),
+          description: parsed.description?.trim() ?? '',
+          instructions: parsed.instructions.trim(),
+          documents: normalizedDocs,
+          isPublic: false,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to create imported skillbook');
+      }
+
+      await fetchBooks();
+      showToast({
+        type: 'success',
+        title: t('skillBook.myBooks.importedTitle'),
+        message: t('skillBook.myBooks.importedMessage'),
+      });
+    } catch {
+      showToast({ type: 'error', title: t('errors.title'), message: t('skillBook.myBooks.importFailed') });
+    }
+  };
+
   const addBuilderSource = useCallback((title: string, content: string) => {
     if (!title.trim() || !content.trim()) return;
     setBuilderSources((prev) => [
@@ -687,13 +737,28 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
       )}
 
       {/* Create button */}
-      <button
-        type="button"
-        onClick={handleNew}
-        className="w-full rounded-md border border-dashed border-slate-300 bg-white py-3 text-sm font-medium text-slate-500 hover:border-slate-400 hover:text-slate-700"
-      >
-        + {t('skillBook.myBooks.create')}
-      </button>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={handleNew}
+          className="w-full rounded-md border border-dashed border-slate-300 bg-white py-3 text-sm font-medium text-slate-500 hover:border-slate-400 hover:text-slate-700"
+        >
+          + {t('skillBook.myBooks.create')}
+        </button>
+        <label className="w-full cursor-pointer rounded-md border border-slate-300 bg-white py-3 text-center text-sm font-medium text-slate-600 hover:bg-slate-50">
+          {t('skillBook.myBooks.import')}
+          <input
+            type="file"
+            accept=".json,.skillbook.json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void handleImport(file);
+              e.currentTarget.value = '';
+            }}
+          />
+        </label>
+      </div>
     </div>
   );
 }
