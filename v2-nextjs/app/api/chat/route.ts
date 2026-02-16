@@ -8,6 +8,7 @@ import { createDecipheriv, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { buildSystemPrompt, KnowledgeItem, selectRelevantKnowledge } from '@/lib/chatKnowledge';
 import { DEFAULT_SKILL_BOOK } from '@/lib/defaultSkillBook';
+import { getRorschachBaseSystemPrompt } from '@/lib/systemPrompts/rorschachBase';
 import type { Language } from '@/types';
 import { prisma } from '@/lib/prisma';
 const scryptAsync = promisify(scrypt);
@@ -206,7 +207,9 @@ export async function POST(req: Request) {
     // Build system prompt: Skill Book instructions + relevant knowledge (RAG)
     const allKnowledge = [...userKnowledge, ...skillBookDocuments];
     const selectedKnowledge = selectRelevantKnowledge(userMessage.content, allKnowledge, undefined, lang ?? 'en');
-    const fullSystemPrompt = buildSystemPrompt(activeInstructions, selectedKnowledge);
+    const basePrompt = getRorschachBaseSystemPrompt(lang ?? 'en');
+    const mergedInstructions = [basePrompt, activeInstructions].filter(Boolean).join('\n\n---\n\n');
+    const fullSystemPrompt = buildSystemPrompt(mergedInstructions, selectedKnowledge);
 
     // For providers that support system messages (OpenAI, Anthropic), use system role.
     // For Google, prepend as first user message since it doesn't have system role.
