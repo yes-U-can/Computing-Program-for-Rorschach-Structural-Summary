@@ -422,7 +422,11 @@
       "documentsHelp": "Use JSON array format: [{\"title\":\"...\",\"content\":\"...\"}]",
       "documentsInvalid": "Documents must be a JSON array of {title, content} with non-empty strings.",
       "updatedAt": "Updated",
-      "deleteConfirm": "Delete this Skill Book? This action cannot be undone."
+      "deleteConfirm": "Delete this Skill Book? This action cannot be undone.",
+      "loadFailed": "Failed to load Skill Books. Please try again.",
+      "saveFailed": "Failed to save Skill Book. Please try again.",
+      "deleteFailed": "Failed to delete Skill Book. Please try again.",
+      "activateFailed": "Failed to switch active Skill Book. Please try again."
     }
   },
   "auth": {

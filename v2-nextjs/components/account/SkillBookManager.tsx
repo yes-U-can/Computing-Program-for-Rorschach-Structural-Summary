@@ -47,17 +47,22 @@ export default function SkillBookManager() {
         fetch('/api/skillbooks'),
         fetch('/api/user/active-skillbook'),
       ]);
-      if (booksRes.ok) {
-        setBooks(await booksRes.json());
+      if (!booksRes.ok || !activeRes.ok) {
+        throw new Error('Failed to load skill books');
       }
-      if (activeRes.ok) {
-        const data = await activeRes.json();
-        setActiveId(data.activeSkillBookId);
-      }
+      setBooks(await booksRes.json());
+      const data = await activeRes.json();
+      setActiveId(data.activeSkillBookId);
+    } catch {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.loadFailed'),
+      });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showToast, t]);
 
   useEffect(() => {
     fetchBooks();
@@ -71,6 +76,12 @@ export default function SkillBookManager() {
     });
     if (res.ok) {
       setActiveId(id);
+    } else {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.activateFailed'),
+      });
     }
   };
 
@@ -83,6 +94,12 @@ export default function SkillBookManager() {
     if (res.ok) {
       setBooks((prev) => prev.filter((b) => b.id !== id));
       if (activeId === id) setActiveId(null);
+    } else {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.deleteFailed'),
+      });
     }
   };
 
@@ -107,6 +124,12 @@ export default function SkillBookManager() {
       } catch {
         setFormDocuments('[]');
       }
+    } else {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.loadFailed'),
+      });
     }
   };
 
@@ -172,6 +195,8 @@ export default function SkillBookManager() {
           setIsNew(false);
           setEditing(null);
           await fetchBooks();
+        } else {
+          showToast({ type: 'error', title: t('errors.title'), message: t('skillBook.myBooks.saveFailed') });
         }
       } else if (editing) {
         const res = await fetch(`/api/skillbooks/${editing.id}`, {
@@ -188,6 +213,8 @@ export default function SkillBookManager() {
           showToast({ type: 'success', title: t('buttons.save'), message: t('account.knowledgeSources.saved') });
           setEditing(null);
           await fetchBooks();
+        } else {
+          showToast({ type: 'error', title: t('errors.title'), message: t('skillBook.myBooks.saveFailed') });
         }
       }
     } finally {
