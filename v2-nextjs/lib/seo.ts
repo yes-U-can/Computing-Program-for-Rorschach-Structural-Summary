@@ -1,6 +1,6 @@
 import { SUPPORTED_LANGUAGES, type Language } from '@/i18n/config';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rorschach-calculator.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
 
 export function buildLanguageAlternates(pathname: string) {
   const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;

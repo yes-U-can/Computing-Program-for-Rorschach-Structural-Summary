@@ -4,6 +4,7 @@ import Script from 'next/script';
 import Providers from '@/components/layout/Providers';
 import { TranslationProvider } from '@/hooks/useTranslation';
 import { ToastProvider } from '@/components/ui/Toast';
+import GoogleAnalyticsPageView from '@/components/analytics/GoogleAnalyticsPageView';
 import { buildLanguageAlternates } from '@/lib/seo';
 import './globals.css';
 
@@ -12,13 +13,14 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rorschach-calculator.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Rorschach Structural Summary Calculator | Free Online Tool',
-    template: '%s | Rorschach Calculator',
+    default: 'Computing Program for Rorschach Structural Summary | Free Online Tool',
+    template: '%s | Rorschach Structural Summary',
   },
   description:
     'Free online Rorschach (Comprehensive System) structural summary calculator for clinical practice and training.',
@@ -39,6 +41,9 @@ export const metadata: Metadata = {
     canonical: '/',
     languages: buildLanguageAlternates('/'),
   },
+  verification: {
+    google: googleSiteVerification,
+  },
   robots: {
     index: true,
     follow: true,
@@ -52,8 +57,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: '/',
-    siteName: 'Rorschach Calculator',
-    title: 'Rorschach Structural Summary Calculator',
+    siteName: 'Rorschach Structural Summary',
+    title: 'Computing Program for Rorschach Structural Summary',
     description:
       'Free online Rorschach (Comprehensive System) structural summary calculator.',
     images: [
@@ -61,13 +66,13 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Rorschach Structural Summary Calculator',
+        alt: 'Computing Program for Rorschach Structural Summary',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rorschach Structural Summary Calculator',
+    title: 'Computing Program for Rorschach Structural Summary',
     description:
       'Free online Rorschach (Comprehensive System) structural summary calculator.',
     images: ['/og-image.png'],
@@ -85,7 +90,7 @@ export default function RootLayout({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Rorschach Structural Summary Calculator',
+    name: 'Computing Program for Rorschach Structural Summary',
     description:
       'Free online Rorschach (Comprehensive System) structural summary calculator for clinicians and trainees.',
     url: siteUrl,
@@ -131,7 +136,7 @@ export default function RootLayout({
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${gaId}', {
-                  page_path: window.location.pathname,
+                  send_page_view: false,
                 });
               `}
             </Script>
@@ -141,7 +146,10 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
           <TranslationProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              {gaId && gaId !== 'G-XXXXXXXXXX' ? <GoogleAnalyticsPageView measurementId={gaId} /> : null}
+              {children}
+            </ToastProvider>
           </TranslationProvider>
         </Providers>
       </body>

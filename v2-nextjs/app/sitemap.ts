@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAllDocRoutes } from '@/lib/docsCatalog';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rorschach-calculator.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://exnersicp.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -32,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/terms`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${siteUrl}/privacy`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
