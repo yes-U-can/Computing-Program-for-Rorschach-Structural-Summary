@@ -2,13 +2,42 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { normalizeSkillBookDocuments, normalizeSkillBookText } from '@/lib/skillBookValidation';
 
 // GET /api/skillbooks
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const visibility = searchParams.get('visibility');
+  const skillBookId = searchParams.get('id');
 
   if (visibility === 'public') {
+    if (skillBookId) {
+      const detail = await prisma.skillBook.findFirst({
+        where: { id: skillBookId, isPublic: true },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          instructions: true,
+          documents: true,
+          updatedAt: true,
+          author: { select: { name: true } },
+        },
+      });
+      if (!detail) {
+        return NextResponse.json({ error: 'Public skill book not found' }, { status: 404 });
+      }
+      return NextResponse.json({
+        id: detail.id,
+        name: detail.name,
+        description: detail.description,
+        instructions: detail.instructions,
+        documents: detail.documents,
+        updatedAt: detail.updatedAt,
+        authorName: detail.author?.name ?? 'Anonymous',
+      });
+    }
+
     const skillBooks = await prisma.skillBook.findMany({
       where: { isPublic: true },
       orderBy: { updatedAt: 'desc' },
@@ -73,19 +102,21 @@ export async function POST(req: Request) {
     isPublic?: boolean;
   };
 
-  if (!name?.trim() || !instructions?.trim()) {
-    return NextResponse.json(
-      { error: 'name and instructions are required' },
-      { status: 400 },
-    );
+  const text = normalizeSkillBookText(name, description, instructions);
+  if (!text.ok) {
+    return NextResponse.json({ error: text.error }, { status: 400 });
+  }
+  const docs = normalizeSkillBookDocuments(documents);
+  if (!docs.ok) {
+    return NextResponse.json({ error: docs.error }, { status: 400 });
   }
 
   const skillBook = await prisma.skillBook.create({
     data: {
-      name: name.trim(),
-      description: description?.trim() ?? '',
-      instructions: instructions.trim(),
-      documents: JSON.stringify(documents ?? []),
+      name: text.value.name,
+      description: text.value.description,
+      instructions: text.value.instructions,
+      documents: JSON.stringify(docs.value),
       isPublic: Boolean(isPublic),
       authorId: session.user.id,
     },

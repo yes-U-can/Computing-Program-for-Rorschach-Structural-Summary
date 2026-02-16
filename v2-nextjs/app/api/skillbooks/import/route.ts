@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { normalizeSkillBookDocuments, normalizeSkillBookText } from '@/lib/skillBookValidation';
 
 // POST /api/skillbooks/import
 export async function POST(req: Request) {
@@ -31,6 +32,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Public skill book not found' }, { status: 404 });
   }
 
+  const text = normalizeSkillBookText(source.name, source.description, source.instructions);
+  if (!text.ok) {
+    return NextResponse.json({ error: text.error }, { status: 400 });
+  }
+  let parsedDocs: unknown = [];
+  try {
+    parsedDocs = JSON.parse(source.documents || '[]');
+  } catch {
+    parsedDocs = [];
+  }
+  const docs = normalizeSkillBookDocuments(parsedDocs);
+  if (!docs.ok) {
+    return NextResponse.json({ error: docs.error }, { status: 400 });
+  }
+
   const existing = await prisma.skillBook.findFirst({
     where: {
       authorId: session.user.id,
@@ -46,10 +62,10 @@ export async function POST(req: Request) {
 
   const created = await prisma.skillBook.create({
     data: {
-      name: source.name,
-      description: source.description,
-      instructions: source.instructions,
-      documents: source.documents,
+      name: text.value.name,
+      description: text.value.description,
+      instructions: text.value.instructions,
+      documents: JSON.stringify(docs.value),
       source: 'user',
       isPublic: false,
       authorId: session.user.id,

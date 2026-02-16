@@ -401,7 +401,9 @@
       "activatedTitle": "Skill Book Activated",
       "activatedMessage": "The copied Skill Book is now active for chat.",
       "sortUpdated": "Sort: Recently Updated",
-      "sortName": "Sort: Name"
+      "sortName": "Sort: Name",
+      "preview": "Preview",
+      "previewFailed": "Could not load Skill Book preview. Please try again."
     },
     "builder": {
       "title": "Skill Book Builder",
@@ -421,7 +423,8 @@
       "generatedTitle": "Draft generated",
       "generatedMessage": "Instructions and documents were filled automatically.",
       "fileTooLarge": "File is too large. Max size is 500KB.",
-      "noApiKey": "This provider has no API key in Account settings."
+      "noApiKey": "This provider has no API key in Account settings.",
+      "goToApiKeys": "Go to API Keys"
     },
     "myBooks": {
       "title": "My Skill Books",
@@ -467,7 +470,11 @@
       "filterAll": "All",
       "filterPublic": "Public",
       "filterPrivate": "Private",
-      "noMatches": "No Skill Books match your filter."
+      "noMatches": "No Skill Books match your filter.",
+      "makePublic": "Make Public",
+      "makePrivate": "Make Private",
+      "visibilityFailed": "Failed to update visibility. Please try again.",
+      "useInChat": "Use in Chat"
     }
   },
   "auth": {

@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
-import { CheckCircleIcon, PencilSquareIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { CheckCircleIcon, PencilSquareIcon, TrashIcon, ArrowDownTrayIcon, GlobeAltIcon, LockClosedIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 
 type SkillBookSummary = {
   id: string;
@@ -43,6 +44,7 @@ const MAX_FILE_SIZE = 500 * 1024; // 500KB
 export default function SkillBookManager({ autoCreate = false }: SkillBookManagerProps) {
   const { t, language } = useTranslation();
   const { showToast } = useToast();
+  const router = useRouter();
 
   const [books, setBooks] = useState<SkillBookSummary[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -216,6 +218,43 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
         message: t('skillBook.myBooks.loadFailed'),
       });
     }
+  };
+
+  const handleTogglePublic = async (book: SkillBookSummary) => {
+    const res = await fetch(`/api/skillbooks/${book.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isPublic: !book.isPublic }),
+    });
+    if (!res.ok) {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.visibilityFailed'),
+      });
+      return;
+    }
+    setBooks((prev) =>
+      prev.map((b) => (b.id === book.id ? { ...b, isPublic: !b.isPublic } : b)),
+    );
+  };
+
+  const handleUseInChat = async (id: string | null) => {
+    const res = await fetch('/api/user/active-skillbook', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skillBookId: id }),
+    });
+    if (!res.ok) {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.myBooks.activateFailed'),
+      });
+      return;
+    }
+    setActiveId(id);
+    router.push('/chat');
   };
 
   const handleExport = async (id: string) => {
@@ -524,7 +563,15 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
           </div>
           <p className="mt-1 text-xs text-slate-500">{t('skillBook.builder.subtitle')}</p>
           {!apiKeyStatus[builderProvider] && (
-            <p className="mt-1 text-xs text-rose-600">{t('skillBook.builder.noApiKey')}</p>
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <p className="text-xs text-rose-600">{t('skillBook.builder.noApiKey')}</p>
+              <a
+                href="#api-keys"
+                className="text-[11px] font-semibold text-[var(--brand-700)] hover:underline"
+              >
+                {t('skillBook.builder.goToApiKeys')}
+              </a>
+            </div>
           )}
 
           <div className="mt-3 grid gap-2">
@@ -692,13 +739,22 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
           </p>
         </div>
         {activeId ? (
-          <button
-            type="button"
-            onClick={() => handleActivate(null)}
-            className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
-          >
-            {t('skillBook.myBooks.useDefault')}
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => void handleUseInChat(null)}
+              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            >
+              {t('skillBook.myBooks.useInChat')}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleActivate(null)}
+              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            >
+              {t('skillBook.myBooks.useDefault')}
+            </button>
+          </div>
         ) : (
           <CheckCircleIcon className="h-5 w-5 shrink-0 text-[var(--brand-500)]" />
         )}
@@ -740,6 +796,22 @@ export default function SkillBookManager({ autoCreate = false }: SkillBookManage
                 {t('skillBook.myBooks.activate')}
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => void handleUseInChat(book.id)}
+              className="rounded p-1 text-slate-400 hover:text-slate-600"
+              title={t('skillBook.myBooks.useInChat')}
+            >
+              <ChatBubbleLeftRightIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleTogglePublic(book)}
+              className="rounded p-1 text-slate-400 hover:text-slate-600"
+              title={book.isPublic ? t('skillBook.myBooks.makePrivate') : t('skillBook.myBooks.makePublic')}
+            >
+              {book.isPublic ? <LockClosedIcon className="h-4 w-4" /> : <GlobeAltIcon className="h-4 w-4" />}
+            </button>
             <button
               type="button"
               onClick={() => void handleExport(book.id)}

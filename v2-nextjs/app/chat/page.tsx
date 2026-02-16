@@ -241,6 +241,10 @@ export default function ChatPage() {
   const showPersistedView = selectedSessionId && !isStreaming;
   const showStreamingView = isStreaming;
   const showEmptyState = !selectedSessionId && !isStreaming;
+  const activeSkillBookName =
+    activeSkillBookId
+      ? skillBooks.find((book) => book.id === activeSkillBookId)?.name ?? t('skillBook.myBooks.defaultOption')
+      : t('skillBook.myBooks.defaultOption');
 
   return (
     <div className="flex min-h-screen flex-col bg-[radial-gradient(circle_at_top_left,#eef5fa_0%,#f8fafc_45%,#f8fafc_100%)]">
@@ -296,7 +300,10 @@ export default function ChatPage() {
           <main className="flex min-h-0 flex-1 flex-col p-2.5 md:py-0 md:pl-4 md:pr-0">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur">
               <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2.5">
-                <p className="text-xs font-medium text-slate-500">{t('skillBook.myBooks.title')}</p>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-slate-500">{t('skillBook.myBooks.title')}</p>
+                  <p className="truncate text-[11px] text-slate-400">{activeSkillBookName}</p>
+                </div>
                 <select
                   value={activeSkillBookId ?? '__default__'}
                   onChange={(e) => void handleSkillBookChange(e.target.value)}

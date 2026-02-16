@@ -7,6 +7,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createDecipheriv, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { prisma } from '@/lib/prisma';
+import { normalizeSkillBookDocuments, SKILLBOOK_LIMITS } from '@/lib/skillBookValidation';
 
 const scryptAsync = promisify(scrypt);
 const algorithm = 'aes-256-cbc';
@@ -14,6 +15,7 @@ const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY as string;
 
 type Provider = 'openai' | 'google' | 'anthropic';
 type SourceDoc = { title: string; content: string };
+const PROVIDERS: Provider[] = ['openai', 'google', 'anthropic'];
 
 async function decrypt(encryptedText: string, iv: string) {
   if (!ENCRYPTION_KEY) {
@@ -27,13 +29,24 @@ async function decrypt(encryptedText: string, iv: string) {
 }
 
 function sanitizeSources(docs: SourceDoc[]): SourceDoc[] {
-  return docs
+  const normalized = docs
     .filter((d) => d.title?.trim() && d.content?.trim())
     .map((d) => ({
       title: d.title.trim().slice(0, 120),
       content: d.content.trim().slice(0, 6000),
     }))
     .slice(0, 12);
+
+  const result: SourceDoc[] = [];
+  let totalChars = 0;
+  for (const item of normalized) {
+    if (totalChars >= 20000) break;
+    const remaining = 20000 - totalChars;
+    const truncatedContent = item.content.slice(0, remaining);
+    result.push({ title: item.title, content: truncatedContent });
+    totalChars += item.title.length + truncatedContent.length;
+  }
+  return result;
 }
 
 function buildPrompt(name: string, description: string, docs: SourceDoc[]) {
@@ -78,10 +91,13 @@ function extractJson(text: string): { instructions: string; documents: SourceDoc
   if (!parsed.instructions || !Array.isArray(parsed.documents)) {
     throw new Error('Invalid builder response');
   }
-  const documents = sanitizeSources(parsed.documents);
+  const normalized = normalizeSkillBookDocuments(parsed.documents);
+  if (!normalized.ok) {
+    throw new Error(normalized.error);
+  }
   return {
-    instructions: parsed.instructions.trim(),
-    documents,
+    instructions: parsed.instructions.trim().slice(0, SKILLBOOK_LIMITS.instructionsMax),
+    documents: normalized.value,
   };
 }
 
@@ -131,6 +147,9 @@ export async function POST(req: Request) {
       sourceDocs?: SourceDoc[];
     };
     const provider = body.provider ?? 'openai';
+    if (!PROVIDERS.includes(provider)) {
+      return NextResponse.json({ error: 'Unsupported provider' }, { status: 400 });
+    }
     const docs = sanitizeSources(body.sourceDocs ?? []);
     if (!docs.length) {
       return NextResponse.json({ error: 'sourceDocs is required' }, { status: 400 });

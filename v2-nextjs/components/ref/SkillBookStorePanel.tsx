@@ -15,6 +15,16 @@ type PublicSkillBook = {
   authorName: string;
 };
 
+type PublicSkillBookDetail = PublicSkillBook & {
+  instructions: string;
+  documents: string;
+};
+
+type PreviewDoc = {
+  title: string;
+  content: string;
+};
+
 export default function SkillBookStorePanel() {
   const { status } = useSession();
   const { t, language } = useTranslation();
@@ -25,6 +35,19 @@ export default function SkillBookStorePanel() {
   const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState<'updated' | 'name'>('updated');
   const [importingId, setImportingId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PublicSkillBookDetail | null>(null);
+  const [previewLoadingId, setPreviewLoadingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!preview) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPreview(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [preview]);
 
   const loadBooks = useCallback(async () => {
     setLoading(true);
@@ -98,6 +121,7 @@ export default function SkillBookStorePanel() {
           message: t('skillBook.store.importedMessage'),
         });
       }
+      setPreview(null);
 
       if (activate && importedId) {
         const activeRes = await fetch('/api/user/active-skillbook', {
@@ -123,6 +147,36 @@ export default function SkillBookStorePanel() {
       setImportingId(null);
     }
   }, [showToast, t]);
+
+  const handlePreview = useCallback(async (skillBookId: string) => {
+    setPreviewLoadingId(skillBookId);
+    try {
+      const res = await fetch(`/api/skillbooks?visibility=public&id=${encodeURIComponent(skillBookId)}`);
+      if (!res.ok) throw new Error('Preview failed');
+      setPreview(await res.json());
+    } catch {
+      showToast({
+        type: 'error',
+        title: t('errors.title'),
+        message: t('skillBook.store.previewFailed'),
+      });
+    } finally {
+      setPreviewLoadingId(null);
+    }
+  }, [showToast, t]);
+
+  const previewDocs: PreviewDoc[] = useMemo(() => {
+    if (!preview) return [];
+    try {
+      const parsed = JSON.parse(preview.documents) as Array<{ title?: string; content?: string }>;
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((d) => typeof d.title === 'string' && typeof d.content === 'string' && d.title.trim() && d.content.trim())
+        .map((d) => ({ title: d.title!.trim(), content: d.content!.trim() }));
+    } catch {
+      return [];
+    }
+  }, [preview]);
 
   return (
     <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
@@ -167,6 +221,14 @@ export default function SkillBookStorePanel() {
                 {t('skillBook.store.author')}: {book.authorName} · {t('skillBook.store.updatedAt')}: {formatDate(book.updatedAt)}
               </p>
               <div className="mt-3 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => void handlePreview(book.id)}
+                  disabled={previewLoadingId === book.id}
+                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                >
+                  {previewLoadingId === book.id ? '...' : t('skillBook.store.preview')}
+                </button>
                 {status === 'authenticated' ? (
                   <>
                     <button
@@ -198,6 +260,87 @@ export default function SkillBookStorePanel() {
             </li>
           ))}
         </ul>
+      )}
+
+      {preview && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/45 p-4"
+          onClick={() => setPreview(null)}
+        >
+          <div
+            className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+              <h3 className="text-sm font-semibold text-slate-800">{preview.name}</h3>
+              <button
+                type="button"
+                onClick={() => setPreview(null)}
+                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50"
+              >
+                {t('buttons.close')}
+              </button>
+            </div>
+            <div className="max-h-[70vh] overflow-y-auto space-y-4 px-4 py-4">
+              <p className="text-xs text-slate-500">
+                {t('skillBook.store.author')}: {preview.authorName} · {t('skillBook.store.updatedAt')}: {formatDate(preview.updatedAt)}
+              </p>
+              {preview.description && (
+                <p className="rounded-md bg-slate-50 p-3 text-sm text-slate-700">{preview.description}</p>
+              )}
+              <div>
+                <p className="mb-1 text-xs font-semibold text-slate-600">{t('skillBook.myBooks.instructions')}</p>
+                <pre className="whitespace-pre-wrap rounded-md bg-slate-50 p-3 text-xs text-slate-700">{preview.instructions}</pre>
+              </div>
+              <div>
+                <p className="mb-1 text-xs font-semibold text-slate-600">{t('skillBook.myBooks.documents')}</p>
+                {previewDocs.length > 0 ? (
+                  <ul className="space-y-2">
+                    {previewDocs.map((doc, idx) => (
+                      <li key={`${doc.title}-${idx}`} className="rounded-md bg-slate-50 p-3">
+                        <p className="text-xs font-semibold text-slate-700">{doc.title}</p>
+                        <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
+                          {doc.content.length > 1500 ? `${doc.content.slice(0, 1500)}...` : doc.content}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <pre className="whitespace-pre-wrap rounded-md bg-slate-50 p-3 text-xs text-slate-700">{preview.documents}</pre>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3">
+              {status === 'authenticated' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => void handleImport(preview.id, false)}
+                    disabled={importingId === preview.id}
+                    className="rounded-md bg-[var(--brand-700)] px-3 py-1.5 text-xs font-medium text-white hover:bg-[var(--brand-700-hover)] disabled:opacity-60"
+                  >
+                    {importingId === preview.id ? '...' : t('skillBook.store.import')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleImport(preview.id, true)}
+                    disabled={importingId === preview.id}
+                    className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                  >
+                    {t('skillBook.store.importAndActivate')}
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => setPreview(null)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
+              >
+                {t('buttons.close')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

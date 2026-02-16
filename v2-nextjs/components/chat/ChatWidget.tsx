@@ -41,6 +41,10 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
   const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
   const handledInitialMessageRef = useRef<string | null>(null);
+  const activeSkillBookName =
+    activeSkillBookId
+      ? skillBooks.find((book) => book.id === activeSkillBookId)?.name ?? t('skillBook.myBooks.defaultOption')
+      : t('skillBook.myBooks.defaultOption');
 
   // Load user knowledge once per mount, not per message
   const userKnowledgeRef = useRef<ReturnType<typeof toChatKnowledgePayload> | null>(null);
@@ -285,7 +289,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
           </span>
           <div className="min-w-0">
             <h3 className="truncate text-sm font-bold text-slate-800">{t('chat.title')}</h3>
-            <p className="truncate text-[11px] text-slate-500">Fast contextual assistant</p>
+            <p className="truncate text-[11px] text-slate-500">{activeSkillBookName}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">

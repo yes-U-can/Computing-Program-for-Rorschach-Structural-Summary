@@ -28,8 +28,13 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const create = new URLSearchParams(window.location.search).get('create') === '1';
+    const url = new URL(window.location.href);
+    const create = url.searchParams.get('create') === '1';
     setAutoCreateSkillBook(create);
+    if (create) {
+      url.searchParams.delete('create');
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash || ''}`);
+    }
   }, []);
 
   if (status === 'loading' || !session) {
