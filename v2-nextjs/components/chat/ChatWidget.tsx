@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
@@ -156,6 +156,12 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
 
   const getFriendlyErrorMessage = useCallback((rawError: string) => {
     const message = rawError.toLowerCase();
+    if (message.includes('platform ai is currently unavailable')) {
+      return '플랫폼 AI가 아직 준비되지 않았습니다. 개인 API 키를 등록하거나 잠시 후 다시 시도해 주세요.';
+    }
+    if (message.includes('insufficient credits')) {
+      return '크레딧이 부족합니다. 충전 후 다시 시도하거나 더 저렴한 모델을 선택해 주세요.';
+    }
     if (message.includes('api key not found') || message.includes('api key not configured')) {
       return t('chat.apiKeyMissing');
     }
@@ -383,8 +389,8 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
             aria-label="Billing mode"
             className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)]"
           >
-            <option value="byok">BYOK</option>
-            <option value="platform">Platform</option>
+            <option value="byok">내 API 키 사용</option>
+            <option value="platform">플랫폼 크레딧 사용</option>
           </select>
           <Link
             href="/chat"
@@ -481,6 +487,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
     </div>
   );
 }
+
 
 
 

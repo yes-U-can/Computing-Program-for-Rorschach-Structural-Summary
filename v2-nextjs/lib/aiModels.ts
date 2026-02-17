@@ -1,4 +1,4 @@
-export type Provider = 'openai' | 'google' | 'anthropic';
+﻿export type Provider = 'openai' | 'google' | 'anthropic';
 
 export type ModelQualityLevel = 'basic' | 'standard' | 'advanced';
 export type ModelPriceLevel = 'low' | 'medium' | 'high';
@@ -162,8 +162,9 @@ export function estimateTokenCostCredits(params: {
 }
 
 export function toPsychologyLabel(level: ModelQualityLevel): string {
-  if (level === 'advanced') return '심층 임상 해석형';
-  if (level === 'standard') return '균형 해석형';
-  return '요약/초안형';
+  if (level === 'advanced') return 'Clinical specialist level';
+  if (level === 'standard') return 'Graduate trainee level';
+  return 'Assistant summary level';
 }
+
 

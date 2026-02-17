@@ -6,16 +6,19 @@ declare module "next-auth" {
     user: {
       id: string;
       hasSavedApiKeys: boolean;
+      role: 'user' | 'admin';
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     hasSavedApiKeys: boolean;
+    role: 'user' | 'admin';
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     hasSavedApiKeys: boolean;
+    role: 'user' | 'admin';
   }
 }

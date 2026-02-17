@@ -3,6 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { normalizeSkillBookDocuments, normalizeSkillBookTextPatch } from '@/lib/skillBookValidation';
+import { applyDiscount, getTierDiscounts } from '@/lib/tierPolicy';
 
 type Params = { params: Promise<{ id: string }> };
 const LISTING_FEE_CREDITS = Number(process.env.SKILLBOOK_LISTING_FEE_CREDITS ?? '50');
@@ -63,6 +64,13 @@ export async function PUT(req: Request, { params }: Params) {
 
   const nextIsPublic = isPublic !== undefined ? Boolean(isPublic) : existing.isPublic;
   const shouldChargeListingFee = !existing.isPublic && nextIsPublic;
+  const userProfile = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { tierCode: true },
+  });
+  const tierCode = userProfile?.tierCode ?? 'bronze';
+  const tierDiscounts = await getTierDiscounts(tierCode);
+  const discountedListingFee = applyDiscount(LISTING_FEE_CREDITS, tierDiscounts.listingFeeDiscountPct);
 
   try {
     const skillBook = shouldChargeListingFee
@@ -77,11 +85,11 @@ export async function PUT(req: Request, { params }: Params) {
           if (!Number.isFinite(LISTING_FEE_CREDITS) || LISTING_FEE_CREDITS <= 0) {
             throw new Error('Listing fee configuration is invalid');
           }
-          if (user.creditBalance < LISTING_FEE_CREDITS) {
-            throw new Error(`Insufficient credits. ${LISTING_FEE_CREDITS} credits are required to publish.`);
+          if (user.creditBalance < discountedListingFee) {
+            throw new Error(`Insufficient credits. ${discountedListingFee} credits are required to publish.`);
           }
 
-          const nextBalance = user.creditBalance - LISTING_FEE_CREDITS;
+          const nextBalance = user.creditBalance - discountedListingFee;
           await tx.user.update({
             where: { id: session.user.id },
             data: { creditBalance: nextBalance },
@@ -90,10 +98,16 @@ export async function PUT(req: Request, { params }: Params) {
             data: {
               userId: session.user.id,
               type: 'listing_fee_burn',
-              amount: -LISTING_FEE_CREDITS,
+              amount: -discountedListingFee,
               balanceAfter: nextBalance,
               description: `Listing fee burn for publishing skill book: ${existing.name}`,
-              metadataJson: JSON.stringify({ skillBookId: existing.id, feeCredits: LISTING_FEE_CREDITS }),
+              metadataJson: JSON.stringify({
+                skillBookId: existing.id,
+                baseFeeCredits: LISTING_FEE_CREDITS,
+                discountedFeeCredits: discountedListingFee,
+                tierCode,
+                discountPct: tierDiscounts.listingFeeDiscountPct,
+              }),
             },
           });
 

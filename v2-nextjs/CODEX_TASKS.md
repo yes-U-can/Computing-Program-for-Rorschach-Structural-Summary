@@ -322,3 +322,375 @@
 3단계:
 1. 참조 문서 제안 스레드/좋아요/검토 큐 구현
 2. AI 보조 검토 배치 + 승인/기각 기록 + 점수 반영
+
+---
+
+## 10) 실제 구현 진행 로그 (2026-02-16, 대화 기반 실행)
+
+### 10-1. 채팅/과금 경로
+
+완료:
+1. Provider + Model 선택 구조 도입 (`modelId`, `billingMode`)
+2. BYOK / Platform 모드 공존 구현
+3. 플랫폼 모드 사전 크레딧 컷오프 + 응답 후 크레딧 소각
+4. 모델 카탈로그/가격수준/속도/품질/심리학형 라벨 노출
+5. 플랫폼 키 미설정/크레딧 부족에 대한 사용자 친화적 오류문구 보강
+
+주요 파일:
+1. `lib/aiModels.ts`
+2. `app/api/chat/models/route.ts`
+3. `app/api/chat/route.ts`
+4. `app/chat/page.tsx`
+5. `components/chat/ChatWidget.tsx`
+
+### 10-2. 크레딧 소각/등급 할인
+
+완료:
+1. 스킬북 공개 전환 시 등록비 소각
+2. 사용자 등급(`tierCode`)에 따른 등록비 할인 계산 반영
+
+주요 파일:
+1. `lib/tierPolicy.ts`
+2. `app/api/skillbooks/[id]/route.ts`
+
+### 10-3. 기여점수/커뮤니티 기반
+
+완료(백엔드 기반):
+1. 활동점수 원장/등급/문서 제안 스레드 관련 스키마 추가
+2. 스킬북 import 시 원저자 점수 지급(다운로드 이벤트)
+3. 스킬북 즐겨찾기/추천 API 추가 + 점수 지급
+4. 문서 제안 스레드/답글/좋아요/관리자 검토 API 추가
+5. 관리자 검토 승인 시 좋아요 가중 포인트 지급
+
+주요 파일:
+1. `prisma/schema.prisma`
+2. `lib/activityPoints.ts`
+3. `app/api/skillbooks/import/route.ts`
+4. `app/api/skillbooks/[id]/favorite/route.ts`
+5. `app/api/skillbooks/[id]/like/route.ts`
+6. `app/api/ref/suggestions/route.ts`
+7. `app/api/ref/suggestions/[threadId]/replies/route.ts`
+8. `app/api/ref/suggestions/[threadId]/like/route.ts`
+9. `app/api/ref/suggestions/[threadId]/review/route.ts`
+
+### 10-4. 운영 준비/설정
+
+완료:
+1. `.env.example` 템플릿 추가 (플랫폼키 예시값 `abcd1234` 포함)
+2. 실제 플랫폼 키 미설정 시 안전 실패 + 사용자 안내 메시지 경로 준비
+
+### 10-5. 남은 구현 (다음 단계)
+
+1. 문서 제안 스레드 UI(참조 페이지 내)
+2. 월간 배치 집계 크론(기간별 자동 평가/리포트)
+3. AI 보조 검토 배치(제안 요약/타당성 점수/패치안 생성)
+4. 판매 정산 시 수수료 소각(`sale_commission_burn`) 및 판매자 정산(`sale_settlement_credit`) 집행 API
+5. 관리자 대시보드(등급/요율/검토 큐/반영 이력)
+
+---
+
+## 11) 2026-02-16 추가 구현/보정 로그 (최신)
+
+### 11-1. 사용자 요청 반영 확인
+
+1. 플랫폼 제공 AI 키는 사용자가 추후 실제 값을 넣을 수 있도록 `.env.example`에 예시값(`abcd1234`)으로 명시했다.
+2. 사용자가 BYOK를 사용하지 않고 플랫폼 모드로 요청했는데 플랫폼 키가 비어 있으면, 채팅 API는 `503`과 함께 명확한 오류를 반환하도록 구현되어 있다.
+3. 채팅 UI(페이지/위젯)는 위 오류를 사용자 친화적인 안내 문구로 변환해서 보여준다.
+
+### 11-2. 품질 보정
+
+1. 일부 화면에 깨져 보이던 문구(인코딩 혼합) 정리:
+   - `app/chat/page.tsx`
+   - `components/chat/ChatWidget.tsx`
+   - `lib/aiModels.ts` (심리학 레이블)
+2. 모델 선택/과금 모드/잔액 표기는 페이지와 위젯에서 일관되게 동작한다.
+
+### 11-3. 검증 결과(최신)
+
+1. `npx prisma generate` 통과
+2. `npx prisma validate` 통과
+3. `npx next build` 통과
+
+### 11-4. 환경 제약 메모
+
+1. 현재 실행 환경의 네트워크 제한으로 `prisma migrate diff`는 Prisma 엔진 다운로드 단계에서 실패할 수 있다.
+2. 따라서 DB 드리프트 최종 검증은 네트워크 가능한 환경에서 1회 재확인이 필요하다.
+
+---
+
+## 12) 2026-02-16 추가 구현 (문서 제안 스레드 UI 연결)
+
+### 12-1. 구현 이유
+
+대화에서 합의한 "참조 문서 위키형 기여 흐름"을 실제 사용자 접점에 올리기 위해, 기존 백엔드 API에 이어 문서 상세 페이지에 제안 스레드 UI를 연결했다.
+
+### 12-2. 실제 변경 사항
+
+1. `app/api/ref/suggestions/route.ts`
+   - GET 응답에 `viewerHasLiked`를 포함하도록 확장했다.
+   - 로그인 사용자 기준으로 현재 문서 스레드들에 대한 좋아요 여부를 계산해 함께 반환한다.
+
+2. `components/ref/DocSuggestionPanel.tsx` (신규)
+   - 문서별 제안 스레드 목록 조회
+   - 제안 스레드 등록
+   - 스레드 좋아요/취소
+   - 답글 조회/등록
+   - 상태 배지(open/reviewed/accepted/rejected) 표시
+   - 다국어 라벨(en/ko/ja/es/pt) 포함
+   - 비로그인 사용자는 읽기만 가능하고, 작성/좋아요는 비활성 처리
+
+3. `app/ref/[...slug]/page.tsx`
+   - 문서 상세 하단에 `DocSuggestionPanel` 연동
+   - `docSlug`를 전달해 해당 문서의 제안만 표시되게 구성
+
+### 12-3. 검증
+
+1. `npx.cmd eslint app/api/ref/suggestions/route.ts components/ref/DocSuggestionPanel.tsx app/ref/[...slug]/page.tsx` 통과
+2. `npx.cmd next build` 통과
+
+### 12-4. 현재 상태 메모
+
+1. 관리자 검토(review) UI는 아직 미구현이며 API는 준비되어 있다.
+2. 현재 단계에서 일반 사용자는 "제안/토론/좋아요"까지 진행 가능하다.
+
+---
+
+## 13) 2026-02-16 추가 구현 (운영/검토/안내 강화 + 빌드 복구)
+
+### 13-1. 계정 페이지 관리자 검토 패널 추가
+
+1. `components/account/DocSuggestionReviewPanel.tsx` 신규 추가
+   - 문서 제안 스레드 목록 필터(status/docSlug)
+   - 관리자 시크릿 입력
+   - reviewed/accepted/rejected 결정 전송
+   - 결정 사유 및 문서 리비전 링크 입력
+2. `app/account/page.tsx`
+   - `Doc Review` 섹션과 사이드 네비 링크 추가
+   - 관리자 검토 패널을 계정 화면에서 직접 사용 가능하게 연결
+
+### 13-2. 업로드 포맷 안내 강화 (사용자 요청 반영)
+
+1. `components/account/SkillBookBuilder.tsx`
+   - `.txt` 권장 안내 추가
+   - `.md`, `.csv` 지원 및 PDF 미지원(텍스트 변환 필요) 안내 추가
+2. `components/account/KnowledgeSourceManager.tsx`
+   - `.txt` 권장 + 현재 브라우저 localStorage 저장 구조 안내 추가
+
+### 13-3. 빌드 블로커 처리
+
+배경:
+1. 현재 실행 환경에서 `prisma generate`가 네트워크 제한으로 실패(Prisma 엔진 다운로드 실패)
+2. 이로 인해 Prisma 타입과 스키마 간 불일치가 발생
+
+조치:
+1. `app/api/internal/account-deletion/route.ts`
+   - Prisma 모델 필드 타입 의존 쿼리 대신 raw SQL delete로 대체
+2. `app/api/user/account/route.ts`
+   - 조회/스케줄/취소 로직을 raw SQL 기반으로 대체
+
+결과:
+1. `npx.cmd eslint ...` 통과
+2. `npx.cmd next build` 통과
+
+### 13-4. 질문 응답 요약(기록)
+
+1. 현재 이슈는 Neon 연결 실패가 아니라, 로컬 실행 환경의 Prisma 엔진 다운로드 제한 이슈였다.
+2. 따라서 Neon CLI 로그인/연결 작업이 빌드 복구의 필수 조건은 아니었다.
+3. 파일 원본 저장용 별도 객체 스토리지(AWS S3 등)는 현재 구조에서 필수는 아니지만, 향후 PDF 원본 보관/대용량 업로드 요구가 생기면 도입이 필요하다.
+
+---
+
+## 14) 2026-02-16 권한 시스템 정식 전환 (Admin RBAC)
+
+### 14-1. 배경
+
+사용자 피드백:
+1. 문서 제안 리뷰 UI가 일반 사용자에게 보이는 것은 부적절함
+2. 임시 시크릿 기반이 아니라 정식 어드민 메커니즘이 필요함
+
+### 14-2. 정식 전환 내용
+
+1. `User.role` 기반 RBAC 도입
+   - `prisma/schema.prisma`에 `UserRole` enum(`user`, `admin`) 및 `User.role` 필드 추가
+
+2. 세션에 role 포함
+   - `types/next-auth.d.ts`에 `session.user.role` 확장
+   - `app/api/auth/[...nextauth]/route.ts`에서 DB 조회 후 `role` 세팅
+
+3. 어드민 판별 API 정식화
+   - `app/api/user/admin-status/route.ts`
+   - 환경변수 이메일 allowlist 제거, DB role 기반 판별로 변경
+
+4. 리뷰 API 보호 방식 전환
+   - `app/api/ref/suggestions/[threadId]/review/route.ts`
+   - `x-admin-review-secret` 검사 제거
+   - 로그인 세션 사용자 role이 `admin`인지 DB 확인 후 허용
+
+5. 어드민 승격(등록) 경로 제공
+   - `app/api/internal/admin/bootstrap/route.ts` 추가
+   - `ADMIN_BOOTSTRAP_SECRET` 헤더 인증 후 특정 이메일을 admin으로 승격
+   - role 컬럼/제약이 없으면 SQL로 자동 보정
+
+6. 운영 환경 변수
+   - `.env.example`에 `ADMIN_BOOTSTRAP_SECRET` 추가
+
+### 14-3. 실제 어드민 승격 실행 결과
+
+대상:
+1. `mow.coding@gmail.com`
+
+결과:
+1. DB 업데이트 성공 (`updatedCount: 1`)
+2. 확인값: `role = admin`
+
+### 14-4. 검증
+
+1. ESLint 통과
+2. `npx.cmd next build` 통과
+
+---
+
+## 15) 2026-02-16 추가 구현 (Admin 리뷰에 AI 사전검토 연결)
+
+### 15-1. 목표
+
+어드민이 문서 제안 스레드를 검토할 때, 수동으로 전부 읽기 전에 AI가 사전 분류/권고안을 제공하도록 연결.
+
+### 15-2. 구현 내용
+
+1. 내부 AI 리뷰 API 권한 확장
+   - `app/api/internal/ref-suggestion-ai-review/route.ts`
+   - 기존: CRON/시크릿 헤더 기반 내부 호출만 허용
+   - 변경: 세션 사용자 role이 `admin`이면 브라우저에서도 호출 허용
+
+2. 어드민 리뷰 패널 기능 확장
+   - `components/account/DocSuggestionReviewPanel.tsx`
+   - 추가 기능:
+     - AI provider 선택(OpenAI/Google/Anthropic)
+     - model override 입력
+     - `Run AI Pre-Review` 실행 버튼
+     - AI 요약(summary) 표시
+     - 스레드별 AI 권고(accept/reject/needs_human_review), confidence, rationale, risk flags 표시
+     - `Apply AI Recommendation` 버튼으로 권고안을 바로 결정으로 반영
+   - 권고안 실행 시:
+     - accept -> accepted
+     - reject -> rejected
+     - needs_human_review -> reviewed
+     - 제안 사유/리비전 값 자동 프리필 활용
+
+### 15-3. 검증
+
+1. `npx.cmd eslint app/api/internal/ref-suggestion-ai-review/route.ts components/account/DocSuggestionReviewPanel.tsx` 통과
+2. `npx.cmd next build` 통과
+
+---
+
+## 16) 2026-02-16 추가 구현 (월간 운영형 리뷰 강화)
+
+### 16-1. 목적
+
+문서 제안 검토를 “운영 배치”처럼 돌릴 수 있도록 기간 필터와 일괄 반영 흐름을 강화.
+
+### 16-2. 변경 사항
+
+1. `app/api/ref/suggestions/route.ts`
+   - GET에 `from`, `to` 파라미터 추가
+   - 생성일(`createdAt`) 기간 필터 지원
+
+2. `components/account/DocSuggestionReviewPanel.tsx`
+   - 날짜 범위 필터(`from`, `to`) 추가 (기본: 당월 1일~말일)
+   - AI pre-review 호출 시 provider/model/docSlug + 기간 전달
+   - 고신뢰 일괄 반영(`Apply High-Confidence Batch`) 추가
+   - 임계값 입력(기본 0.8) 추가
+   - 스레드 메타 표기 정리(깨진 구분자 정리)
+
+### 16-3. 기대 효과
+
+1. 월 단위로 쌓인 제안을 한 번에 조회/검토 가능
+2. AI 권고를 안전 임계치로 일괄 반영하여 검토 시간 단축
+3. 최종 결정은 여전히 어드민 권한 하에서만 실행
+
+### 16-4. 검증
+
+1. `npx.cmd eslint app/api/ref/suggestions/route.ts components/account/DocSuggestionReviewPanel.tsx` 통과
+2. `npx.cmd next build` 통과
+
+---
+
+## 17) 2026-02-17 버그 수정 (API 키 저장 후 즉시 인식 안 되는 문제)
+
+### 17-1. 증상
+
+1. 사용자가 OpenAI API 키를 저장했는데도
+2. 메인에서 AI 해석 진입 시 "API 키 설정 필요" 안내가 계속 표시됨
+
+### 17-2. 원인
+
+1. 키는 DB에 정상 저장되지만
+2. `session.user.hasSavedApiKeys` 값이 세션 캐시에 남아 즉시 갱신되지 않음
+
+### 17-3. 조치
+
+1. `components/account/ApiKeyManager.tsx`에서 키 상태 재조회 후
+2. `useSession().update()`를 호출해 세션 정보를 즉시 갱신하도록 수정
+
+### 17-4. 검증
+
+1. `npx.cmd eslint components/account/ApiKeyManager.tsx` 통과
+2. `npx.cmd next build` 통과
+
+---
+
+## 18) 2026-02-17 UX 보강 (API 키 입력 섹션)
+
+### 18-1. 사용자 피드백
+
+1. 저장 후 입력 칸 변화가 적어 불안함
+2. 저장된 키에 대한 식별 정보가 없어서 상태 확인이 어려움
+3. 눈 아이콘으로 표시 전환 시 긴 문자열이 우측 아이콘과 겹쳐 보임
+
+### 18-2. 개선 내용
+
+1. `app/api/user/keys/route.ts`
+   - GET 응답에 provider별 마스킹 값(`masked`) 추가
+   - 복호화 후 마지막 4자리만 노출 (`****1234`) 형태
+
+2. `components/account/ApiKeyManager.tsx`
+   - 저장된 provider에 대해 `Stored key: ****1234` 표시
+   - 입력창 우측 패딩(`pr-10`) 추가로 눈 아이콘 겹침 현상 수정
+   - 기존 저장/삭제 후 세션 갱신 흐름 유지
+
+### 18-3. 검증
+
+1. `npx.cmd eslint app/api/user/keys/route.ts components/account/ApiKeyManager.tsx` 통과
+2. `npx.cmd next build` 통과
+
+---
+
+## 19) 2026-02-17 긴급 장애 복구 (로컬 Google 로그인 Callback/P2022)
+
+### 19-1. 증상
+
+1. 로컬 로그인 시 `error=Callback`
+2. 서버 로그:
+   - `adapter_error_getUserByAccount`
+   - `P2022 The column (not available) does not exist`
+
+### 19-2. 원인
+
+1. NextAuth Adapter의 `getUserByAccount` 경로에서 `Account + User` 조회 시
+2. DB `User` 테이블이 현재 Prisma 모델 필드와 드리프트 상태
+3. 누락 컬럼으로 인해 OAuth 콜백 단계에서 예외 발생
+
+### 19-3. 조치
+
+Neon DB에 누락 컬럼 즉시 보강:
+1. `User.deletionRequestedAt TIMESTAMP`
+2. `User.deletionScheduledAt TIMESTAMP`
+3. `User.activityPoints INTEGER DEFAULT 0 NOT NULL`
+4. `User.tierCode TEXT DEFAULT 'bronze' NOT NULL`
+
+### 19-4. 검증
+
+1. Prisma로 `account.findFirst({ include: { user: true } })` 직접 실행 성공
+2. OAuth 오류 경로 쿼리 레벨에서 P2022 해소 확인

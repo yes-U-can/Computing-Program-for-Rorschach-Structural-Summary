@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useToast } from '@/components/ui/Toast';
 import { KeyIcon, EyeIcon, EyeSlashIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
 
 type AIProvider = 'openai' | 'google' | 'anthropic';
 
@@ -14,14 +15,17 @@ const PROVIDERS: { id: AIProvider; name: string }[] = [
 ];
 
 type KeyStatus = Record<AIProvider, boolean>;
+type KeyMasked = Record<AIProvider, string | null>;
 
 const ApiKeyInput = ({
   provider,
   isSaved,
+  maskedValue,
   onStatusChange,
 }: {
   provider: { id: AIProvider; name: string };
   isSaved: boolean;
+  maskedValue: string | null;
   onStatusChange: () => void;
 }) => {
   const { t } = useTranslation();
@@ -98,7 +102,7 @@ const ApiKeyInput = ({
             type={showKey ? 'text' : 'password'}
             name={`${provider.id}-api-key`}
             id={`${provider.id}-api-key`}
-            className="block w-full rounded-none rounded-l-md border border-slate-300 pl-10 focus:border-[var(--brand-500)] focus:ring-[var(--brand-500)] sm:text-sm"
+            className="block w-full rounded-none rounded-l-md border border-slate-300 pl-10 pr-10 focus:border-[var(--brand-500)] focus:ring-[var(--brand-500)] sm:text-sm"
             placeholder={t('account.apiKeys.placeholder', { provider: provider.name })}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
@@ -136,19 +140,36 @@ const ApiKeyInput = ({
           <div className="rounded-r-md" />
         )}
       </form>
+      {isSaved && maskedValue && (
+        <p className="mt-1 text-xs text-slate-500">
+          Stored key: <span className="font-mono text-slate-700">{maskedValue}</span>
+        </p>
+      )}
     </div>
   );
 };
 
 export default function ApiKeyManager() {
+  const { update } = useSession();
   const [keyStatus, setKeyStatus] = useState<KeyStatus>({ openai: false, google: false, anthropic: false });
+  const [maskedKeys, setMaskedKeys] = useState<KeyMasked>({
+    openai: null,
+    google: null,
+    anthropic: null,
+  });
 
   const fetchStatus = async () => {
     try {
       const res = await fetch('/api/user/keys');
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as KeyStatus & { masked?: Partial<KeyMasked> };
         setKeyStatus(data);
+        setMaskedKeys({
+          openai: data.masked?.openai ?? null,
+          google: data.masked?.google ?? null,
+          anthropic: data.masked?.anthropic ?? null,
+        });
+        await update();
       }
     } catch {
       // silently fail
@@ -160,8 +181,13 @@ export default function ApiKeyManager() {
       try {
         const res = await fetch('/api/user/keys');
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as KeyStatus & { masked?: Partial<KeyMasked> };
           setKeyStatus(data);
+          setMaskedKeys({
+            openai: data.masked?.openai ?? null,
+            google: data.masked?.google ?? null,
+            anthropic: data.masked?.anthropic ?? null,
+          });
         }
       } catch {
         // silently fail
@@ -177,6 +203,7 @@ export default function ApiKeyManager() {
           key={provider.id}
           provider={provider}
           isSaved={keyStatus[provider.id]}
+          maskedValue={maskedKeys[provider.id]}
           onStatusChange={fetchStatus}
         />
       ))}

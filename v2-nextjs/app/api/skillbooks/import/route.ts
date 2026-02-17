@@ -3,6 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { normalizeSkillBookDocuments, normalizeSkillBookText } from '@/lib/skillBookValidation';
+import { awardActivityPoints } from '@/lib/activityPoints';
 
 // POST /api/skillbooks/import
 export async function POST(req: Request) {
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
       documents: true,
       author: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -80,6 +82,17 @@ export async function POST(req: Request) {
     },
     select: { id: true },
   });
+
+  if (source.author?.id && source.author.id !== session.user.id) {
+    await awardActivityPoints(prisma, {
+      userId: source.author.id,
+      points: Number(process.env.POINTS_PER_SKILLBOOK_DOWNLOAD ?? '1'),
+      sourceType: 'skillbook_download',
+      sourceId: source.id,
+      reason: 'Skill book imported by another user',
+      metadata: { importedByUserId: session.user.id, createdSkillBookId: created.id },
+    });
+  }
 
   return NextResponse.json({ imported: true, id: created.id }, { status: 201 });
 }

@@ -2,6 +2,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import CopyDocButton from '@/components/docs/CopyDocButton';
+import DocSuggestionPanel from '@/components/ref/DocSuggestionPanel';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { findDocRouteBySlug, getAllDocRoutes, getDocChildren, resolveDocContent } from '@/lib/docsCatalog';
@@ -64,6 +65,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
   if (!route) notFound();
 
   const content = resolveDocContent(route, activeLang);
+  const docSlug = slug.join('/');
   const level1Items = getDocChildren([]);
   const selectedLevel1 = slug[0] ?? level1Items[0]?.slug[0];
 
@@ -181,6 +183,7 @@ export default async function DocDetailPage({ params, searchParams }: PageProps)
           </div>
           <p className="mt-6 whitespace-pre-wrap text-base leading-7 text-slate-700">{content.description}</p>
         </div>
+        <DocSuggestionPanel docSlug={docSlug} language={activeLang} />
       </main>
       <Footer />
     </div>

@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { NextRequest, NextResponse } from 'next/server';
-import { createCipheriv, randomBytes, scrypt } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { prisma } from '@/lib/prisma';
 const scryptAsync = promisify(scrypt);
@@ -25,6 +25,21 @@ async function encrypt(text: string) {
   return { encrypted, iv: iv.toString('hex') };
 }
 
+async function decrypt(encryptedText: string, iv: string) {
+  const key = (await scryptAsync(ENCRYPTION_KEY, 'salt', 32)) as Buffer;
+  const decipher = createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
+  let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+}
+
+function maskKey(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  const tail = trimmed.slice(-4);
+  return `****${tail}`;
+}
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
@@ -36,15 +51,34 @@ export async function GET() {
       where: { email: session.user.email },
       select: {
         encryptedOpenAIKey: true,
+        openAIKeyIv: true,
         encryptedGoogleKey: true,
+        googleKeyIv: true,
         encryptedAnthropicKey: true,
+        anthropicKeyIv: true,
       },
     });
+
+    const masked = {
+      openai:
+        user?.encryptedOpenAIKey && user.openAIKeyIv
+          ? maskKey(await decrypt(user.encryptedOpenAIKey, user.openAIKeyIv))
+          : null,
+      google:
+        user?.encryptedGoogleKey && user.googleKeyIv
+          ? maskKey(await decrypt(user.encryptedGoogleKey, user.googleKeyIv))
+          : null,
+      anthropic:
+        user?.encryptedAnthropicKey && user.anthropicKeyIv
+          ? maskKey(await decrypt(user.encryptedAnthropicKey, user.anthropicKeyIv))
+          : null,
+    };
 
     return NextResponse.json({
       openai: !!user?.encryptedOpenAIKey,
       google: !!user?.encryptedGoogleKey,
       anthropic: !!user?.encryptedAnthropicKey,
+      masked,
     });
   } catch {
     return NextResponse.json({ error: 'Failed to fetch key status.' }, { status: 500 });

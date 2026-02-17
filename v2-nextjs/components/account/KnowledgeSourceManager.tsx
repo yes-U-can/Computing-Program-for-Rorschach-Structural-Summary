@@ -65,6 +65,10 @@ export default function KnowledgeSourceManager() {
       <p className="text-sm text-slate-600">
         {t('account.knowledgeSources.description')}
       </p>
+      <p className="rounded bg-sky-50 px-3 py-2 text-xs text-sky-700">
+        Upload guide: `.txt` is recommended for best AI readability. `.md` and `.csv` are supported.
+        Uploaded text sources are currently stored in this browser&apos;s local storage.
+      </p>
 
       <div className="grid gap-3">
         <input

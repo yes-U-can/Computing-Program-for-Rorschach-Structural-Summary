@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -129,6 +129,31 @@ export default function ChatPage() {
 
   const selectedModel = models.find((m) => m.id === modelId) ?? null;
 
+  const getFriendlyErrorMessage = useCallback((rawError: string) => {
+    const message = rawError.toLowerCase();
+    if (message.includes('platform ai is currently unavailable')) {
+      return '플랫폼 AI가 아직 준비되지 않았습니다. 잠시 후 다시 시도하거나 개인 API 키 모드를 사용해 주세요.';
+    }
+    if (message.includes('insufficient credits')) {
+      return '크레딧이 부족합니다. 크레딧을 충전하거나 더 저렴한 모델을 선택해 주세요.';
+    }
+    if (message.includes('api key not found') || message.includes('api key not configured')) {
+      return t('chat.apiKeyMissing');
+    }
+    if (
+      message.includes('insufficient_quota') ||
+      message.includes('quota') ||
+      message.includes('billing') ||
+      message.includes('credit')
+    ) {
+      return t('chat.billingOrQuota');
+    }
+    if (message.includes('invalid') && message.includes('key')) {
+      return t('chat.invalidApiKey');
+    }
+    return t('chat.errorMessage');
+  }, [t]);
+
   const handleSkillBookChange = useCallback(async (value: string) => {
     if (status !== 'authenticated') return;
     const skillBookId = value === '__default__' ? null : value;
@@ -221,7 +246,21 @@ export default function ChatPage() {
       });
 
       if (!response.ok || !response.body) {
-        throw new Error('Failed to get response from server.');
+        let serverError = 'Failed to get response from server.';
+        try {
+          const data = await response.json();
+          if (data?.error && typeof data.error === 'string') {
+            serverError = data.error;
+          }
+        } catch {
+          try {
+            const text = await response.text();
+            if (text) serverError = text;
+          } catch {
+            // no-op
+          }
+        }
+        throw new Error(serverError);
       }
 
       const newSessionId = response.headers.get('X-Chat-Session-Id');
@@ -271,13 +310,13 @@ export default function ChatPage() {
       console.error(error);
       setStreamingMessages(prev => [
         ...prev,
-        { id: Date.now() + 2, role: 'ai', content: t('chat.errorMessage') },
+        { id: Date.now() + 2, role: 'ai', content: getFriendlyErrorMessage(error instanceof Error ? error.message : '') },
       ]);
     } finally {
       setIsLoading(false);
       setIsStreaming(false);
     }
-  }, [isLoading, streamingMessages, provider, modelId, billingMode, chatSessionId, selectedSessionId, language, t]);
+  }, [isLoading, streamingMessages, provider, modelId, billingMode, chatSessionId, selectedSessionId, language, getFriendlyErrorMessage]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -520,3 +559,4 @@ export default function ChatPage() {
     </div>
   );
 }
+

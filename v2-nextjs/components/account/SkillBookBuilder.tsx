@@ -194,6 +194,10 @@ export default function SkillBookBuilder({
       <p className="mt-1 rounded bg-amber-50 px-2 py-1 text-xs text-amber-600">
         {t('skillBook.builder.usesYourKey')}
       </p>
+      <p className="mt-1 rounded bg-sky-50 px-2 py-1 text-xs text-sky-700">
+        Source format guide: plain text (`.txt`) is the most stable for AI parsing. `.md` and `.csv` are also supported.
+        PDF upload is not supported in this builder yet, so convert PDF to clean text before upload.
+      </p>
       {!apiKeyStatus[builderProvider] && (
         <div className="mt-1 flex items-center justify-between gap-2">
           <p className="text-xs text-rose-600">{t('skillBook.builder.noApiKey')}</p>
