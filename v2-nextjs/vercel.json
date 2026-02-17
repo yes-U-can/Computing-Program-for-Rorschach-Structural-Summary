@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/internal/account-deletion",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
