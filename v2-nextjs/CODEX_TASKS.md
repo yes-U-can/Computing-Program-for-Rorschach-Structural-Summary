@@ -694,3 +694,26 @@ Neon DB에 누락 컬럼 즉시 보강:
 
 1. Prisma로 `account.findFirst({ include: { user: true } })` 직접 실행 성공
 2. OAuth 오류 경로 쿼리 레벨에서 P2022 해소 확인
+
+---
+
+## 20) 2026-02-17 재발 방지 조치 (Auth DB 안전 패치 스크립트)
+
+### 20-1. 배경
+
+1. Prisma 엔진 다운로드/마이그레이션이 환경 제약으로 실패하는 경우가 있어 DB 드리프트가 재발할 수 있음
+2. 이 경우 NextAuth 콜백에서 `P2022`가 다시 발생할 수 있음
+
+### 20-2. 구현
+
+1. `scripts/ensure-auth-db-schema.cjs` 추가
+   - `.env.local`의 `DATABASE_URL`을 사용해 Neon에 직접 접속
+   - 로그인 경로 핵심 컬럼을 idempotent SQL로 보정
+   - 대상: `User.role`, `User.deletionRequestedAt`, `User.deletionScheduledAt`, `User.activityPoints`, `User.tierCode`, `User.creditBalance`
+2. `package.json` 스크립트 추가
+   - `db:ensure-auth-schema`
+
+### 20-3. 실행 검증
+
+1. `npm.cmd run db:ensure-auth-schema` 실행 성공
+2. 출력: `Auth schema safety patch applied successfully.`
