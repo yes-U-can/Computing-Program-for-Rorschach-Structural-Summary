@@ -40,3 +40,33 @@ export async function GET(
   }
 }
 
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ sessionId: string }> }
+) {
+  const session = await getServerSession(authOptions);
+  const { sessionId } = await params;
+
+  if (!session || !session.user || !session.user.id) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
+  try {
+    const result = await prisma.chatSession.deleteMany({
+      where: {
+        id: sessionId,
+        userId: session.user.id,
+      },
+    });
+
+    if (result.count === 0) {
+      return new NextResponse('Chat session not found', { status: 404 });
+    }
+
+    return NextResponse.json({ deleted: true });
+  } catch (error) {
+    console.error(`Error deleting chat session ${sessionId}:`, error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+

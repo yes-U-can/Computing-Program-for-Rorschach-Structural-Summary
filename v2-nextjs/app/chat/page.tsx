@@ -2,13 +2,15 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Bars3Icon, XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import ChatHistorySidebar from '@/components/chat/ChatHistorySidebar';
 import ChatMessageView from '@/components/chat/ChatMessageView';
 import { useTranslation } from '@/hooks/useTranslation';
 import { loadUserKnowledgeSources, toChatKnowledgePayload } from '@/lib/userKnowledge';
+import { getCondensedSystemMessage } from '@/lib/chatMessageVisibility';
+import { toPlainTextChat } from '@/lib/chatPlainText';
 import Header from '@/components/layout/Header';
 
 type Message = {
@@ -62,6 +64,7 @@ export default function ChatPage() {
   const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
   const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
+  const [favoriteModelIds, setFavoriteModelIds] = useState<string[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -106,28 +109,66 @@ export default function ChatPage() {
       const data = (await res.json()) as {
         models: ModelOption[];
         creditBalance: number;
+        favoriteModelIds: string[];
       };
-      setModels(data.models ?? []);
+      const allModels = data.models ?? [];
+      const available = allModels.filter((m) => m.byokAvailable || m.platformAvailable);
+      const favorites = data.favoriteModelIds ?? [];
+      const favoriteByokModels = available.filter(
+        (m) => m.byokAvailable && favorites.includes(m.id)
+      );
+      const platformCandidates = available.filter((m) => m.platformAvailable);
+
+      setModels(available);
+      setFavoriteModelIds(favorites);
       setCreditBalance(data.creditBalance ?? 0);
 
-      const recommended =
-        data.models?.find((m) => m.recommended && m.provider === provider) ??
-        data.models?.[0];
-      if (recommended) {
-        setModelId(recommended.id);
-        setProvider(recommended.provider);
-        setBillingMode(recommended.byokAvailable ? 'byok' : 'platform');
+      if (favoriteByokModels.length > 0) {
+        const recommendedByok =
+          favoriteByokModels.find((m) => m.recommended) ?? favoriteByokModels[0];
+        setModelId(recommendedByok.id);
+        setProvider(recommendedByok.provider);
+        setBillingMode('byok');
+      } else if (platformCandidates.length > 0) {
+        const recommendedPlatform =
+          platformCandidates.find((m) => m.recommended) ?? platformCandidates[0];
+        setModelId(recommendedPlatform.id);
+        setProvider(recommendedPlatform.provider);
       }
     } finally {
       setModelLoading(false);
     }
-  }, [provider, status]);
+  }, [status]);
 
   useEffect(() => {
     void loadChatModelState();
   }, [loadChatModelState]);
 
-  const selectedModel = models.find((m) => m.id === modelId) ?? null;
+  const platformModels = useMemo(
+    () => models.filter((m) => m.platformAvailable),
+    [models]
+  );
+  const byokModels = useMemo(
+    () => models.filter((m) => m.byokAvailable),
+    [models]
+  );
+  const byokFavoriteModels = useMemo(
+    () => byokModels.filter((m) => favoriteModelIds.includes(m.id)),
+    [byokModels, favoriteModelIds]
+  );
+  const selectableModels = billingMode === 'platform' ? platformModels : byokFavoriteModels;
+
+  useEffect(() => {
+    const pool = billingMode === 'platform' ? platformModels : byokFavoriteModels;
+    if (pool.length === 0) return;
+
+    const current = pool.find((m) => m.id === modelId);
+    const next = current ?? pool.find((m) => m.recommended) ?? pool[0];
+    if (!next) return;
+
+    if (next.id !== modelId) setModelId(next.id);
+    if (next.provider !== provider) setProvider(next.provider);
+  }, [billingMode, platformModels, byokFavoriteModels, modelId, provider]);
 
   const getFriendlyErrorMessage = useCallback((rawError: string) => {
     const message = rawError.toLowerCase();
@@ -203,7 +244,7 @@ export default function ChatPage() {
   }, [selectedSessionId]);
 
   // Close sidebar on mobile when a session is selected
-  const handleSessionSelect = useCallback((sessionId: string) => {
+  const handleSessionSelect = useCallback((sessionId: string | null) => {
     setSelectedSessionId(sessionId);
     setSidebarOpen(false);
   }, []);
@@ -341,9 +382,9 @@ export default function ChatPage() {
       : t('skillBook.myBooks.defaultOption');
 
   return (
-    <div className="flex min-h-screen flex-col bg-[radial-gradient(circle_at_top_left,#eef5fa_0%,#f8fafc_45%,#f8fafc_100%)]">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,#eef5fa_0%,#f8fafc_45%,#f8fafc_100%)]">
       <Header />
-      <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 items-stretch px-0 py-3 sm:px-4 md:py-6 lg:px-6">
+      <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 items-stretch overflow-hidden px-0 py-3 sm:px-4 md:py-6 lg:px-6">
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div
@@ -356,8 +397,8 @@ export default function ChatPage() {
         <div
           className={`
             fixed inset-y-0 left-0 z-40 w-72 transform border-r border-slate-200 bg-white transition-transform duration-200 ease-in-out
-            md:relative md:inset-auto md:z-0 md:flex md:min-h-0 md:w-[280px] md:translate-x-0 md:flex-col md:self-stretch md:rounded-2xl md:shadow-sm
-            lg:w-[300px] xl:w-[320px]
+            md:relative md:inset-auto md:z-0 md:flex md:min-h-0 md:w-[232px] md:translate-x-0 md:flex-col md:self-stretch md:rounded-2xl md:shadow-sm
+            lg:w-[248px] xl:w-[264px]
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           `}
         >
@@ -424,22 +465,37 @@ export default function ChatPage() {
                 {showStreamingView && (
                   <div className="flex-1 overflow-y-auto p-4">
                     <div className="space-y-4">
-                      {streamingMessages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
-                        >
+                      {streamingMessages.map((message) => {
+                        const condensed = getCondensedSystemMessage(message.content);
+                        if (condensed) {
+                          return (
+                            <div key={message.id} className="flex justify-center">
+                              <p className="max-w-[90%] rounded-full bg-slate-100 px-3 py-1.5 text-xs text-slate-500">
+                                {condensed}
+                              </p>
+                            </div>
+                          );
+                        }
+
+                        return (
                           <div
-                            className={`max-w-[86%] px-4 py-2.5 shadow-sm ring-1 ${
-                              message.role === 'ai'
-                                ? 'rounded-2xl rounded-bl-md bg-white text-slate-800 ring-slate-200'
-                                : 'rounded-2xl rounded-br-md bg-[var(--brand-700)] text-white ring-[var(--brand-700)]/20'
-                            }`}
+                            key={message.id}
+                            className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
                           >
-                            <p className="whitespace-pre-wrap text-sm leading-6">{message.content}</p>
+                            <div
+                              className={`w-fit max-w-[calc(100%-2rem)] sm:max-w-[86%] px-4 py-2.5 shadow-sm ring-1 ${
+                                message.role === 'ai'
+                                  ? 'rounded-2xl rounded-bl-md bg-white text-slate-800 ring-slate-200'
+                                  : 'rounded-2xl rounded-br-md bg-[var(--brand-700)] text-white ring-[var(--brand-700)]/20'
+                              }`}
+                            >
+                              <p className="whitespace-pre-wrap break-words break-all [overflow-wrap:anywhere] text-sm leading-6">
+                                {message.role === 'ai' ? toPlainTextChat(message.content) : message.content}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {isLoading && streamingMessages[streamingMessages.length - 1]?.role !== 'ai' && (
                         <div className="flex justify-start">
                           <div className="rounded-2xl rounded-bl-md bg-white px-4 py-2.5 text-slate-800 shadow-sm ring-1 ring-slate-200">
@@ -470,70 +526,64 @@ export default function ChatPage() {
                 )}
               </div>
 
-              {/* Skill Book Builder entry */}
-              <div className="border-t border-dashed border-slate-200 bg-gradient-to-r from-amber-50/50 to-white px-4 py-2.5">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <SparklesIcon className="h-4 w-4 shrink-0 text-amber-500" />
-                    <span className="text-xs font-medium text-slate-600">{t('skillBook.builder.toggle')}</span>
-                  </div>
-                  <a
-                    href="/account?create=1#my-skillbooks"
-                    className="rounded-md border border-amber-300 bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-800 hover:bg-amber-200"
-                  >
-                    {t('skillBook.builder.open')}
-                  </a>
-                </div>
-              </div>
-
               {/* Input form */}
               <div className="pb-safe rounded-b-2xl border-t border-slate-200 bg-white/95 p-3 md:p-4">
-                <div className="mb-2 grid gap-2 md:grid-cols-[1fr_auto_auto]">
-                  <select
-                    value={modelId}
-                    onChange={(e) => {
-                      const next = models.find((m) => m.id === e.target.value);
-                      if (!next) return;
-                      setModelId(next.id);
-                      setProvider(next.provider);
-                      if (!next.byokAvailable) setBillingMode('platform');
-                    }}
-                    disabled={modelLoading || models.length === 0}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] disabled:opacity-60"
-                  >
-                    {models.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.provider.toUpperCase()} · {m.label}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={billingMode}
-                    onChange={(e) => setBillingMode(e.target.value as BillingMode)}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)]"
-                  >
-                    <option value="byok">내 API 키 사용</option>
-                    <option value="platform">플랫폼 크레딧 사용</option>
-                  </select>
-                  <div className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-600">
-                    잔액: {creditBalance.toLocaleString()} cr
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setBillingMode('byok')}
+                      className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                        billingMode === 'byok'
+                          ? 'bg-white text-slate-800 shadow-sm'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      내 API 키
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBillingMode('platform')}
+                      className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                        billingMode === 'platform'
+                          ? 'bg-white text-slate-800 shadow-sm'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      플랫폼 크레딧
+                    </button>
                   </div>
+
+                  {billingMode === 'byok' ? (
+                    <select
+                      value={selectableModels.length === 0 ? '__no_favorite_model__' : modelId}
+                      onChange={(e) => {
+                        const next = selectableModels.find((m) => m.id === e.target.value);
+                        if (!next) return;
+                        setModelId(next.id);
+                        setProvider(next.provider);
+                      }}
+                      disabled={modelLoading || selectableModels.length === 0}
+                      className="min-w-[220px] flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {selectableModels.length === 0 && (
+                        <option value="__no_favorite_model__" disabled>
+                          즐겨찾기된 모델이 없습니다. 계정 설정에서 모델을 즐겨찾기해 주세요.
+                        </option>
+                      )}
+                      {selectableModels.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.provider.toUpperCase()} · {m.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+                      잔액: {creditBalance.toLocaleString()} cr
+                    </div>
+                  )}
                 </div>
-                {selectedModel && (
-                  <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-[11px] text-slate-600">
-                    <p className="font-semibold text-slate-700">{selectedModel.label} · {selectedModel.psychologyLabel}</p>
-                    <p className="mt-0.5">
-                      가격: {selectedModel.priceLevel} · 속도: {selectedModel.speedLevel} · 품질: {selectedModel.qualityLevel}
-                    </p>
-                    <p className="mt-0.5">{selectedModel.description}</p>
-                    {billingMode === 'byok' && !selectedModel.byokAvailable && (
-                      <p className="mt-1 text-rose-600">선택한 제공자의 개인 API 키가 없어 플랫폼 모드를 권장합니다.</p>
-                    )}
-                    {billingMode === 'platform' && !selectedModel.platformAvailable && (
-                      <p className="mt-1 text-rose-600">해당 모델의 플랫폼키가 아직 설정되지 않았습니다.</p>
-                    )}
-                  </div>
-                )}
+
                 <form onSubmit={handleSubmit} className="flex items-center gap-2">
                   <input
                     ref={inputRef}
@@ -559,4 +609,3 @@ export default function ChatPage() {
     </div>
   );
 }
-

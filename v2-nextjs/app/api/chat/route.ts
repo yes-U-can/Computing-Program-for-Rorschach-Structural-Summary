@@ -223,7 +223,8 @@ export async function POST(req: Request) {
         currentSession = await prisma.chatSession.create({
             data: {
                 userId: user.id,
-                title: userMessage.content.substring(0, 50),
+                // Title is no longer shown in UI; keep a neutral placeholder for schema compatibility.
+                title: 'chat-session',
                 provider: provider,
             }
         });

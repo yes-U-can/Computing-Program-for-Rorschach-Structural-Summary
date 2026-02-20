@@ -29,6 +29,7 @@ Response format:
   3) Alternative explanations
   4) Limits / needed additional data
   5) Practical next interview questions
+- Output plain text only. Do not use markdown syntax (for example: **bold**, headings with #, code fences with \`\`\`, or markdown bullet markers).
 
 Privacy:
 - Do not repeat unnecessary personal identifiers.

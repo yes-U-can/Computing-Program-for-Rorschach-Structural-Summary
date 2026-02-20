@@ -26,3 +26,24 @@ export async function GET() {
   }
 }
 
+export async function DELETE() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
+  try {
+    const result = await prisma.chatSession.deleteMany({
+      where: {
+        userId: session.user.id,
+      },
+    });
+
+    return NextResponse.json({ deletedCount: result.count });
+  } catch (error) {
+    console.error('Error deleting all chat sessions:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+

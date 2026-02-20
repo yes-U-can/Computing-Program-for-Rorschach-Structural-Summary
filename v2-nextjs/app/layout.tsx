@@ -6,7 +6,6 @@ import Providers from '@/components/layout/Providers';
 import { TranslationProvider } from '@/hooks/useTranslation';
 import { ToastProvider } from '@/components/ui/Toast';
 import GoogleAnalyticsPageView from '@/components/analytics/GoogleAnalyticsPageView';
-import { buildLanguageAlternates } from '@/lib/seo';
 import './globals.css';
 
 const inter = Inter({
@@ -40,10 +39,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'Seoul Institute of Clinical Psychology (SICP)' }],
   creator: 'Seoul Institute of Clinical Psychology (SICP)',
   publisher: 'SICP',
-  alternates: {
-    canonical: '/',
-    languages: buildLanguageAlternates('/'),
-  },
   verification: {
     google: googleSiteVerification,
   },

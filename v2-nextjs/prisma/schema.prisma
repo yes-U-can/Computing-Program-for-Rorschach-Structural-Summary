@@ -67,6 +67,7 @@ model User {
   reviewedSuggestions   RefDocSuggestionReview[] @relation("SuggestionReviewer")
   skillBookFavorites    SkillBookFavorite[]
   skillBookLikes        SkillBookLike[]
+  favoriteModelIds      String[]            @default([])
 }
 
 enum UserRole {

@@ -1,11 +1,13 @@
 ﻿'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { SparklesIcon, XMarkIcon, ArrowsPointingOutIcon } from '@heroicons/react/24/solid';
 import { PaperAirplaneIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { loadUserKnowledgeSources, toChatKnowledgePayload } from '@/lib/userKnowledge';
+import { getCondensedSystemMessage } from '@/lib/chatMessageVisibility';
+import { toPlainTextChat } from '@/lib/chatPlainText';
 import { useTranslation } from '@/hooks/useTranslation';
 
 type Message = {
@@ -47,6 +49,15 @@ type ModelOption = {
 export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidgetProps) {
   const { status } = useSession();
   const { t, language } = useTranslation();
+  const popupEmptyDescriptionByLanguage: Record<string, string> = {
+    ko: '아래 입력창에 메시지를 입력해 새 대화를 시작하세요.',
+    en: 'Type a message below to start a new conversation.',
+    ja: '下の入力欄にメッセージを入力して、新しい会話を始めてください。',
+    es: 'Escribe un mensaje abajo para iniciar una conversación nueva.',
+    pt: 'Digite uma mensagem abaixo para iniciar uma nova conversa.',
+  };
+  const popupEmptyDescription =
+    popupEmptyDescriptionByLanguage[language] ?? popupEmptyDescriptionByLanguage.en;
   const [provider, setProvider] = useState<Provider>('openai');
   const [modelId, setModelId] = useState('gpt-4o');
   const [billingMode, setBillingMode] = useState<BillingMode>('byok');
@@ -61,6 +72,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   const [activeSkillBookId, setActiveSkillBookId] = useState<string | null>(null);
   const [isSkillBookLoading, setIsSkillBookLoading] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
+  const [favoriteModelIds, setFavoriteModelIds] = useState<string[]>([]);
   const handledInitialMessageRef = useRef<string | null>(null);
   const activeSkillBookName =
     activeSkillBookId
@@ -115,21 +127,35 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
       const data = (await res.json()) as {
         models: ModelOption[];
         creditBalance: number;
+        favoriteModelIds: string[];
       };
-      setModels(data.models ?? []);
+      const allModels = data.models ?? [];
+      const available = allModels.filter((m) => m.byokAvailable || m.platformAvailable);
+      const favorites = data.favoriteModelIds ?? [];
+      const favoriteByokModels = available.filter(
+        (m) => m.byokAvailable && favorites.includes(m.id)
+      );
+      const platformCandidates = available.filter((m) => m.platformAvailable);
+
+      setModels(available);
+      setFavoriteModelIds(favorites);
       setCreditBalance(data.creditBalance ?? 0);
-      const recommended =
-        data.models?.find((m) => m.recommended && m.provider === provider) ??
-        data.models?.[0];
-      if (recommended) {
-        setModelId(recommended.id);
-        setProvider(recommended.provider);
-        setBillingMode(recommended.byokAvailable ? 'byok' : 'platform');
+      if (favoriteByokModels.length > 0) {
+        const recommendedByok =
+          favoriteByokModels.find((m) => m.recommended) ?? favoriteByokModels[0];
+        setModelId(recommendedByok.id);
+        setProvider(recommendedByok.provider);
+        setBillingMode('byok');
+      } else if (platformCandidates.length > 0) {
+        const recommendedPlatform =
+          platformCandidates.find((m) => m.recommended) ?? platformCandidates[0];
+        setModelId(recommendedPlatform.id);
+        setProvider(recommendedPlatform.provider);
       }
     } finally {
       setModelLoading(false);
     }
-  }, [provider, status]);
+  }, [status]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -137,7 +163,24 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
     void loadChatModelState();
   }, [isOpen, loadSkillBookState, loadChatModelState]);
 
-  const selectedModel = models.find((m) => m.id === modelId) ?? null;
+  const platformModels = useMemo(
+    () => models.filter((m) => m.platformAvailable),
+    [models]
+  );
+  const byokFavoriteModels = useMemo(
+    () => models.filter((m) => m.byokAvailable && favoriteModelIds.includes(m.id)),
+    [models, favoriteModelIds]
+  );
+
+  useEffect(() => {
+    const pool = billingMode === 'platform' ? platformModels : byokFavoriteModels;
+    if (pool.length === 0) return;
+    const current = pool.find((m) => m.id === modelId);
+    const next = current ?? pool.find((m) => m.recommended) ?? pool[0];
+    if (!next) return;
+    if (next.id !== modelId) setModelId(next.id);
+    if (next.provider !== provider) setProvider(next.provider);
+  }, [billingMode, platformModels, byokFavoriteModels, modelId, provider]);
 
   const handleSkillBookChange = useCallback(async (value: string) => {
     if (status !== 'authenticated') return;
@@ -335,11 +378,12 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
   }
 
   return (
-    <div className="fixed inset-0 z-50 sm:inset-auto sm:bottom-8 sm:right-8 sm:w-[420px] sm:h-[680px]">
+    <div className="fixed inset-0 z-50 sm:inset-auto sm:bottom-8 sm:right-8 sm:w-[420px] sm:h-[680px] sm:max-h-[calc(100dvh-2rem)]">
       <div className="absolute inset-0 bg-white sm:hidden" />
-      <div className="absolute inset-0 rounded-none border-0 bg-white shadow-2xl sm:rounded-2xl sm:border sm:border-slate-200/70 sm:bg-white/95 sm:backdrop-blur">
+      <div className="absolute inset-0 flex flex-col rounded-none border-0 bg-white shadow-2xl sm:rounded-2xl sm:border sm:border-slate-300 sm:bg-white/95 sm:backdrop-blur">
+
       {/* Header */}
-      <div className="pt-safe flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-slate-50 px-4 py-3 sm:rounded-t-2xl">
+      <div className="pt-safe flex shrink-0 items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-slate-50 px-4 py-3 sm:rounded-t-2xl">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand-700)] text-white shadow-sm">
             <SparklesIcon className="h-5 w-5" />
@@ -349,49 +393,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
             <p className="truncate text-[11px] text-slate-500">{activeSkillBookName}</p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <select
-            value={activeSkillBookId ?? '__default__'}
-            onChange={(e) => void handleSkillBookChange(e.target.value)}
-            disabled={status !== 'authenticated' || isSkillBookLoading}
-            aria-label={t('skillBook.myBooks.title')}
-            className="max-w-[140px] rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <option value="__default__">{t('skillBook.myBooks.defaultOption')}</option>
-            {skillBooks.map((book) => (
-              <option key={book.id} value={book.id}>
-                {book.name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={modelId}
-            onChange={(e) => {
-              const next = models.find((m) => m.id === e.target.value);
-              if (!next) return;
-              setModelId(next.id);
-              setProvider(next.provider);
-              if (!next.byokAvailable) setBillingMode('platform');
-            }}
-            aria-label="AI model"
-            disabled={modelLoading || models.length === 0}
-            className="max-w-[165px] rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:opacity-60"
-          >
-            {models.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.provider.toUpperCase()} · {m.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={billingMode}
-            onChange={(e) => setBillingMode(e.target.value as BillingMode)}
-            aria-label="Billing mode"
-            className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)]"
-          >
-            <option value="byok">내 API 키 사용</option>
-            <option value="platform">플랫폼 크레딧 사용</option>
-          </select>
+        <div className="flex items-center gap-1">
           <Link
             href="/chat"
             aria-label="Open full chat page"
@@ -409,44 +411,110 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
         </div>
       </div>
 
+      {/* Settings bar */}
+      <div className="flex shrink-0 items-end gap-1.5 border-b border-slate-100 bg-slate-50/80 px-3 py-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-[9px] font-medium uppercase tracking-wide text-slate-400">스킬북</span>
+          <select
+            value={activeSkillBookId ?? '__default__'}
+            onChange={(e) => void handleSkillBookChange(e.target.value)}
+            disabled={status !== 'authenticated' || isSkillBookLoading}
+            aria-label={t('skillBook.myBooks.title')}
+            className="min-w-0 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-600 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <option value="__default__">{t('skillBook.myBooks.defaultOption')}</option>
+            {skillBooks.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-[9px] font-medium uppercase tracking-wide text-slate-400">AI 모델</span>
+          <select
+            value={(billingMode === 'platform' ? platformModels : byokFavoriteModels).length === 0 ? '__no_favorite_model__' : modelId}
+            onChange={(e) => {
+              const pool = billingMode === 'platform' ? platformModels : byokFavoriteModels;
+              const next = pool.find((m) => m.id === e.target.value);
+              if (!next) return;
+              setModelId(next.id);
+              setProvider(next.provider);
+              if (!next.byokAvailable) setBillingMode('platform');
+            }}
+            aria-label="AI model"
+            disabled={modelLoading || billingMode === 'platform' || byokFavoriteModels.length === 0}
+            className="min-w-0 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-600 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {billingMode !== 'platform' && byokFavoriteModels.length === 0 && (
+              <option value="__no_favorite_model__" disabled>
+                즐겨찾기된 모델이 없습니다. 계정 설정에서 모델을 즐겨찾기해 주세요.
+              </option>
+            )}
+            {(billingMode === 'platform' ? platformModels : byokFavoriteModels).map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.provider.toUpperCase()} · {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-[9px] font-medium uppercase tracking-wide text-slate-400">결제 방식</span>
+          <select
+            value={billingMode}
+            onChange={(e) => setBillingMode(e.target.value as BillingMode)}
+            aria-label="Billing mode"
+            className="min-w-0 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-600 focus:border-[var(--brand-500)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)]"
+          >
+            <option value="byok">내 API 키</option>
+            <option value="platform">플랫폼 크레딧</option>
+          </select>
+        </div>
+      </div>
+
       {/* Messages */}
-      <div className="h-[calc(100%-130px)] overflow-y-auto px-4 py-4 pb-3 sm:h-[calc(100%-136px)]">
-        {selectedModel && (
-          <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-600">
-            <p className="font-semibold text-slate-700">
-              {selectedModel.label} · {selectedModel.psychologyLabel}
-            </p>
-            <p className="mt-0.5">
-              가격 {selectedModel.priceLevel} · 속도 {selectedModel.speedLevel} · 품질 {selectedModel.qualityLevel} · 잔액 {creditBalance.toLocaleString()} cr
-            </p>
-          </div>
-        )}
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-3">
         <div className="space-y-4">
           {messages.length === 0 && !isLoading && (
             <div className="flex h-full min-h-[260px] items-center justify-center">
               <div className="max-w-xs text-center">
                 <ChatBubbleLeftRightIcon className="mx-auto h-10 w-10 text-slate-300" />
                 <p className="mt-3 text-sm font-medium text-slate-600">{t('chat.emptyStateTitle')}</p>
-                <p className="mt-1 text-xs leading-5 text-slate-500">{t('chat.emptyStateDescription')}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">{popupEmptyDescription}</p>
               </div>
             </div>
           )}
-          {messages.filter((m) => !m.hidden).map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
-            >
+          {messages.filter((m) => !m.hidden).map((message) => {
+            const condensed = getCondensedSystemMessage(message.content);
+            if (condensed) {
+              return (
+                <div key={message.id} className="flex justify-center">
+                  <p className="max-w-[90%] rounded-full bg-slate-100 px-3 py-1.5 text-xs text-slate-500">
+                    {condensed}
+                  </p>
+                </div>
+              );
+            }
+
+            return (
               <div
-                className={`max-w-[85%] px-4 py-2.5 shadow-sm ring-1 ${
-                  message.role === 'ai'
-                    ? 'rounded-2xl rounded-bl-md bg-white text-slate-800 ring-slate-200'
-                    : 'rounded-2xl rounded-br-md bg-[var(--brand-700)] text-white ring-[var(--brand-700)]/20'
-                }`}
+                key={message.id}
+                className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}
               >
-                <p className="whitespace-pre-wrap text-sm leading-6">{message.content}</p>
+                <div
+                  className={`w-fit max-w-[calc(100%-2rem)] sm:max-w-[85%] px-4 py-2.5 shadow-sm ring-1 ${
+                    message.role === 'ai'
+                      ? 'rounded-2xl rounded-bl-md bg-white text-slate-800 ring-slate-200'
+                      : 'rounded-2xl rounded-br-md bg-[var(--brand-700)] text-white ring-[var(--brand-700)]/20'
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap break-words break-all [overflow-wrap:anywhere] text-sm leading-6">
+                    {message.role === 'ai' ? toPlainTextChat(message.content) : message.content}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {isLoading && messages[messages.length - 1]?.role !== 'ai' && (
             <div className="flex justify-start">
               <div className="rounded-2xl rounded-bl-md bg-white px-4 py-2.5 text-slate-800 shadow-sm ring-1 ring-slate-200">
@@ -463,7 +531,7 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
       </div>
 
       {/* Input Form */}
-      <div className="pb-safe border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:rounded-b-2xl sm:p-4">
+      <div className="pb-safe shrink-0 border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:rounded-b-2xl sm:p-4">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <input
             type="text"
@@ -483,13 +551,8 @@ export default function ChatWidget({ isOpen, onClose, initialMessage }: ChatWidg
           </button>
         </form>
       </div>
+
       </div>
     </div>
   );
 }
-
-
-
-
-
-

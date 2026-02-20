@@ -19,7 +19,6 @@ import { Card } from '@/components/ui/Card';
 
 import { exportToCSV, exportSummaryToCSV, generateRawDataCsv, generateSummaryCsv } from '@/lib/csv';
 
-import DraggableFab from '@/components/ui/DraggableFab';
 import AdModal from '@/components/ads/AdModal';
 
 // Lazy-loaded heavy components (only loaded when actually needed)
@@ -391,14 +390,16 @@ export default function HomePage() {
       )}
 
       {session && !showChatWidget && (
-        <DraggableFab
+        <button
+          type="button"
           onClick={() => setShowChatWidget(true)}
-          label={t('nav.aiAssistant')}
-          className="border border-white/20 bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-500)] px-4 py-3 text-white shadow-[0_12px_30px_rgba(36,72,114,0.35)] transition-shadow hover:shadow-[0_16px_34px_rgba(36,72,114,0.45)]"
+          aria-label={t('nav.aiAssistant')}
+          title={t('nav.aiAssistant')}
+          className="fixed bottom-4 right-4 z-40 inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-500)] px-4 py-3 text-white shadow-[0_12px_30px_rgba(36,72,114,0.35)] transition-shadow hover:shadow-[0_16px_34px_rgba(36,72,114,0.45)] sm:bottom-6 sm:right-6"
         >
           <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6" />
           <span className="text-sm font-semibold tracking-tight">{t('nav.aiAssistant')}</span>
-        </DraggableFab>
+        </button>
       )}
 
       {/* Welcome Modal */}

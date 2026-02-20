@@ -48,18 +48,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.6,
     },
-    {
-      url: absolute('/chat'),
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: absolute('/account'),
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
   ];
 
   const docRoutes = getAllDocRoutes()

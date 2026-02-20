@@ -10,6 +10,7 @@ import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 
 import ApiKeyManager from '@/components/account/ApiKeyManager';
+import ModelFavoritePicker from '@/components/account/ModelFavoritePicker';
 import KnowledgeSourceManager from '@/components/account/KnowledgeSourceManager';
 import SkillBookManager from '@/components/account/SkillBookManager';
 import CreditBalancePanel from '@/components/account/CreditBalancePanel';
@@ -248,6 +249,7 @@ export default function AccountPage() {
             <div className="md:col-span-1">
               <ul className="space-y-2">
                 <li><a href="#api-keys" className="font-semibold text-[var(--brand-500)]">{t('account.apiKeys.title')}</a></li>
+                <li><a href="#model-favorites" className="text-slate-600 hover:text-[var(--brand-500)]">AI 모델 즐겨찾기</a></li>
                 <li><a href="#my-skillbooks" className="text-slate-600 hover:text-[var(--brand-500)]">{t('skillBook.myBooks.title')}</a></li>
                 <li><a href="#credits" className="text-slate-600 hover:text-[var(--brand-500)]">Credits</a></li>
                 {isDocReviewAdmin && (
@@ -263,6 +265,14 @@ export default function AccountPage() {
                 <h2 className="text-xl font-semibold text-slate-700">{t('account.apiKeys.title')}</h2>
                 <div className="mt-4 p-8 bg-white rounded-lg shadow-sm border border-slate-200">
                   <ApiKeyManager />
+                </div>
+              </section>
+
+              <section id="model-favorites">
+                <h2 className="text-xl font-semibold text-slate-700">AI 모델 즐겨찾기</h2>
+                <p className="mt-1 text-sm text-slate-500">채팅 드롭다운에 표시할 모델을 선택하세요.</p>
+                <div className="mt-4 p-8 bg-white rounded-lg shadow-sm border border-slate-200">
+                  <ModelFavoritePicker />
                 </div>
               </section>
 
