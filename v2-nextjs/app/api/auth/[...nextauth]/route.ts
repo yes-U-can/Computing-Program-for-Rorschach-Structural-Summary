@@ -23,11 +23,6 @@ export const authOptions: NextAuthOptions = {
   session: {
     maxAge: 24 * 60 * 60, // 24 hours
   },
-  events: {
-    async signInError({ error, message }) {
-      console.error('[NextAuth] signInError:', message, error);
-    },
-  },
   callbacks: {
     async signIn({ user, account, profile }) {
       // Google accounts that require phone verification often have email_verified: false.
