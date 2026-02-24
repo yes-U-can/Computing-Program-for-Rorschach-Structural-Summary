@@ -23,7 +23,30 @@ export const authOptions: NextAuthOptions = {
   session: {
     maxAge: 24 * 60 * 60, // 24 hours
   },
+  events: {
+    async signInError({ error, message }) {
+      console.error('[NextAuth] signInError:', message, error);
+    },
+  },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Google accounts that require phone verification often have email_verified: false.
+      // If the email is not verified by Google, block sign-in early to prevent
+      // OAuthCreateAccount errors from the Prisma adapter.
+      if (account?.provider === 'google') {
+        const googleProfile = profile as { email_verified?: boolean; email?: string } | undefined;
+        const isVerified = googleProfile?.email_verified;
+        console.info('[NextAuth] Google signIn attempt:', {
+          email: user.email,
+          email_verified: isVerified,
+        });
+        if (!isVerified) {
+          // Return a path to redirect to with a recognizable error code.
+          return '/api/auth/signin?error=EmailNotVerified';
+        }
+      }
+      return true;
+    },
     async session({ session }) {
       if (!session.user?.email) {
         return session;
